@@ -131,6 +131,12 @@ html, body {
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 8px 18px rgba(198,166,100,0.4);
 }
+.lg-btn-glow {
+  border-color: var(--gold);
+  animation: lgHeroGlow 2.6s ease-in-out infinite;
+}
+.lg-root.lg-light .lg-btn-glow { animation: lgHeroGlowLight 2.6s ease-in-out infinite; }
+.lg-btn-glow:hover { animation-play-state: paused; }
 
 /* ---- Viewport ---- */
 .lg-viewport { flex: 1 1 auto; min-height: 0; overflow-y: auto; position: relative; }
@@ -309,7 +315,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   margin: 0 0 32px;
 }
 .lg-hero-cat {
-  border: 1px solid var(--line);
+  border: 1px solid var(--gold);
   padding: 12px 10px;
   font-size: 12.5px;
   letter-spacing: .04em;
@@ -320,11 +326,22 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   font-family: var(--font-body);
   cursor: pointer;
   transition: border-color .18s ease, background .18s ease, transform .18s ease, box-shadow .18s ease;
+  animation: lgHeroGlow 2.6s ease-in-out infinite;
+}
+@keyframes lgHeroGlow {
+  0%, 100% { box-shadow: 0 0 6px rgba(198,166,100,0.25), 0 0 0 1px rgba(198,166,100,0.25); }
+  50% { box-shadow: 0 0 18px rgba(198,166,100,0.6), 0 0 0 1px rgba(198,166,100,0.6); }
+}
+.lg-root.lg-light .lg-hero-cat { animation: lgHeroGlowLight 2.6s ease-in-out infinite; }
+@keyframes lgHeroGlowLight {
+  0%, 100% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); }
+  50% { box-shadow: 0 0 18px rgba(156,122,58,0.5), 0 0 0 1px rgba(156,122,58,0.5); }
 }
 .lg-hero-cat:hover {
   border-color: var(--gold);
   background: var(--gold-soft);
   transform: translateY(-4px) scale(1.035);
+  animation-play-state: paused;
   box-shadow: 0 10px 26px rgba(198,166,100,0.28), 0 0 0 1px var(--gold);
 }
 .lg-root.lg-light .lg-hero-cat:hover {
@@ -512,8 +529,8 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <span>Lexus Care · Protection Guide</span>
       </div>
       <div class="lg-nav-actions">
-        <button class="lg-btn" onclick="lgGoTo('front')">Front Page</button>
-        <button class="lg-btn" onclick="lgGoTo('contents')">Contents</button>
+        <button class="lg-btn lg-btn-glow" onclick="lgGoTo('front')">Front Page</button>
+        <button class="lg-btn lg-btn-glow" onclick="lgGoTo('contents')">Contents</button>
         <button class="lg-btn lg-icon" onclick="lgStep(-1)" id="lgPrevBtn" aria-label="Previous page">‹</button>
         <button class="lg-btn lg-icon" onclick="lgStep(1)" id="lgNextBtn" aria-label="Next page">›</button>
         <button class="lg-theme-switch" id="lgThemeSwitch" onclick="lgToggleTheme()" role="switch" aria-checked="false" aria-label="Toggle bright and dark mode">
@@ -934,12 +951,12 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 
         <div class="lg-section-block">
           <h3 class="lg-h2" style="font-size:22.5px;">Pricing by Term</h3>
-          <p style="font-size:15px;color:var(--muted);max-width:600px;margin-bottom:14px;">Base term is 3 years at $1,299, with $200 added for each additional year, up to a maximum term of 9 years.</p>
+          <p style="font-size:15px;color:var(--muted);max-width:600px;margin-bottom:14px;">Base term is 3 years at $1,299, with $200 added for each additional year, up to a maximum term of 8 years.</p>
           <div class="lg-table-wrap">
             <table class="lg-table">
-              <thead><tr><th>3 yr</th><th>4 yr</th><th>5 yr</th><th>6 yr</th><th>7 yr</th><th>8 yr</th><th>9 yr</th></tr></thead>
+              <thead><tr><th>3 yr</th><th>4 yr</th><th>5 yr</th><th>6 yr</th><th>7 yr</th><th>8 yr</th></tr></thead>
               <tbody>
-                <tr><td>$1,299</td><td>$1,499</td><td>$1,699</td><td>$1,899</td><td>$2,099</td><td>$2,299</td><td>$2,499</td></tr>
+                <tr><td>$1,299</td><td>$1,499</td><td>$1,699</td><td>$1,899</td><td>$2,099</td><td>$2,299</td></tr>
               </tbody>
             </table>
           </div>
@@ -1207,6 +1224,46 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   };
 
   render();
+})();
+</script>
+<script>
+(function(){
+  var ctx = null;
+  function getCtx(){
+    if (!ctx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) ctx = new AC();
+    }
+    return ctx;
+  }
+  function playHoverTone(){
+    var ac = getCtx();
+    if (!ac) return;
+    if (ac.state === 'suspended') ac.resume();
+    var now = ac.currentTime;
+    var osc = ac.createOscillator();
+    var gain = ac.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(520, now);
+    osc.frequency.exponentialRampToValueAtTime(540, now + 0.09);
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.004, now + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+    osc.connect(gain);
+    gain.connect(ac.destination);
+    osc.start(now);
+    osc.stop(now + 0.18);
+  }
+  function attach(){
+    document.querySelectorAll('.lg-hero-cat, .lg-btn-glow').forEach(function(el){
+      el.addEventListener('mouseenter', playHoverTone);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attach);
+  } else {
+    attach();
+  }
 })();
 </script>
 </body>
