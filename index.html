@@ -563,6 +563,15 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   .lg-hero-cats { grid-template-columns: repeat(2, 1fr); }
   .lg-nav { padding: 12px 14px; }
   .lg-btn span.lg-btn-label { display: none; }
+
+  /* Force tables to fit the screen width instead of requiring horizontal scroll */
+  table.lg-table { min-width: 0; table-layout: fixed; }
+  table.lg-table th, table.lg-table td {
+    white-space: normal;
+    word-break: break-word;
+    padding: 7px 8px;
+    font-size: 12.5px;
+  }
 }
 </style>
 </head>
@@ -752,7 +761,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 
         <div class="lg-section-block">
           <h3 class="lg-h2" style="font-size:22.5px;">Platinum Program with Included Maintenance</h3>
-          <p class="lg-lede" style="margin-bottom:14px;">Must be purchased from an authorized Lexus dealership at time of sale (not available to current owners); vehicle must be within 84 months / 140,000 km of the Warranty Registration Date. Pricing is Open Dealer Margin (ODM), set to compete fairly with third-party warranties.</p>
+          <p class="lg-lede" style="margin-bottom:14px;">Must be purchased from an authorized Lexus dealership at time of sale (not available to current owners); vehicle must be within 84 months / 140,000 km of the Warranty Registration Date.</p>
 
           <h4 style="font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:0 0 10px;">All Available Coverage Plans</h4>
           <div class="lg-table-wrap" style="max-height:280px; overflow-y:auto;">
@@ -1125,6 +1134,10 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <div class="lg-eyebrow">Section 09</div>
         <h2 class="lg-h1">Platinum Loyalty Plus — Theft Protection</h2>
         <p class="lg-lede">Underwritten by Millennium Insurance Corporation (MIC). Compensation is paid if the vehicle is declared a total loss due to theft, subject to policy terms, conditions and limitations. Coverage terms available up to 84 months.</p>
+
+        <div class="lg-section-block" style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div class="lg-price-tag"><span class="amt">$988</span><span class="lbl">Platinum Loyalty Plus</span></div>
+        </div>
 
         <div class="lg-grid lg-grid-2 lg-section-block">
           <div class="lg-card">
