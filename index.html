@@ -23,7 +23,6 @@ html, body {
   --muted-2: #5c6270;
   --gold: #c6a664;
   --gold-soft: rgba(198,166,100,0.14);
-  --danger-soft: rgba(198,166,100,0.08);
   --radius: 2px;
   font-family: var(--font-body);
   background: var(--bg);
@@ -34,9 +33,22 @@ html, body {
   height: 100vh;
   position: relative;
   border: 1px solid var(--line);
+  transition: background .25s ease, color .25s ease;
 }
 
 .lg-root * { box-sizing: border-box; }
+
+.lg-root.lg-light {
+  --bg: #f6f5f1;
+  --panel: #ffffff;
+  --panel-2: #efece4;
+  --line: #ddd7c8;
+  --platinum: #1c1d1f;
+  --muted: #55585f;
+  --muted-2: #82858c;
+  --gold: #9c7a3a;
+  --gold-soft: rgba(156,122,58,0.12);
+}
 
 .lg-shell {
   display: flex;
@@ -54,6 +66,9 @@ html, body {
   border-bottom: 1px solid var(--line);
   background: linear-gradient(180deg, #101114, #0d0e10);
   flex-shrink: 0;
+}
+.lg-root.lg-light .lg-nav {
+  background: linear-gradient(180deg, #ffffff, #f8f6f1);
 }
 .lg-brand {
   display: flex;
@@ -88,21 +103,34 @@ html, body {
   padding: 8px 14px;
   border-radius: var(--radius);
   cursor: pointer;
-  transition: border-color .15s ease, color .15s ease, background .15s ease;
+  transition: border-color .18s ease, color .18s ease, background .18s ease, transform .18s ease, box-shadow .18s ease;
   white-space: nowrap;
 }
-.lg-btn:hover { color: var(--platinum); border-color: var(--gold-dim,#7a6a45); background: var(--gold-soft); }
+.lg-btn:hover {
+  color: var(--platinum);
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 18px rgba(198,166,100,0.3), 0 0 0 1px var(--gold);
+}
+.lg-root.lg-light .lg-btn:hover { box-shadow: 0 8px 18px rgba(156,122,58,0.24), 0 0 0 1px var(--gold); }
 .lg-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .lg-btn.lg-icon { padding: 8px 11px; }
 .lg-btn:disabled { opacity: .3; cursor: default; }
-.lg-btn:disabled:hover { background: transparent; border-color: var(--line); color: var(--muted); }
+.lg-btn:disabled:hover { background: transparent; border-color: var(--line); color: var(--muted); transform: none; box-shadow: none; }
 .lg-btn-gold {
   color: #0a0b0d;
   background: var(--gold);
   border-color: var(--gold);
   font-weight: 600;
 }
-.lg-btn-gold:hover { background: #d6b878; border-color: #d6b878; color: #0a0b0d; }
+.lg-btn-gold:hover {
+  background: #d6b878;
+  border-color: #d6b878;
+  color: #0a0b0d;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 18px rgba(198,166,100,0.4);
+}
 
 /* ---- Viewport ---- */
 .lg-viewport { flex: 1 1 auto; min-height: 0; overflow-y: auto; position: relative; }
@@ -249,6 +277,11 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
     linear-gradient(180deg, #0d0e11, #0a0b0d 60%);
   position: relative;
 }
+.lg-root.lg-light .lg-hero {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(156,122,58,0.10), transparent 55%),
+    linear-gradient(180deg, #fbfaf6, #f6f5f1 60%);
+}
 .lg-hero-mark {
   width: 46px; height: 46px;
   border: 1px solid var(--gold);
@@ -286,12 +319,16 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   background: transparent;
   font-family: var(--font-body);
   cursor: pointer;
-  transition: border-color .15s ease, background .15s ease, transform .15s ease;
+  transition: border-color .18s ease, background .18s ease, transform .18s ease, box-shadow .18s ease;
 }
 .lg-hero-cat:hover {
   border-color: var(--gold);
   background: var(--gold-soft);
-  transform: translateY(-2px);
+  transform: translateY(-4px) scale(1.035);
+  box-shadow: 0 10px 26px rgba(198,166,100,0.28), 0 0 0 1px var(--gold);
+}
+.lg-root.lg-light .lg-hero-cat:hover {
+  box-shadow: 0 10px 26px rgba(156,122,58,0.22), 0 0 0 1px var(--gold);
 }
 .lg-hero-cat:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .lg-hero-cat b { display: block; color: var(--platinum); font-family: var(--font-display); font-size: 16.5px; font-weight: 600; margin-bottom: 2px;}
@@ -338,8 +375,8 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   color: var(--muted-2);
   letter-spacing: .05em;
 }
+.lg-root.lg-light .lg-footbar { background: #f8f6f1; }
 .lg-footbar .lg-pageno { font-family: var(--font-display); color: var(--gold); font-size: 15.5px; }
-.lg-footbar-nav { display: flex; gap: 6px; }
 
 .lg-copy {
   text-align: center;
@@ -347,6 +384,110 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   color: var(--muted-2);
   margin-top: 30px;
   letter-spacing: .04em;
+}
+
+/* ---- Theme toggle + QR (top right) ---- */
+.lg-theme-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 46px;
+  height: 24px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background .2s ease, border-color .2s ease;
+}
+.lg-theme-switch:hover {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(198,166,100,0.32);
+}
+.lg-root.lg-light .lg-theme-switch:hover { box-shadow: 0 6px 16px rgba(156,122,58,0.25); }
+.lg-theme-switch:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.lg-theme-switch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #0a0b0d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  line-height: 1;
+  transition: transform .22s ease;
+}
+.lg-theme-switch.is-light .lg-theme-switch-knob { transform: translateX(22px); }
+
+.lg-qr-img { cursor: pointer; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+.lg-qr-img:hover {
+  transform: scale(1.25);
+  border-color: var(--gold);
+  box-shadow: 0 8px 22px rgba(198,166,100,0.4), 0 0 0 1px var(--gold);
+}
+.lg-root.lg-light .lg-qr-img:hover { box-shadow: 0 8px 22px rgba(156,122,58,0.3), 0 0 0 1px var(--gold); }
+.lg-qr-img:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.lg-qr-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+.lg-qr-modal-backdrop.is-open { display: flex; }
+.lg-qr-modal {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 28px 30px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  max-width: 90%;
+}
+.lg-qr-modal-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lg-qr-modal-close:hover { color: var(--platinum); border-color: var(--gold); }
+.lg-qr-modal-title { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--platinum); margin: 0; }
+.lg-qr-modal-sub { font-size: 12.5px; color: var(--muted); text-align: center; max-width: 220px; line-height: 1.5; margin: 0; }
+.lg-qr-modal canvas { border-radius: 3px; border: 1px solid var(--line); background: #fff; padding: 10px; }
+.lg-qr-img {
+  width: 34px;
+  height: 34px;
+  border-radius: 3px;
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 2px;
+  display: block;
 }
 
 @media (max-width: 720px) {
@@ -375,6 +516,22 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <button class="lg-btn" onclick="lgGoTo('contents')">Contents</button>
         <button class="lg-btn lg-icon" onclick="lgStep(-1)" id="lgPrevBtn" aria-label="Previous page">‹</button>
         <button class="lg-btn lg-icon" onclick="lgStep(1)" id="lgNextBtn" aria-label="Next page">›</button>
+        <button class="lg-theme-switch" id="lgThemeSwitch" onclick="lgToggleTheme()" role="switch" aria-checked="false" aria-label="Toggle bright and dark mode">
+          <span class="lg-theme-switch-knob" id="lgThemeKnob">☾</span>
+        </button>
+        <div class="lg-qr-wrap">
+          <canvas class="lg-qr-img" id="lgQrCanvas" width="34" height="34" title="Click to enlarge" aria-label="QR code linking to loc-protection-guide.vercel.app. Click to enlarge." role="button" tabindex="0" onclick="lgOpenQrModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();lgOpenQrModal();}"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR MODAL -->
+    <div class="lg-qr-modal-backdrop" id="lgQrBackdrop" onclick="if(event.target===this){lgCloseQrModal();}">
+      <div class="lg-qr-modal" role="dialog" aria-modal="true" aria-label="Enlarged QR code">
+        <button class="lg-qr-modal-close" onclick="lgCloseQrModal()" aria-label="Close">✕</button>
+        <p class="lg-qr-modal-title">Scan to Share</p>
+        <canvas id="lgQrCanvasLarge" width="220" height="220"></canvas>
+        <p class="lg-qr-modal-sub">loc-protection-guide.vercel.app</p>
       </div>
     </div>
 
@@ -951,6 +1108,45 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+<script>
+(function(){
+  try {
+    if (window.QRious) {
+      window.lgQrSmall = new QRious({
+        element: document.getElementById('lgQrCanvas'),
+        value: 'https://loc-protection-guide.vercel.app',
+        size: 160,
+        background: '#ffffff',
+        foreground: '#8a6a2e',
+        level: 'M'
+      });
+      window.lgQrLarge = new QRious({
+        element: document.getElementById('lgQrCanvasLarge'),
+        value: 'https://loc-protection-guide.vercel.app',
+        size: 220,
+        background: '#ffffff',
+        foreground: '#8a6a2e',
+        level: 'M'
+      });
+    }
+  } catch (e) {
+    console.error('QR render failed', e);
+  }
+
+  window.lgOpenQrModal = function(){
+    var bd = document.getElementById('lgQrBackdrop');
+    if (bd) bd.classList.add('is-open');
+  };
+  window.lgCloseQrModal = function(){
+    var bd = document.getElementById('lgQrBackdrop');
+    if (bd) bd.classList.remove('is-open');
+  };
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') window.lgCloseQrModal();
+  });
+})();
+</script>
 <script>
 (function(){
   var order = ['front','contents','s01','s02','s03','s04','s04b','s05','s06','s07','s08','s09'];
@@ -998,6 +1194,16 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
     if (next < 0 || next >= order.length) return;
     current = next;
     render();
+  };
+
+  window.lgToggleTheme = function(){
+    var root = document.querySelector('.lg-root');
+    var isLight = root.classList.toggle('lg-light');
+    var sw = document.getElementById('lgThemeSwitch');
+    var knob = document.getElementById('lgThemeKnob');
+    sw.classList.toggle('is-light', isLight);
+    sw.setAttribute('aria-checked', isLight ? 'true' : 'false');
+    knob.textContent = isLight ? '☀' : '☾';
   };
 
   render();
