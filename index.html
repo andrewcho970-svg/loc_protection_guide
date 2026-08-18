@@ -561,7 +561,8 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   .lg-grid-2, .lg-grid-3 { grid-template-columns: 1fr; }
   .lg-hero h1 { font-size: 40px; }
   .lg-hero-cats { grid-template-columns: repeat(2, 1fr); }
-  .lg-nav { padding: 12px 14px; }
+  .lg-nav { padding: 12px 14px; flex-wrap: wrap; row-gap: 10px; }
+  .lg-nav-actions { flex-wrap: wrap; row-gap: 8px; }
   .lg-btn span.lg-btn-label { display: none; }
 
   /* Force tables to fit the screen width instead of requiring horizontal scroll */
@@ -727,23 +728,22 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <h2 class="lg-h1">Lexus Certified Pre-Owned Programs</h2>
         <p class="lg-lede">Every Lexus Certified Pre-Owned (LCPO) purchase includes a minimum of 1-year Roadside Assistance and 1-year/20,000km Powertrain coverage. Upgrade programs extend this protection further.</p>
 
-        <div class="lg-grid lg-grid-2 lg-section-block">
-          <div>
-            <h3 class="lg-h2" style="font-size:20px;">LCPO Comprehensive Upgrades</h3>
-            <div class="lg-table-wrap">
-              <table class="lg-table">
-                <thead><tr><th>Code</th><th>Term</th><th>Retail</th></tr></thead>
-                <tbody>
-                  <tr><td>ULC39</td><td>36 mo / 180,000 km</td><td>$3,600</td></tr>
-                  <tr><td>ULC69</td><td>72 mo / 180,000 km</td><td>$2,950</td></tr>
-                  <tr><td>ULC60</td><td>72 mo / 200,000 km</td><td>$3,100</td></tr>
-                  <tr><td>ULC78</td><td>84 mo / 160,000 km</td><td>$2,950</td></tr>
-                  <tr><td>ULC88</td><td>96 mo / 160,000 km</td><td>$3,150</td></tr>
-                </tbody>
-              </table>
-            </div>
-            <p style="font-size:13.5px;color:var(--muted);margin-top:8px;">Includes 12-month Connected Services trial, No Deductible, Vehicle Rental Assistance and Travel Planning.</p>
+        <div class="lg-section-block">
+          <h3 class="lg-h2" style="font-size:20px;">LCPO Comprehensive Upgrades</h3>
+          <div class="lg-table-wrap">
+            <table class="lg-table lg-table-fixed">
+              <colgroup><col style="width:33.33%"><col style="width:33.33%"><col style="width:33.34%"></colgroup>
+              <thead><tr><th>Code</th><th>Term</th><th>Retail</th></tr></thead>
+              <tbody>
+                <tr><td>ULC39</td><td>36 mo / 180,000 km</td><td>$3,600</td></tr>
+                <tr><td>ULC69</td><td>72 mo / 180,000 km</td><td>$2,950</td></tr>
+                <tr><td>ULC60</td><td>72 mo / 200,000 km</td><td>$3,100</td></tr>
+                <tr><td>ULC78</td><td>84 mo / 160,000 km</td><td>$2,950</td></tr>
+                <tr><td>ULC88</td><td>96 mo / 160,000 km</td><td>$3,150</td></tr>
+              </tbody>
+            </table>
           </div>
+          <p style="font-size:13.5px;color:var(--muted);margin-top:8px;">Includes 12-month Connected Services trial, No Deductible, Vehicle Rental Assistance and Travel Planning.</p>
         </div>
 
         <div class="lg-section-block">
@@ -752,20 +752,21 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 
           <h4 style="font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:0 0 10px;">All Available Coverage Plans</h4>
           <div class="lg-table-wrap" style="max-height:280px; overflow-y:auto;">
-            <table class="lg-table">
-              <thead><tr><th>Code</th><th>Description</th><th>Company</th><th>Price (CAD)</th></tr></thead>
+            <table class="lg-table lg-table-fixed">
+              <colgroup><col style="width:33.33%"><col style="width:33.33%"><col style="width:33.34%"></colgroup>
+              <thead><tr><th>Code</th><th>Description</th><th>RETAIL</th></tr></thead>
               <tbody>
-                <tr><td>YLF01</td><td>LCPO ECP 12/20,000 in warranty</td><td class="muted">Lexus Canada</td><td>$3,000.00</td></tr>
-                <tr><td>YLF02</td><td>LCPO ECP 24/40,000 in warranty</td><td class="muted">Lexus Canada</td><td>$3,300.00</td></tr>
-                <tr><td>YLF03</td><td>LCPO ECP 36/60,000 in warranty</td><td class="muted">Lexus Canada</td><td>$4,300.00</td></tr>
-                <tr><td>YLF04</td><td>LCPO ECP 48/80,000 in warranty</td><td class="muted">Lexus Canada</td><td>$4,600.00</td></tr>
-                <tr><td>YLF05</td><td>LCPO ECP 60/100,000 in warranty</td><td class="muted">Lexus Canada</td><td>$5,100.00</td></tr>
-                <tr><td>YLF13</td><td>LCPO ECP 36/60,000 under 60/100</td><td class="muted">Lexus Canada</td><td>$4,700.00</td></tr>
-                <tr><td>YLF14</td><td>LCPO ECP 48/80,000 under 60/100</td><td class="muted">Lexus Canada</td><td>$5,100.00</td></tr>
-                <tr><td>YLF15</td><td>LCPO ECP 60/100,000 under 60/100</td><td class="muted">Lexus Canada</td><td>$5,700.00</td></tr>
-                <tr><td>YLF23</td><td>LCPO ECP 36/60,000 under 72/120</td><td class="muted">Lexus Canada</td><td>$5,300.00</td></tr>
-                <tr><td>YLF24</td><td>LCPO ECP 48/80,000 under 72/120</td><td class="muted">Lexus Canada</td><td>$5,800.00</td></tr>
-                <tr><td>YLF33</td><td>LCPO ECP 36/60,000 under 84/140</td><td class="muted">Lexus Canada</td><td>$6,200.00</td></tr>
+                <tr><td>YLF01</td><td>LCPO ECP 12/20,000 in warranty</td><td>$3,000.00</td></tr>
+                <tr><td>YLF02</td><td>LCPO ECP 24/40,000 in warranty</td><td>$3,300.00</td></tr>
+                <tr><td>YLF03</td><td>LCPO ECP 36/60,000 in warranty</td><td>$4,300.00</td></tr>
+                <tr><td>YLF04</td><td>LCPO ECP 48/80,000 in warranty</td><td>$4,600.00</td></tr>
+                <tr><td>YLF05</td><td>LCPO ECP 60/100,000 in warranty</td><td>$5,100.00</td></tr>
+                <tr><td>YLF13</td><td>LCPO ECP 36/60,000 under 60/100</td><td>$4,700.00</td></tr>
+                <tr><td>YLF14</td><td>LCPO ECP 48/80,000 under 60/100</td><td>$5,100.00</td></tr>
+                <tr><td>YLF15</td><td>LCPO ECP 60/100,000 under 60/100</td><td>$5,700.00</td></tr>
+                <tr><td>YLF23</td><td>LCPO ECP 36/60,000 under 72/120</td><td>$5,300.00</td></tr>
+                <tr><td>YLF24</td><td>LCPO ECP 48/80,000 under 72/120</td><td>$5,800.00</td></tr>
+                <tr><td>YLF33</td><td>LCPO ECP 36/60,000 under 84/140</td><td>$6,200.00</td></tr>
               </tbody>
             </table>
           </div>
