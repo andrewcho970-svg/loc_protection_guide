@@ -249,6 +249,9 @@ table.lg-table td {
   white-space: nowrap;
 }
 table.lg-table tr:last-child td { border-bottom: none; }
+table.lg-table.lg-table-fixed { table-layout: fixed; }
+table.lg-table.lg-table-fixed th:first-child,
+table.lg-table.lg-table-fixed td:first-child { white-space: normal; }
 table.lg-table tr:hover td { background: rgba(255,255,255,0.02); }
 table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 
@@ -372,10 +375,22 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   border-radius: 0;
   width: 100%;
   text-align: left;
-  transition: background .15s ease, border-color .15s ease;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+  position: relative;
 }
-.lg-toc-item:hover { background: var(--panel); border-left-color: var(--gold); }
-.lg-toc-num { font-family: var(--font-display); font-size: 23.5px; color: var(--gold); width: 30px; flex-shrink: 0; }
+.lg-toc-item:hover {
+  background: var(--gold-soft);
+  border-left-color: var(--gold);
+  transform: translateX(6px) scale(1.01);
+  box-shadow: 0 8px 22px rgba(198,166,100,0.22), inset 0 0 0 1px rgba(198,166,100,0.3);
+  z-index: 1;
+}
+.lg-root.lg-light .lg-toc-item:hover {
+  box-shadow: 0 8px 22px rgba(156,122,58,0.18), inset 0 0 0 1px rgba(156,122,58,0.25);
+}
+.lg-toc-item:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+.lg-toc-item:hover .lg-toc-num { color: var(--platinum); transform: scale(1.08); }
+.lg-toc-num { font-family: var(--font-display); font-size: 23.5px; color: var(--gold); width: 30px; flex-shrink: 0; transition: color .18s ease, transform .18s ease; display: inline-block; }
 .lg-toc-body b { display: block; font-size: 17px; color: var(--platinum); font-weight: 600; margin-bottom: 3px; }
 .lg-toc-body span { font-size: 14px; color: var(--muted); line-height: 1.5; }
 
@@ -977,7 +992,8 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <div class="lg-section-block">
           <h3 class="lg-h2" style="font-size:20px;">Charges Waived at Lease-End</h3>
           <div class="lg-table-wrap">
-            <table class="lg-table">
+            <table class="lg-table lg-table-fixed">
+              <colgroup><col style="width:46%"><col style="width:27%"><col style="width:27%"></colgroup>
               <thead><tr><th></th><th>Wear Pass</th><th>Wear Pass Plus</th></tr></thead>
               <tbody>
                 <tr><td>Maximum charges waived</td><td>$7,500</td><td>$10,000</td></tr>
@@ -995,7 +1011,8 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <div class="lg-section-block">
           <h3 class="lg-h2" style="font-size:20px;">Charges Waived During Lease</h3>
           <div class="lg-table-wrap">
-            <table class="lg-table">
+            <table class="lg-table lg-table-fixed">
+              <colgroup><col style="width:46%"><col style="width:27%"><col style="width:27%"></colgroup>
               <thead><tr><th></th><th>Wear Pass</th><th>Wear Pass Plus</th></tr></thead>
               <tbody>
                 <tr><td>Up to $3,500 in repair charges</td><td>—</td><td>✓</td></tr>
@@ -1255,7 +1272,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
     osc.stop(now + 0.18);
   }
   function attach(){
-    document.querySelectorAll('.lg-hero-cat, .lg-btn-glow').forEach(function(el){
+    document.querySelectorAll('.lg-hero-cat, .lg-btn-glow, .lg-toc-item').forEach(function(el){
       el.addEventListener('mouseenter', playHoverTone);
     });
   }
