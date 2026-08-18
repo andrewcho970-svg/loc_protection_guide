@@ -1,5 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lexus of Calgary — LexusCare Protection Guide</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #0a0b0d;
+}
 
 .lg-root {
   --bg: #0a0b0d;
@@ -19,7 +31,7 @@
   --font-display: 'Space Grotesk', 'Inter', sans-serif;
   --font-body: 'Inter', -apple-system, sans-serif;
   width: 100%;
-  min-height: 100%;
+  height: 100vh;
   position: relative;
   border: 1px solid var(--line);
 }
@@ -29,9 +41,7 @@
 .lg-shell {
   display: flex;
   flex-direction: column;
-  height: 860px;
-  max-height: 90vh;
-  min-height: 560px;
+  height: 100%;
 }
 
 /* ---- Top Nav ---- */
@@ -95,7 +105,7 @@
 .lg-btn-gold:hover { background: #d6b878; border-color: #d6b878; color: #0a0b0d; }
 
 /* ---- Viewport ---- */
-.lg-viewport { flex: 1; overflow-y: auto; position: relative; }
+.lg-viewport { flex: 1 1 auto; min-height: 0; overflow-y: auto; position: relative; }
 .lg-page { display: none; padding: 46px 56px 40px; animation: lgFade .35s ease; }
 .lg-page.active { display: block; }
 @keyframes lgFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -273,7 +283,17 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   color: var(--muted);
   text-align: center;
   border-radius: var(--radius);
+  background: transparent;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease, transform .15s ease;
 }
+.lg-hero-cat:hover {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  transform: translateY(-2px);
+}
+.lg-hero-cat:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .lg-hero-cat b { display: block; color: var(--platinum); font-family: var(--font-display); font-size: 16.5px; font-weight: 600; margin-bottom: 2px;}
 .lg-front-foot {
   border-top: 1px solid var(--line);
@@ -338,6 +358,8 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   .lg-btn span.lg-btn-label { display: none; }
 }
 </style>
+</head>
+<body>
 
 <div class="lg-root">
   <div class="lg-shell">
@@ -367,12 +389,12 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
             <h1>Protection Products Guide</h1>
             <p>A complete overview of Lexus ECP programs, vehicle service contracts, cosmetic &amp; surface protection, lease-end coverage, tire &amp; glass protection, and theft protection available for your vehicle.</p>
             <div class="lg-hero-cats">
-              <div class="lg-hero-cat"><b>Lexus ECP</b>Platinum &amp; Certified Pre-Owned Programs</div>
-              <div class="lg-hero-cat"><b>Service Contracts</b>Lubrico Everest, Sierra, Superior, Driver's Shield &amp; Certified Powertrain Plus</div>
-              <div class="lg-hero-cat"><b>Surface Protection</b>XPEL Paint Film, CeramX Paint &amp; Interior, Smart Program</div>
-              <div class="lg-hero-cat"><b>Wear Pass</b>Lease-end excess wear &amp; tear protection</div>
-              <div class="lg-hero-cat"><b>Tire, Rim &amp; Glass</b>Road Hazard &amp; Road Hazard Glass</div>
-              <div class="lg-hero-cat"><b>Theft Protection</b>Platinum Loyalty Plus total-loss coverage</div>
+              <button class="lg-hero-cat" onclick="lgGoTo('s01')" aria-label="Go to Lexus ECP Platinum Program"><b>Lexus ECP</b>Platinum &amp; Certified Pre-Owned Programs</button>
+              <button class="lg-hero-cat" onclick="lgGoTo('s04')" aria-label="Go to Vehicle Service Contracts"><b>Service Contracts</b>Lubrico Everest, Sierra, Superior, Driver's Shield &amp; Certified Powertrain Plus</button>
+              <button class="lg-hero-cat" onclick="lgGoTo('s05')" aria-label="Go to Surface Protection"><b>Surface Protection</b>XPEL Paint Film, CeramX Paint &amp; Interior, Smart Program</button>
+              <button class="lg-hero-cat" onclick="lgGoTo('s07')" aria-label="Go to Wear Pass"><b>Wear Pass</b>Lease-end excess wear &amp; tear protection</button>
+              <button class="lg-hero-cat" onclick="lgGoTo('s08')" aria-label="Go to Tire, Rim and Glass Protection"><b>Tire, Rim &amp; Glass</b>Road Hazard &amp; Road Hazard Glass</button>
+              <button class="lg-hero-cat" onclick="lgGoTo('s09')" aria-label="Go to Theft Protection"><b>Theft Protection</b>Platinum Loyalty Plus total-loss coverage</button>
             </div>
             <button class="lg-btn lg-btn-gold" onclick="lgGoTo('contents')">View Contents →</button>
           </div>
@@ -981,3 +1003,5 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   render();
 })();
 </script>
+</body>
+</html>
