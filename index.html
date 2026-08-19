@@ -105,6 +105,10 @@ html, body {
   cursor: pointer;
   transition: border-color .18s ease, color .18s ease, background .18s ease, transform .18s ease, box-shadow .18s ease;
   white-space: nowrap;
+  display: inline-block;
+  text-decoration: none;
+  line-height: 1.3;
+  vertical-align: middle;
 }
 .lg-btn:hover {
   color: var(--platinum);
@@ -538,6 +542,43 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 .lg-root.lg-light .lg-qr-img:hover { box-shadow: 0 8px 22px rgba(156,122,58,0.3), 0 0 0 1px var(--gold); }
 .lg-qr-img:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
+.lg-contact-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background .2s ease, box-shadow .2s ease, transform .2s ease, color .2s ease;
+}
+.lg-contact-btn::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  opacity: .35;
+  transition: opacity .2s ease, transform .2s ease;
+}
+.lg-contact-btn:hover {
+  background: var(--gold);
+  color: #0a0b0d;
+  transform: scale(1.08);
+  box-shadow: 0 6px 18px rgba(198,166,100,0.4);
+}
+.lg-contact-btn:hover::before { opacity: .7; transform: scale(1.08); }
+.lg-contact-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
 .lg-qr-modal-backdrop {
   position: absolute;
   inset: 0;
@@ -587,7 +628,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   height: 34px;
   border-radius: 3px;
   border: 1px solid var(--line);
-  background: #fff;
+  background: transparent;
   padding: 2px;
   display: block;
 }
@@ -631,6 +672,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <button class="lg-theme-switch" id="lgThemeSwitch" onclick="lgToggleTheme()" role="switch" aria-checked="false" aria-label="Toggle bright and dark mode">
           <span class="lg-theme-switch-knob" id="lgThemeKnob">☾</span>
         </button>
+        <a class="lg-contact-btn" href="mailto:lexusfinancial@lexusofcalgary.com?subject=%5BLexus%20Care%20Online%20Guide%20Inquiry%5D" title="Questions? Click to email us" aria-label="Questions? Click to email us">?</a>
         <div class="lg-qr-wrap">
           <canvas class="lg-qr-img" id="lgQrCanvas" width="34" height="34" title="Click to enlarge" aria-label="QR code linking to loc-protection-guide.vercel.app. Click to enlarge." role="button" tabindex="0" onclick="lgOpenQrModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();lgOpenQrModal();}"></canvas>
         </div>
@@ -1226,6 +1268,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         value: 'https://loc-protection-guide.vercel.app',
         size: 160,
         background: '#ffffff',
+        backgroundAlpha: 0,
         foreground: '#8a6a2e',
         level: 'M'
       });
@@ -1550,7 +1593,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
     if (contentsPage && contentsPage.classList.contains('active')) {
       runStartupGlow('.lg-toc-item');
     }
-  }, 10000);
+  }, 8000);
 })();
 </script>
 </body>
