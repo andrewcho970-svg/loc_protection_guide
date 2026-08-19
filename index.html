@@ -1262,6 +1262,1379 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   window.lgGoTo = function(key){
     var idx = order.indexOf(key);
     if (idx === -1) return;
+    lastStepTime = Date.now();
+    current = idx;
+    render();
+  };
+
+  // Guard against a single user gesture producing more than one navigation.
+  // On touch devices, a swipe fires our touchend handler AND (sometimes) a
+  // trailing synthetic "click" on the same gesture; some embedding contexts
+  // can even duplicate touch events. Rather than trying to predict every
+  // possible duplicate event, lgStep itself ignores any call that arrives
+  // within STEP_LOCK_MS of the previous one, so only the first call per
+  // gesture actually moves the page.
+  var lastStepTime = 0;
+  var STEP_LOCK_MS = 400;
+  window.lgStep = function(delta){
+    var now = Date.now();
+    if (now - lastStepTime < STEP_LOCK_MS) return;
+    var next = current + delta;
+    if (next < 0 || next >= order.length) return;
+    lastStepTime = now;
+    current = next;
+    render();
+  };
+
+  // Keyboard arrow navigation
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight') { lgStep(1); }
+    else if (e.key === 'ArrowLeft') { lgStep(-1); }
+  });
+
+  // Hover-zone arrow indicators
+  var zoneLeft = document.getElementById('lgZoneLeft');
+  var zoneRight = document.getElementById('lgZoneRight');
+  if (viewport && zoneLeft && zoneRight) {
+    viewport.addEventListener('mousemove', function(e){
+      var rect = viewport.getBoundingClientRect();
+      var x = e.clientX - rect.left;
+      var half = rect.width / 2;
+      var overInteractive = !!e.target.closest('a, button, input, select, textarea, [onclick]');
+      if (overInteractive) {
+        zoneLeft.classList.remove('is-visible');
+        zoneRight.classList.remove('is-visible');
+        return;
+      }
+      if (x >= half) {
+        zoneRight.classList.toggle('is-visible', current < order.length - 1);
+        zoneLeft.classList.remove('is-visible');
+      } else {
+        zoneLeft.classList.toggle('is-visible', current > 0);
+        zoneRight.classList.remove('is-visible');
+      }
+    });
+    viewport.addEventListener('mouseleave', function(){
+      zoneLeft.classList.remove('is-visible');
+      zoneRight.classList.remove('is-visible');
+    });
+  }
+
+  // Mouse click navigation: click right side of viewport = next, left side = previous.
+  // Ignore clicks on interactive elements AND inside horizontally-scrollable areas
+  // (e.g. wide tables) so tapping/dragging a table to view its columns doesn't
+  // accidentally flip the page.
+  if (viewport) {
+    viewport.addEventListener('click', function(e){
+      if (e.target.closest('a, button, input, select, textarea, [onclick], .lg-table-wrap')) return;
+      var rect = viewport.getBoundingClientRect();
+      var clickX = e.clientX - rect.left;
+      var half = rect.width / 2;
+      if (clickX >= half) {
+        lgStep(1);
+      } else {
+        lgStep(-1);
+      }
+    });
+  }
+
+  // Swipe navigation (touch): swipe left = next, swipe right = previous.
+  // A swipe that starts inside a horizontally-scrollable element (like a wide
+  // pricing table) is treated as that element's own scroll gesture and must
+  // NOT trigger page navigation.
+  if (viewport) {
+    var touchStartX = 0;
+    var touchStartY = 0;
+    var touchEndX = 0;
+    var touchEndY = 0;
+    var touchStartTarget = null;
+    var SWIPE_THRESHOLD = 50;
+
+    viewport.addEventListener('touchstart', function(e){
+      var t = e.changedTouches[0];
+      touchStartX = t.screenX;
+      touchStartY = t.screenY;
+      touchStartTarget = e.target;
+    }, { passive: true });
+
+    // NOTE: not passive — a swipe that triggers page navigation needs to call
+    // preventDefault() so the browser doesn't also fire a synthetic "click"
+    // right after touchend. Without that, a single swipe was calling lgStep()
+    // twice (once from this handler, once from the click handler below),
+    // which is why pages appeared to skip (1 -> 3, 12 -> 10, etc).
+    viewport.addEventListener('touchend', function(e){
+      var t = e.changedTouches[0];
+      touchEndX = t.screenX;
+      touchEndY = t.screenY;
+      var dx = touchEndX - touchStartX;
+      var dy = touchEndY - touchStartY;
+
+      // If the touch began inside a table's horizontal scroll container that
+      // actually has overflow to scroll, let it scroll the table and skip
+      // page navigation entirely — regardless of swipe direction/distance.
+      var scrollWrap = touchStartTarget && touchStartTarget.closest
+        ? touchStartTarget.closest('.lg-table-wrap')
+        : null;
+      if (scrollWrap && scrollWrap.scrollWidth > scrollWrap.clientWidth) {
+        return;
+      }
+
+      // Only treat as a horizontal swipe if horizontal movement dominates vertical
+      if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
+        e.preventDefault(); // suppress the ghost click that would double-navigate
+        if (dx < 0) {
+          lgStep(1); // swipe left -> next page
+        } else {
+          lgStep(-1); // swipe right -> previous page
+        }
+      }
+    }, { passive: false });
+  }
+
+  window.lgToggleTheme = function(){
+    var root = document.querySelector('.lg-root');
+    var isLight = root.classList.toggle('lg-light');
+    var sw = document.getElementById('lgThemeSwitch');
+    var knob = document.getElementById('lgThemeKnob');
+    sw.classList.toggle('is-light', isLight);
+    sw.setAttribute('aria-checked', isLight ? 'true' : 'false');
+    knob.textContent = isLight ? '☀' : '☾';
+  };
+
+  render();
+})();
+</script>
+<script>
+(function(){
+  var ctx = null;
+  function getCtx(){
+    if (!ctx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) ctx = new AC();
+    }
+    return ctx;
+  }
+  function playHoverTone(){
+    var ac = getCtx();
+    if (!ac) return;
+    if (ac.state === 'suspended') ac.resume();
+    var now = ac.currentTime;
+    var osc = ac.createOscillator();
+    var gain = ac.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(520, now);
+    osc.frequency.exponentialRampToValueAtTime(540, now + 0.09);
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.004, now + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+    osc.connect(gain);
+    gain.connect(ac.destination);
+    osc.start(now);
+    osc.stop(now + 0.18);
+  }
+  function attach(){
+    document.querySelectorAll('.lg-hero-cat, .lg-btn-glow, .lg-toc-item').forEach(function(el){
+      el.addEventListener('mouseenter', playHoverTone);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attach);
+  } else {
+    attach();
+  }
+})();
+</script>
+</body>
+</html>
+  line-height: 1.05;
+  cursor: pointer;
+  user-select: none;
+}
+.lg-brand b {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--platinum);
+}
+.lg-brand span {
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.lg-nav-actions { display: flex; align-items: center; gap: 8px; }
+.lg-btn {
+  font-family: var(--font-body);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color .18s ease, color .18s ease, background .18s ease, transform .18s ease, box-shadow .18s ease;
+  white-space: nowrap;
+}
+.lg-btn:hover {
+  color: var(--platinum);
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 18px rgba(198,166,100,0.3), 0 0 0 1px var(--gold);
+}
+.lg-root.lg-light .lg-btn:hover { box-shadow: 0 8px 18px rgba(156,122,58,0.24), 0 0 0 1px var(--gold); }
+.lg-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.lg-btn.lg-icon { padding: 8px 11px; }
+.lg-btn:disabled { opacity: .3; cursor: default; }
+.lg-btn:disabled:hover { background: transparent; border-color: var(--line); color: var(--muted); transform: none; box-shadow: none; }
+.lg-btn-gold {
+  color: #0a0b0d;
+  background: var(--gold);
+  border-color: var(--gold);
+  font-weight: 600;
+}
+.lg-btn-gold:hover {
+  background: #d6b878;
+  border-color: #d6b878;
+  color: #0a0b0d;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 18px rgba(198,166,100,0.4);
+}
+.lg-btn-glow {
+  border-color: var(--gold);
+  animation: lgHeroGlow 2.6s ease-in-out infinite;
+}
+.lg-root.lg-light .lg-btn-glow { animation: lgHeroGlowLight 2.6s ease-in-out infinite; }
+.lg-btn-glow:hover { animation-play-state: paused; }
+
+/* ---- Viewport ---- */
+.lg-viewport { flex: 1 1 auto; min-height: 0; overflow-y: auto; position: relative; }
+
+/* ---- Hover-zone nav arrows ---- */
+.lg-hover-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  z-index: 5;
+}
+.lg-hover-zone.lg-zone-left { left: 0; justify-content: flex-start; }
+.lg-hover-zone.lg-zone-right { right: 0; justify-content: flex-end; }
+.lg-hover-arrow {
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 1;
+  color: var(--gold);
+  opacity: 0;
+  padding: 14px 10px;
+  transition: opacity .2s ease;
+  user-select: none;
+}
+.lg-zone-left .lg-hover-arrow { margin-left: 14px; }
+.lg-zone-right .lg-hover-arrow { margin-right: 14px; }
+.lg-hover-zone.is-visible .lg-hover-arrow {
+  opacity: .55;
+  animation: lgArrowBlink 1.6s ease-in-out infinite;
+}
+@keyframes lgArrowBlink {
+  0%, 100% { opacity: .28; }
+  50% { opacity: .75; }
+}
+.lg-page { display: none; padding: 46px 56px 40px; animation: lgFade .35s ease; }
+.lg-page.active { display: block; }
+@keyframes lgFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+.lg-eyebrow {
+  font-size: 12.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.lg-eyebrow::before { content: ''; width: 26px; height: 1px; background: var(--gold); display: inline-block; }
+
+.lg-h1 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 49.5px;
+  letter-spacing: 0.01em;
+  color: var(--platinum);
+  margin: 0 0 10px;
+}
+.lg-h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 32px;
+  color: var(--platinum);
+  margin: 0 0 6px;
+}
+.lg-lede { font-size: 16.5px; color: var(--muted); max-width: 640px; line-height: 1.65; margin-bottom: 30px; }
+
+/* corner-bracket signature card */
+.lg-card {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 22px 22px 20px;
+  border-radius: var(--radius);
+}
+.lg-card::before, .lg-card::after {
+  content: '';
+  position: absolute;
+  width: 10px; height: 10px;
+  border-color: var(--gold);
+  opacity: .8;
+}
+.lg-card::before { top: -1px; left: -1px; border-top: 1.5px solid var(--gold); border-left: 1.5px solid var(--gold); }
+.lg-card::after { bottom: -1px; right: -1px; border-bottom: 1.5px solid var(--gold); border-right: 1.5px solid var(--gold); }
+
+.lg-grid { display: grid; gap: 16px; }
+.lg-grid-2 { grid-template-columns: repeat(2, 1fr); }
+.lg-grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+.lg-card h3 {
+  font-family: var(--font-display);
+  font-size: 22.5px;
+  font-weight: 600;
+  margin: 0 0 10px;
+  color: var(--platinum);
+}
+.lg-card p { font-size: 15px; color: var(--muted); line-height: 1.6; margin: 0 0 8px; }
+.lg-list { list-style: none; margin: 0; padding: 0; }
+.lg-list li {
+  font-size: 15px;
+  color: var(--muted);
+  padding: 5px 0 5px 18px;
+  position: relative;
+  line-height: 1.55;
+}
+.lg-list li::before { content: '—'; position: absolute; left: 0; color: var(--gold); }
+
+.lg-price-tag {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  background: var(--gold-soft);
+  border: 1px solid rgba(198,166,100,0.35);
+  padding: 6px 12px;
+  border-radius: 3px;
+  margin: 4px 8px 4px 0;
+}
+.lg-price-tag .amt { font-family: var(--font-display); font-size: 23.5px; color: var(--gold); font-weight: 600; }
+.lg-price-tag .lbl { font-size: 12.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+
+.lg-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); }
+table.lg-table { width: 100%; border-collapse: collapse; min-width: 560px; }
+table.lg-table th {
+  text-align: left;
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: var(--panel-2);
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+table.lg-table td {
+  font-size: 15px;
+  color: var(--platinum);
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+table.lg-table tr:last-child td { border-bottom: none; }
+table.lg-table.lg-table-fixed { table-layout: fixed; }
+table.lg-table.lg-table-fixed th:first-child,
+table.lg-table.lg-table-fixed td:first-child { white-space: normal; }
+table.lg-table tr:hover td { background: rgba(255,255,255,0.02); }
+table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
+
+.lg-note {
+  margin-top: 22px;
+  padding: 14px 16px;
+  border-left: 2px solid var(--gold);
+  background: var(--panel-2);
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.lg-note b { color: var(--platinum); font-weight: 600; }
+
+.lg-foot-disc { margin-top: 28px; font-size: 12.5px; color: var(--muted-2); line-height: 1.6; border-top: 1px solid var(--line); padding-top: 14px; }
+
+.lg-section-block { margin-bottom: 34px; }
+.lg-section-block:last-child { margin-bottom: 0; }
+
+/* Front page */
+.lg-front { padding: 0; height: 100%; display: flex; flex-direction: column; }
+.lg-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 40px 30px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(198,166,100,0.10), transparent 55%),
+    linear-gradient(180deg, #0d0e11, #0a0b0d 60%);
+  position: relative;
+}
+.lg-root.lg-light .lg-hero {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(156,122,58,0.10), transparent 55%),
+    linear-gradient(180deg, #fbfaf6, #f6f5f1 60%);
+}
+.lg-hero-mark {
+  width: 46px; height: 46px;
+  border: 1px solid var(--gold);
+  transform: rotate(45deg);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 30px;
+}
+.lg-hero-mark span { transform: rotate(-45deg); color: var(--gold); font-family: var(--font-display); font-size: 21px; font-weight: 600; }
+.lg-hero .lg-eyebrow { justify-content: center; margin-bottom: 20px; }
+.lg-hero .lg-eyebrow::before { display: none; }
+.lg-hero h1 {
+  font-family: var(--font-display);
+  font-size: 61.5px;
+  font-weight: 500;
+  color: var(--platinum);
+  margin: 0 0 14px;
+  letter-spacing: 0.01em;
+}
+.lg-hero p { max-width: 520px; color: var(--muted); font-size: 16.5px; line-height: 1.7; margin: 0 0 30px; }
+.lg-hero-cats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(150px,1fr));
+  grid-auto-rows: 1fr;
+  gap: 10px;
+  max-width: 640px;
+  margin: 0 0 32px;
+}
+.lg-hero-cat {
+  border: 1px solid var(--gold);
+  padding: 12px 10px;
+  font-size: 12.5px;
+  letter-spacing: .04em;
+  color: var(--muted);
+  text-align: center;
+  border-radius: var(--radius);
+  background: transparent;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: border-color .18s ease, background .18s ease, transform .18s ease, box-shadow .18s ease;
+  animation: lgHeroGlow 2.6s ease-in-out infinite;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+@keyframes lgHeroGlow {
+  0%, 100% { box-shadow: 0 0 6px rgba(198,166,100,0.25), 0 0 0 1px rgba(198,166,100,0.25); }
+  50% { box-shadow: 0 0 18px rgba(198,166,100,0.6), 0 0 0 1px rgba(198,166,100,0.6); }
+}
+.lg-root.lg-light .lg-hero-cat { animation: lgHeroGlowLight 2.6s ease-in-out infinite; }
+@keyframes lgHeroGlowLight {
+  0%, 100% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); }
+  50% { box-shadow: 0 0 18px rgba(156,122,58,0.5), 0 0 0 1px rgba(156,122,58,0.5); }
+}
+.lg-hero-cat:hover {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  transform: translateY(-4px) scale(1.035);
+  animation-play-state: paused;
+  box-shadow: 0 10px 26px rgba(198,166,100,0.28), 0 0 0 1px var(--gold);
+}
+.lg-root.lg-light .lg-hero-cat:hover {
+  box-shadow: 0 10px 26px rgba(156,122,58,0.22), 0 0 0 1px var(--gold);
+}
+.lg-hero-cat:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.lg-hero-cat b { display: block; color: var(--platinum); font-family: var(--font-display); font-size: 16.5px; font-weight: 600; margin-bottom: 2px;}
+.lg-front-foot {
+  border-top: 1px solid var(--line);
+  padding: 16px 30px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted-2);
+  flex-shrink: 0;
+}
+
+/* Contents */
+.lg-toc { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.lg-toc-item {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  padding: 15px 14px;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  background: transparent;
+  border-left: 2px solid transparent;
+  border-radius: 0;
+  width: 100%;
+  text-align: left;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+  position: relative;
+}
+.lg-toc-item:hover {
+  background: var(--gold-soft);
+  border-left-color: var(--gold);
+  transform: translateX(6px) scale(1.01);
+  box-shadow: 0 8px 22px rgba(198,166,100,0.22), inset 0 0 0 1px rgba(198,166,100,0.3);
+  z-index: 1;
+}
+.lg-root.lg-light .lg-toc-item:hover {
+  box-shadow: 0 8px 22px rgba(156,122,58,0.18), inset 0 0 0 1px rgba(156,122,58,0.25);
+}
+.lg-toc-item:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+.lg-toc-item:hover .lg-toc-num { color: var(--platinum); transform: scale(1.08); }
+.lg-toc-num { font-family: var(--font-display); font-size: 23.5px; color: var(--gold); width: 30px; flex-shrink: 0; transition: color .18s ease, transform .18s ease; display: inline-block; }
+.lg-toc-body b { display: block; font-size: 17px; color: var(--platinum); font-weight: 600; margin-bottom: 3px; }
+.lg-toc-body span { font-size: 14px; color: var(--muted); line-height: 1.5; }
+
+/* footer bar with page indicator */
+.lg-footbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 22px;
+  border-top: 1px solid var(--line);
+  background: #0d0e10;
+  flex-shrink: 0;
+  font-size: 12.5px;
+  color: var(--muted-2);
+  letter-spacing: .05em;
+}
+.lg-root.lg-light .lg-footbar { background: #f8f6f1; }
+.lg-footbar .lg-pageno { font-family: var(--font-display); color: var(--gold); font-size: 15.5px; }
+
+.lg-copy {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted-2);
+  margin-top: 30px;
+  letter-spacing: .04em;
+}
+
+/* ---- Theme toggle + QR (top right) ---- */
+.lg-theme-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 46px;
+  height: 24px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background .2s ease, border-color .2s ease;
+}
+.lg-theme-switch:hover {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(198,166,100,0.32);
+}
+.lg-root.lg-light .lg-theme-switch:hover { box-shadow: 0 6px 16px rgba(156,122,58,0.25); }
+.lg-theme-switch:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.lg-theme-switch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #0a0b0d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  line-height: 1;
+  transition: transform .22s ease;
+}
+.lg-theme-switch.is-light .lg-theme-switch-knob { transform: translateX(22px); }
+
+.lg-qr-img { cursor: pointer; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+.lg-qr-img:hover {
+  transform: scale(1.25);
+  border-color: var(--gold);
+  box-shadow: 0 8px 22px rgba(198,166,100,0.4), 0 0 0 1px var(--gold);
+}
+.lg-root.lg-light .lg-qr-img:hover { box-shadow: 0 8px 22px rgba(156,122,58,0.3), 0 0 0 1px var(--gold); }
+.lg-qr-img:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.lg-qr-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+.lg-qr-modal-backdrop.is-open { display: flex; }
+.lg-qr-modal {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 28px 30px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  max-width: 90%;
+}
+.lg-qr-modal-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lg-qr-modal-close:hover { color: var(--platinum); border-color: var(--gold); }
+.lg-qr-modal-title { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--platinum); margin: 0; }
+.lg-qr-modal-sub { font-size: 12.5px; color: var(--muted); text-align: center; max-width: 220px; line-height: 1.5; margin: 0; }
+.lg-qr-modal canvas { border-radius: 3px; border: 1px solid var(--line); background: #fff; padding: 10px; }
+.lg-qr-img {
+  width: 34px;
+  height: 34px;
+  border-radius: 3px;
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 2px;
+  display: block;
+}
+
+@media (max-width: 720px) {
+  .lg-page { padding: 30px 20px 30px; }
+  .lg-grid-2, .lg-grid-3 { grid-template-columns: 1fr; }
+  .lg-hero h1 { font-size: 40px; }
+  .lg-hero-cats { grid-template-columns: repeat(2, 1fr); }
+  .lg-nav { padding: 12px 14px; flex-wrap: wrap; row-gap: 10px; }
+  .lg-nav-actions { flex-wrap: wrap; row-gap: 8px; }
+  .lg-btn span.lg-btn-label { display: none; }
+
+  /* Force tables to fit the screen width instead of requiring horizontal scroll */
+  table.lg-table { min-width: 0; table-layout: fixed; }
+  table.lg-table th, table.lg-table td {
+    white-space: normal;
+    word-break: break-word;
+    padding: 7px 8px;
+    font-size: 12.5px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="lg-root">
+  <div class="lg-shell">
+
+    <!-- NAV -->
+    <div class="lg-nav">
+      <div class="lg-brand" onclick="lgGoTo('front')" tabindex="0" role="button" aria-label="Go to front page">
+        <b>LEXUS OF CALGARY</b>
+        <span>Lexus Care · Protection Guide</span>
+      </div>
+      <div class="lg-nav-actions">
+        <button class="lg-btn lg-btn-glow" onclick="lgGoTo('front')">Front Page</button>
+        <button class="lg-btn lg-btn-glow" onclick="lgGoTo('contents')">Contents</button>
+        <button class="lg-btn lg-icon" onclick="lgStep(-1)" id="lgPrevBtn" aria-label="Previous page">‹</button>
+        <button class="lg-btn lg-icon" onclick="lgStep(1)" id="lgNextBtn" aria-label="Next page">›</button>
+        <button class="lg-theme-switch" id="lgThemeSwitch" onclick="lgToggleTheme()" role="switch" aria-checked="false" aria-label="Toggle bright and dark mode">
+          <span class="lg-theme-switch-knob" id="lgThemeKnob">☾</span>
+        </button>
+        <div class="lg-qr-wrap">
+          <canvas class="lg-qr-img" id="lgQrCanvas" width="34" height="34" title="Click to enlarge" aria-label="QR code linking to loc-protection-guide.vercel.app. Click to enlarge." role="button" tabindex="0" onclick="lgOpenQrModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();lgOpenQrModal();}"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR MODAL -->
+    <div class="lg-qr-modal-backdrop" id="lgQrBackdrop" onclick="if(event.target===this){lgCloseQrModal();}">
+      <div class="lg-qr-modal" role="dialog" aria-modal="true" aria-label="Enlarged QR code">
+        <button class="lg-qr-modal-close" onclick="lgCloseQrModal()" aria-label="Close">✕</button>
+        <p class="lg-qr-modal-title">Scan to Share</p>
+        <canvas id="lgQrCanvasLarge" width="220" height="220"></canvas>
+        <p class="lg-qr-modal-sub">loc-protection-guide.vercel.app</p>
+      </div>
+    </div>
+
+    <!-- VIEWPORT -->
+    <div class="lg-viewport" id="lgViewport">
+      <div class="lg-hover-zone lg-zone-left" id="lgZoneLeft"><span class="lg-hover-arrow">‹</span></div>
+      <div class="lg-hover-zone lg-zone-right" id="lgZoneRight"><span class="lg-hover-arrow">›</span></div>
+
+      <!-- FRONT -->
+      <div class="lg-page active" id="page-front">
+        <div class="lg-front">
+          <div class="lg-hero">
+            <div class="lg-eyebrow">Lexus of Calgary · Lexus Care</div>
+            <h1>Protection Products Guide</h1>
+            <p>A complete overview of Lexus ECP programs, vehicle service contracts, cosmetic &amp; surface protection, lease-end coverage, tire &amp; glass protection, and theft protection available for your vehicle.</p>
+            <div class="lg-hero-cats">
+              <button class="lg-hero-cat" onclick="lgGoTo('s01')" aria-label="Go to Lexus ECP Platinum Program"><b>Lexus ECP</b>Platinum &amp; Certified Pre-Owned Programs</button>
+              <button class="lg-hero-cat" onclick="lgGoTo('s04')" aria-label="Go to Vehicle Service Contracts"><b>Service Contracts</b>Lubrico Everest, Sierra, Superior, Driver's Shield &amp; Certified Powertrain Plus</button>
+              <button class="lg-hero-cat" onclick="lgGoTo('s05')" aria-label="Go to Surface Protection"><b>Surface Protection</b>XPEL Paint Film, CeramX Paint &amp; Interior, Smart Program</button>
+              <button class="lg-hero-cat" onclick="lgGoTo('s07')" aria-label="Go to Wear Pass"><b>Wear Pass</b>Lease-end excess wear &amp; tear protection</button>
+              <button class="lg-hero-cat" onclick="lgGoTo('s08')" aria-label="Go to Tire, Rim and Glass Protection"><b>Tire, Rim &amp; Glass</b>Road Hazard &amp; Road Hazard Glass</button>
+              <button class="lg-hero-cat" onclick="lgGoTo('s09')" aria-label="Go to Theft Protection"><b>Theft Protection</b>Platinum Loyalty Plus total-loss coverage</button>
+            </div>
+            <button class="lg-btn lg-btn-gold" onclick="lgGoTo('contents')">View Contents →</button>
+          </div>
+          <div class="lg-front-foot">Ask your sales representative for full terms &amp; conditions. Plans, terms and pricing subject to change without notice.</div>
+        </div>
+      </div>
+
+      <!-- CONTENTS -->
+      <div class="lg-page" id="page-contents">
+        <div class="lg-eyebrow">Contents</div>
+        <h2 class="lg-h1" style="font-size:40px;">What's Inside</h2>
+        <p class="lg-lede">Select any section to jump straight to it.</p>
+        <div class="lg-toc">
+          <button class="lg-toc-item" onclick="lgGoTo('s01')"><span class="lg-toc-num">01</span><span class="lg-toc-body"><b>Lexus ECP Platinum Program</b><span>Manufacturer-backed Extra Care Protection with maintenance, roadside assistance and trip interruption benefits.</span></span></button>
+          <button class="lg-toc-item" onclick="lgGoTo('s02')"><span class="lg-toc-num">02</span><span class="lg-toc-body"><b>Lexus Certified Pre-Owned Programs</b><span>LCPO roadside/powertrain minimums, Comprehensive Upgrade plans and the Platinum Program with Included Maintenance.</span></span></button>
+          <button class="lg-toc-item" onclick="lgGoTo('s03')"><span class="lg-toc-num">03</span><span class="lg-toc-body"><b>Lexus LCPO Protection Overview</b><span>A summary of standard and certified pre-owned coverage components across every system.</span></span></button>
+          <button class="lg-toc-item" onclick="lgGoTo('s04')"><span class="lg-toc-num">04</span><span class="lg-toc-body"><b>Lubrico Extended Vehicle Warranties</b><span>Everest, Sierra, Superior Protection, Driver's Shield and Certified Powertrain Plus mechanical breakdown coverage.</span></span></button>
+          <button class="lg-toc-item" onclick="lgGoTo('s05')"><span class="lg-toc-num">05</span><span class="lg-toc-body"><b>Paint &amp; Surface Protection</b><span>XPEL Ultimate Plus paint protection film and CeramX ceramic paint &amp; interior coatings.</span></span></button>
+          <button class="lg-toc-item" onclick="lgGoTo('s06')"><span class="lg-toc-num">06</span><span class="lg-toc-body"><b>The Smart Program</b><span>Cosmetic wear coverage — dents, scratches, windshield chips, interior rips and more.</span></span></button>
+          <button class="lg-toc-item" onclick="lgGoTo('s07')"><span class="lg-toc-num">07</span><span class="lg-toc-body"><b>Wear Pass &amp; Wear Pass Plus</b><span>Lexus Financial Services lease-end excess wear and tear protection.</span></span></button>
+          <button class="lg-toc-item" onclick="lgGoTo('s08')"><span class="lg-toc-num">08</span><span class="lg-toc-body"><b>Tire &amp; Rim / Road Hazard Glass</b><span>Protection from potholes, curbs and road debris — tires, rims and exterior glass.</span></span></button>
+          <button class="lg-toc-item" onclick="lgGoTo('s09')"><span class="lg-toc-num">09</span><span class="lg-toc-body"><b>Platinum Loyalty Plus — Theft Protection</b><span>Total-loss theft protection with dealer loyalty credit and deductible reimbursement.</span></span></button>
+        </div>
+        <p class="lg-foot-disc">Lexus ECP · Vehicle Service Contracts · Surface Protection · Wear Pass / Wear Pass Plus · Tire, Rim &amp; Glass · Theft Protection</p>
+      </div>
+
+      <!-- S01 -->
+      <div class="lg-page" id="page-s01">
+        <div class="lg-eyebrow">Section 01</div>
+        <h2 class="lg-h1">Lexus ECP Platinum Program</h2>
+        <p class="lg-lede">Lexus Extra Care Protection (ECP) Platinum is the manufacturer-backed extended protection plan for all Lexus models, combining mechanical coverage with maintenance and travel benefits. Effective April 1, 2026.</p>
+
+        <div class="lg-section-block">
+          <div class="lg-card">
+            <h3>Includes</h3>
+            <ul class="lg-list">
+              <li>Platinum Protection (mechanical coverage)</li>
+              <li>Maintenance Service Program*</li>
+              <li>Vehicle Rental Assistance</li>
+              <li>Trip Interruption &amp; Travel Planning</li>
+              <li>24-hour Towing &amp; Emergency Road Service</li>
+            </ul>
+            <p style="margin-top:10px;">*Varies by model; must be purchased within 180 days of warranty registration. RZ 450e includes cabin air filters in maintenance services.</p>
+          </div>
+        </div>
+
+        <div class="lg-section-block">
+          <h3 class="lg-h2" style="font-size:21px;">Pricing by Term / Code</h3>
+          <div class="lg-table-wrap">
+            <table class="lg-table">
+              <thead><tr>
+                <th>All Lexus Models</th>
+                <th>48/100<br><span class="muted">NLF45</span></th>
+                <th>48/120<br><span class="muted">NLF46</span></th>
+                <th>60/100<br><span class="muted">NLF55</span></th>
+                <th>72/120<br><span class="muted">NLF66</span></th>
+                <th>72/160<br><span class="muted">NLF68</span></th>
+                <th>72/180<br><span class="muted">NLF69</span></th>
+                <th>84/140<br><span class="muted">NLF77</span></th>
+                <th>96/120<br><span class="muted">NLF86</span></th>
+                <th>96/160<br><span class="muted">NLF88</span></th>
+                <th>96/200<br><span class="muted">NLF80</span></th>
+              </tr></thead>
+              <tbody>
+                <tr>
+                  <td>Price (CAD)</td>
+                  <td>$2,145</td><td>$2,625</td><td>$2,525</td><td>$3,145</td><td>$3,635</td>
+                  <td>$3,915</td><td>$3,770</td><td>$4,395</td><td>$5,095</td><td>$5,895</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="lg-section-block">
+          <h3 class="lg-h2" style="font-size:21px;">Deferred Purchase Surcharges</h3>
+          <div class="lg-table-wrap">
+            <table class="lg-table">
+              <thead><tr><th>Term</th><th>All Plans</th></tr></thead>
+              <tbody>
+                <tr><td>Over 180 days, &lt;24 mo / 40,000 km</td><td>$300</td></tr>
+                <tr><td>Less than 36 mo / 60,000 km</td><td>$450</td></tr>
+                <tr><td>Less than 48 mo / 80,000 km</td><td>$600</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="font-size:14px;color:var(--muted);margin-top:8px;">ECP plans should be registered within 15 days of sale; plans submitted after 60 days may incur a $450 dealership fee.</p>
+        </div>
+
+        <p class="lg-foot-disc">Every new Lexus includes a 48-month/80,000km Comprehensive warranty and a 72-month/110,000km Powertrain warranty. Active dealer demos are not ECP-eligible; ECP plans are not to be registered in the dealership name. Plans, terms and surcharges are subject to change without notice; acceptance is at the sole discretion of the ECP Division and Lexus.</p>
+      </div>
+
+      <!-- S02 -->
+      <div class="lg-page" id="page-s02">
+        <div class="lg-eyebrow">Section 02</div>
+        <h2 class="lg-h1">Lexus Certified Pre-Owned Programs</h2>
+        <p class="lg-lede">Every Lexus Certified Pre-Owned (LCPO) purchase includes a minimum of 1-year Roadside Assistance and 1-year/20,000km Powertrain coverage. Upgrade programs extend this protection further.</p>
+
+        <div class="lg-section-block">
+          <h3 class="lg-h2" style="font-size:20px;">LCPO Comprehensive Upgrades</h3>
+          <div class="lg-table-wrap">
+            <table class="lg-table lg-table-fixed">
+              <colgroup><col style="width:33.33%"><col style="width:33.33%"><col style="width:33.34%"></colgroup>
+              <thead><tr><th>Code</th><th>Term</th><th>Retail</th></tr></thead>
+              <tbody>
+                <tr><td>ULC39</td><td>36 mo / 180,000 km</td><td>$3,600</td></tr>
+                <tr><td>ULC69</td><td>72 mo / 180,000 km</td><td>$2,950</td></tr>
+                <tr><td>ULC60</td><td>72 mo / 200,000 km</td><td>$3,100</td></tr>
+                <tr><td>ULC78</td><td>84 mo / 160,000 km</td><td>$2,950</td></tr>
+                <tr><td>ULC88</td><td>96 mo / 160,000 km</td><td>$3,150</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="font-size:13.5px;color:var(--muted);margin-top:8px;">Includes 12-month Connected Services trial, No Deductible, Vehicle Rental Assistance and Travel Planning.</p>
+        </div>
+
+        <div class="lg-section-block">
+          <h3 class="lg-h2" style="font-size:22.5px;">Platinum Program with Included Maintenance</h3>
+          <p class="lg-lede" style="margin-bottom:14px;">Must be purchased from an authorized Lexus dealership at time of sale (not available to current owners); vehicle must be within 84 months / 140,000 km of the Warranty Registration Date.</p>
+
+          <h4 style="font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:0 0 10px;">All Available Coverage Plans</h4>
+          <div class="lg-table-wrap" style="max-height:280px; overflow-y:auto;">
+            <table class="lg-table lg-table-fixed">
+              <colgroup><col style="width:33.33%"><col style="width:33.33%"><col style="width:33.34%"></colgroup>
+              <thead><tr><th>Code</th><th>Description</th><th>RETAIL</th></tr></thead>
+              <tbody>
+                <tr><td>YLF01</td><td>LCPO ECP 12/20,000 in warranty</td><td>$3,000.00</td></tr>
+                <tr><td>YLF02</td><td>LCPO ECP 24/40,000 in warranty</td><td>$3,300.00</td></tr>
+                <tr><td>YLF03</td><td>LCPO ECP 36/60,000 in warranty</td><td>$4,300.00</td></tr>
+                <tr><td>YLF04</td><td>LCPO ECP 48/80,000 in warranty</td><td>$4,600.00</td></tr>
+                <tr><td>YLF05</td><td>LCPO ECP 60/100,000 in warranty</td><td>$5,100.00</td></tr>
+                <tr><td>YLF13</td><td>LCPO ECP 36/60,000 under 60/100</td><td>$4,700.00</td></tr>
+                <tr><td>YLF14</td><td>LCPO ECP 48/80,000 under 60/100</td><td>$5,100.00</td></tr>
+                <tr><td>YLF15</td><td>LCPO ECP 60/100,000 under 60/100</td><td>$5,700.00</td></tr>
+                <tr><td>YLF23</td><td>LCPO ECP 36/60,000 under 72/120</td><td>$5,300.00</td></tr>
+                <tr><td>YLF24</td><td>LCPO ECP 48/80,000 under 72/120</td><td>$5,800.00</td></tr>
+                <tr><td>YLF33</td><td>LCPO ECP 36/60,000 under 84/140</td><td>$6,200.00</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="font-size:12.5px;color:var(--muted-2);margin-top:8px;">Table scrolls to show all 11 coverage plans without overflowing the page. Coverage details subject to program terms and conditions.</p>
+        </div>
+
+        <p class="lg-foot-disc">LCPO Beyond Warranty upgrades — YLF15 (60mo/100,000km base → +60mo/100,000km added), YTF24 (72mo/120,000km base → +48mo/80,000km added), YLF33 (84mo/140,000km base → +36mo/60,000km added) — are reflected in the plan table above.</p>
+      </div>
+
+      <!-- S03 -->
+      <div class="lg-page" id="page-s03">
+        <div class="lg-eyebrow">Section 03</div>
+        <h2 class="lg-h1">Lexus LCPO Protection — Coverage Overview</h2>
+        <p class="lg-lede">A snapshot of the component groups covered under standard Certified Pre-Owned coverage versus the Certified Pre-Owned Upgrade coverage.</p>
+
+        <div class="lg-grid lg-grid-2 lg-section-block">
+          <div class="lg-card">
+            <h3>Certified Pre-Owned Coverage</h3>
+            <ul class="lg-list">
+              <li>Engine — block, heads, oil pan, mounts, manifold, harmonic balancer, flywheel, timing components, valve covers, oil/water pump, fuel pump, ECU</li>
+              <li>Manual/Automatic Transmission or Transaxle — case, clutch cover, oil pan, mounts, cooler &amp; lines, torque converter</li>
+              <li>Front/Rear Wheel Drive — final drive housing, CV joints, front hub, axle housing, driveshaft</li>
+              <li>Four Wheel Drive — transfer case, differential assemblies, front hub &amp; spindle</li>
+              <li>Safety Restraints — seatbelts, airbags</li>
+              <li>Seals / Gaskets / Fluid / Filters</li>
+            </ul>
+          </div>
+          <div class="lg-card">
+            <h3>Certified Pre-Owned Upgrade Coverage</h3>
+            <p style="margin-top:-4px;">(In addition to all Certified Pre-Owned coverage)</p>
+            <ul class="lg-list">
+              <li>Engine — camshaft cover, exhaust manifold, timing belt tensioner, radiator, thermostat, starter, injection pump</li>
+              <li>Heating/AC — all A/C components, blower motors, electronic heater control</li>
+              <li>Steering &amp; Electrical System — power steering, door locks, seat/sunroof motors, wiring harness</li>
+              <li>High Tech Components — suspension, transmission and ABS computers/sensors</li>
+              <li>Body Hardware &amp; Emission Control — door hinges/handles, fuel injection system, catalytic converter, EGR system</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lg-section-block">
+          <h3 class="lg-h2" style="font-size:22.5px;">Standard Owner Protection Services</h3>
+          <div class="lg-grid lg-grid-2">
+            <ul class="lg-list">
+              <li>Trip interruption — up to $100/day for hotel, meals &amp; transport (300km+ from home)</li>
+              <li>Vehicle rental assistance — $60/day, up to 5 days</li>
+              <li>Travel planning assistance with personalized route planner</li>
+            </ul>
+            <ul class="lg-list">
+              <li>24/7/365 roadside assistance program</li>
+              <li>Towing up to 300km per occurrence, battery boost, tire change, winching from ditch</li>
+              <li>Fuel delivery &amp; key lockout service up to $100/occurrence</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="lg-foot-disc">This section summarizes publicly available product highlight sheets for informational purposes only. Pricing, terms, eligibility and exclusions are subject to change without notice and vary by vehicle, province and underwriter. Please refer to the applicable certificate of insurance or contract for full terms and conditions, and speak with your Lexus of Calgary sales representative to confirm current availability and pricing.</p>
+      </div>
+
+      <!-- S04 -->
+      <div class="lg-page" id="page-s04">
+        <div class="lg-eyebrow">Section 04</div>
+        <h2 class="lg-h1">Lubrico Extended Vehicle Warranties</h2>
+        <p class="lg-lede">Lubrico Warranty, a division of Industrial Alliance Financial Group, offers a range of mechanical breakdown protection plans for current and prior model-year vehicles. All plans include Roadside Assistance and Breakdown Away From Home benefits, with several optional upgrade packages.</p>
+
+        <div class="lg-grid lg-grid-2 lg-section-block">
+          <div class="lg-card">
+            <h3>NTL Everest — Comprehensive, no time limit</h3>
+            <p>Available on current + 7 prior model years, up to 200,000 km. $20,000 per-claim limit with no deductible. Covers nearly every major vehicle system, including air bags, technology equipment, suspension and turbo/supercharger.</p>
+            <div class="lg-table-wrap">
+              <table class="lg-table">
+                <thead><tr><th>Distance</th><th>120,000km</th><th>160,000km</th><th>200,000km</th></tr></thead>
+                <tbody>
+                  <tr><td>0–60,000 km</td><td>$5,999</td><td>$6,799</td><td>$7,699</td></tr>
+                  <tr><td>Top bracket</td><td>$6,199</td><td>$6,899</td><td>$7,999</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p style="margin-top:8px;">+ Hybrid/EV Package: $699 · Class 2 surcharge from $175 · Class 3 surcharge from $770</p>
+          </div>
+
+          <div class="lg-card">
+            <h3>NTL Sierra — High-mileage, $5,000/claim</h3>
+            <p>Available on current + 10 prior model years, up to 200,000 km. $150 deductible, $5,000 per-claim limit. Optional Car Rental, Engine &amp; Powertrain Management, Technology Package and Zero Deductible.</p>
+            <div class="lg-table-wrap">
+              <table class="lg-table">
+                <thead><tr><th>Distance</th><th>125,000km</th><th>150,000km</th><th>200,000km</th></tr></thead>
+                <tbody>
+                  <tr><td>0–60,000 km</td><td>$4,199</td><td>$4,319</td><td>$4,839</td></tr>
+                  <tr><td>Top bracket</td><td>$4,259</td><td>$4,459</td><td>$4,929</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p style="margin-top:8px;">+ Zero Deductible: $199 · Class 2 surcharge from $75 · Class 3 surcharge from $330</p>
+          </div>
+
+          <div class="lg-card">
+            <h3>Superior Protection — 12–48 months</h3>
+            <p>Available on current + 7 prior model years up to 160,000 km. $150 deductible; $5,000 or $10,000 per-claim tiers. Select Bundle (Zero Deductible + Car Rental + Engine &amp; Powertrain Management + Technology MAX) available from $649.</p>
+            <div class="lg-table-wrap">
+              <table class="lg-table">
+                <thead><tr><th>0–60,000 km</th><th>12 mo</th><th>24 mo</th><th>36 mo</th><th>48 mo</th></tr></thead>
+                <tbody><tr><td>Price</td><td>$3,849</td><td>$4,099</td><td>$4,279</td><td>$4,449</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="lg-card">
+            <h3>Driver's Shield — Any make, any year, any mileage</h3>
+            <p>Ideal for older or higher-mileage vehicles ineligible for other plans. $150 deductible, $3,000–$4,000 per-claim limit. "Double Your Term" guarantee extends unused 24/36/48-month terms from $149.</p>
+            <div class="lg-table-wrap">
+              <table class="lg-table">
+                <thead><tr><th>Term</th><th>3 mo</th><th>12 mo</th><th>24 mo</th><th>48 mo</th></tr></thead>
+                <tbody><tr><td>Price</td><td>$1,239</td><td>$1,569</td><td>$2,329</td><td>$2,729</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg-note"><b>Speak with your sales representative for more details</b> — class surcharges, eligibility by make/model, and current per-claim limits vary by vehicle. Your Lexus of Calgary sales representative can confirm the right Lubrico plan and pricing for your vehicle.</div>
+
+        <p class="lg-foot-disc">Class 2 vehicles (Cadillac, Camaro, Challenger, Mustang, Transit, Genesis, Infiniti, Lincoln, Ram Vans, Saab, VW, ½-ton trucks) and Class 3 vehicles (exotic/performance brands and heavy-duty diesel trucks) carry additional surcharges. See full rate sheets for complete vehicle exclusions and surcharge tables.</p>
+      </div>
+
+      <!-- S04b -->
+      <div class="lg-page" id="page-s04b">
+        <div class="lg-eyebrow">Section 04 · Continued</div>
+        <h2 class="lg-h1">Certified Powertrain Plus</h2>
+        <p class="lg-lede">Certified Powertrain Plus pairs an initial short-term Comprehensive coverage period with long-term Powertrain protection — functioning just like a manufacturer's warranty. Available on any vehicle with up to 200,000 km.</p>
+
+        <div class="lg-section-block">
+          <h3 class="lg-h2" style="font-size:21px;">How It Works</h3>
+          <div class="lg-table-wrap">
+            <table class="lg-table">
+              <thead><tr><th>Total Term</th><th>Initial Comprehensive</th><th>Per-Claim Limit</th><th>Price</th></tr></thead>
+              <tbody>
+                <tr><td>24 mo / Unlimited km*</td><td>3 mo / Unlimited km*</td><td>$3,000</td><td>$2,949</td></tr>
+                <tr><td>36 mo / 60,000 km</td><td>8 mo / 12,000 km</td><td>$4,000</td><td>$3,099</td></tr>
+                <tr><td>48 mo / 80,000 km — Best Value</td><td>12 mo / 24,000 km</td><td>$5,000</td><td>$3,379</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="lg-grid lg-grid-2 lg-section-block">
+          <div class="lg-card">
+            <h3>Comprehensive Coverage Highlights</h3>
+            <p>Air conditioning, brakes, electrical, fuel injection, steering, supplementary mechanical parts, front suspension and technology package components (optional).</p>
+          </div>
+          <div class="lg-card">
+            <h3>Powertrain Coverage Highlights</h3>
+            <p>Engine, transmission, differential, transfer case, turbo/supercharger, seals &amp; gaskets, roadside assistance and breakdown away from home.</p>
+          </div>
+        </div>
+
+        <ul class="lg-list lg-section-block">
+          <li>Initial Comprehensive coverage (3, 8 or 12 months, unlimited or capped km)</li>
+          <li>Followed automatically by extended Powertrain coverage (24, 36 or 48 months)</li>
+          <li>$150 deductible, with Zero Deductible upgrade available for $149</li>
+          <li>Optional Technology Package from $199</li>
+        </ul>
+
+        <p class="lg-foot-disc">Class 2 surcharge from $65 · Class 3 surcharge from $275. Commercial vehicles are excluded from unlimited-km terms. See Lubrico rate sheet for full vehicle class listings and exclusions.</p>
+      </div>
+
+      <!-- S05 -->
+      <div class="lg-page" id="page-s05">
+        <div class="lg-eyebrow">Section 05</div>
+        <h2 class="lg-h1">Paint &amp; Surface Protection</h2>
+        <p class="lg-lede">XPEL Ultimate Plus paint protection film and CeramX ceramic paint &amp; interior coatings.</p>
+
+        <div class="lg-section-block">
+          <h3 class="lg-h2" style="font-size:22.5px;">XPEL Ultimate Plus™ Paint Protection Film</h3>
+          <p style="font-size:15px;color:var(--muted);max-width:620px;margin-bottom:14px;">A high-performance, self-healing, clear film that protects against rock chips, scuffs and light scratches — backed by a 10-year warranty.</p>
+          <div class="lg-table-wrap">
+            <table class="lg-table">
+              <thead><tr><th>Package</th><th>Price</th><th>Coverage</th></tr></thead>
+              <tbody>
+                <tr><td>Standard</td><td>$1,188</td><td>24" hood/fenders, A-pillars, roofline, mirror backs, door cups</td></tr>
+                <tr><td>Premium</td><td>$1,899</td><td>Standard + painted front bumper</td></tr>
+                <tr><td>Executive</td><td>$2,499</td><td>Entire hood/fenders, A-pillars, roofline, bumper, mirror backs, door cups</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="font-size:13.5px;color:var(--muted);margin-top:8px;">Additional options: Headlights $199 · Sunroof $499 · Panoramic roof $799</p>
+        </div>
+
+        <div class="lg-grid lg-grid-2">
+          <div class="lg-card">
+            <h3>CeramX Paint Protection</h3>
+            <div class="lg-price-tag"><span class="amt">$1,788</span><span class="lbl">Full Application</span></div>
+            <p style="margin-top:10px;">A revolutionary ceramic paint coating (Silicon Carbide, 9H hardness on the Mohs scale) providing lifetime protection with a single application. Independently tested and certified by Exova.</p>
+            <ul class="lg-list">
+              <li>UV resistant</li>
+              <li>Chemical resistant</li>
+              <li>Water repellent</li>
+              <li>Scratch resistant</li>
+              <li>Spillage rolls off seats</li>
+            </ul>
+          </div>
+          <div class="lg-card">
+            <h3>CeramX Interior Protection</h3>
+            <div class="lg-price-tag"><span class="amt">$699</span><span class="lbl">Full Application</span></div>
+            <p style="margin-top:10px;">Penetrates deep into fabric, leather and vinyl to seal and strengthen fibers — without altering colour, texture or adding odour.</p>
+            <ul class="lg-list">
+              <li>Seals &amp; strengthens fibers</li>
+              <li>UV resistant</li>
+              <li>Protects from abrasion</li>
+              <li>Prevents dye transfer from clothing</li>
+              <li>Reduces cracking &amp; staining on leather/vinyl</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- S06 -->
+      <div class="lg-page" id="page-s06">
+        <div class="lg-eyebrow">Section 06</div>
+        <h2 class="lg-h1">The Smart Program</h2>
+        <p class="lg-lede">Drive Protected. Drive Confident. Drive Smart. The Smart Program covers everyday cosmetic wear — helping keep your Lexus looking new and protecting its resale value.</p>
+
+        <div class="lg-grid lg-grid-3 lg-section-block">
+          <div class="lg-card"><h3>Windshield Chips</h3><p>Repair to unlimited windshield chips up to the size of a toonie, and cracks up to 6" in length. Optional All Window Coverage available.</p></div>
+          <div class="lg-card"><h3>Interior Repair</h3><p>Repair of a rip, tear or burn to factory interior upholstery (leather &amp; cloth), up to 2" in length.</p></div>
+          <div class="lg-card"><h3>Scratch Repair</h3><p>Cosmetic repair to accessible exterior painted factory body panels up to 12" in length.</p></div>
+          <div class="lg-card"><h3>Dent Removal</h3><p>Repair to accessible exterior painted factory sheet metal body panels up to 4" in width or length.</p></div>
+          <div class="lg-card"><h3>Paint Chips</h3><p>Cosmetic repair of up to 12 rock chips per visit, to a maximum 1/8" size per chip.</p></div>
+          <div class="lg-card"><h3>Rim Scuff (optional)</h3><p>Repair of factory wheel brushed or painted surfaces, up to 1 event per year. Optional CeramX paint protection also available.</p></div>
+        </div>
+
+        <div class="lg-section-block">
+          <h3 class="lg-h2" style="font-size:22.5px;">Pricing by Term</h3>
+          <p style="font-size:15px;color:var(--muted);max-width:600px;margin-bottom:14px;">Base term is 3 years at $1,299, with $200 added for each additional year, up to a maximum term of 8 years.</p>
+          <div class="lg-table-wrap">
+            <table class="lg-table">
+              <thead><tr><th>3 yr</th><th>4 yr</th><th>5 yr</th><th>6 yr</th><th>7 yr</th><th>8 yr</th></tr></thead>
+              <tbody>
+                <tr><td>$1,299</td><td>$1,499</td><td>$1,699</td><td>$1,899</td><td>$2,099</td><td>$2,299</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- S07 -->
+      <div class="lg-page" id="page-s07">
+        <div class="lg-eyebrow">Section 07</div>
+        <h2 class="lg-h1">Wear Pass &amp; Wear Pass Plus</h2>
+        <p class="lg-lede">An official product of Lexus Financial Services. Whether returning your vehicle at lease-end or simply keeping it looking new, Wear Pass waives excess wear and tear charges.</p>
+
+        <div class="lg-section-block" style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div class="lg-price-tag"><span class="amt">$1,050</span><span class="lbl">Wear Pass</span></div>
+          <div class="lg-price-tag"><span class="amt">$1,499</span><span class="lbl">Wear Pass Plus</span></div>
+        </div>
+
+        <div class="lg-section-block">
+          <h3 class="lg-h2" style="font-size:20px;">Charges Waived at Lease-End</h3>
+          <div class="lg-table-wrap">
+            <table class="lg-table lg-table-fixed">
+              <colgroup><col style="width:46%"><col style="width:27%"><col style="width:27%"></colgroup>
+              <thead><tr><th></th><th>Wear Pass</th><th>Wear Pass Plus</th></tr></thead>
+              <tbody>
+                <tr><td>Maximum charges waived</td><td>$7,500</td><td>$10,000</td></tr>
+                <tr><td>Excess kilometres travelled</td><td>1,000 km</td><td>2,500 km</td></tr>
+                <tr><td>Body panel dents/dings/scratches/chips</td><td>✓</td><td>✓</td></tr>
+                <tr><td>Interior cuts, tears, stains, burn holes</td><td>✓</td><td>✓</td></tr>
+                <tr><td>Alloy wheel curb/road damage</td><td>✓</td><td>✓</td></tr>
+                <tr><td>Glass chips, scratches, cracks</td><td>✓</td><td>✓</td></tr>
+                <tr><td>Up to $250 missing key/remote/fob</td><td>—</td><td>✓</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="lg-section-block">
+          <h3 class="lg-h2" style="font-size:20px;">Charges Waived During Lease</h3>
+          <div class="lg-table-wrap">
+            <table class="lg-table lg-table-fixed">
+              <colgroup><col style="width:46%"><col style="width:27%"><col style="width:27%"></colgroup>
+              <thead><tr><th></th><th>Wear Pass</th><th>Wear Pass Plus</th></tr></thead>
+              <tbody>
+                <tr><td>Up to $3,500 in repair charges</td><td>—</td><td>✓</td></tr>
+                <tr><td>Paintless dent repair</td><td>—</td><td>✓</td></tr>
+                <tr><td>Windshield replacement / repair</td><td>—</td><td>✓</td></tr>
+                <tr><td>Headlight / tail light / fog light repair</td><td>—</td><td>✓</td></tr>
+                <tr><td>Interior seat rip &amp; tear repair</td><td>—</td><td>✓</td></tr>
+                <tr><td>Key or keyless remote replacement</td><td>—</td><td>✓</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="lg-section-block">
+          <h3 class="lg-h2" style="font-size:20px;">Wear Pass Plus — Repair Benefit Limits</h3>
+          <div class="lg-table-wrap">
+            <table class="lg-table">
+              <thead><tr><th>Benefit</th><th>Dollar Limit</th><th>Repair Limit</th></tr></thead>
+              <tbody>
+                <tr><td>Paintless dent repair</td><td>Lesser of $125+tax each or limit remaining</td><td>Up to 3/day/visit</td></tr>
+                <tr><td>Windshield replacement</td><td>Repair benefit limit remaining</td><td>One per addendum</td></tr>
+                <tr><td>Windshield repair</td><td>Lesser of $100+tax each or limit remaining</td><td>Three per windshield</td></tr>
+                <tr><td>Key/keyless remote replacement</td><td>Lesser of $1,000+tax or limit remaining</td><td>One per addendum</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- S08 -->
+      <div class="lg-page" id="page-s08">
+        <div class="lg-eyebrow">Section 08</div>
+        <h2 class="lg-h1">Tire &amp; Rim Protection · Road Hazard Glass</h2>
+        <p class="lg-lede">Protection from potholes, curbs and road debris — tires, rims and exterior glass.</p>
+
+        <div class="lg-section-block">
+          <h3 class="lg-h2" style="font-size:22.5px;">Lexus Tire &amp; Rim Road Hazard</h3>
+          <p style="font-size:15px;color:var(--muted);max-width:620px;margin-bottom:14px;">Protects against unexpected tire and rim repair costs from potholes, curbs, nails and glass. A typical replacement (tire, rim, labour, valve, levy, towing &amp; taxes) totals $1,145 — this plan covers it.</p>
+          <div class="lg-table-wrap">
+            <table class="lg-table">
+              <thead><tr><th>Term</th><th>Price</th><th>+ Cosmetic Rim</th></tr></thead>
+              <tbody>
+                <tr><td>12 mo</td><td>$399</td><td>$599</td></tr>
+                <tr><td>36 mo</td><td>$629</td><td>$829</td></tr>
+                <tr><td>60 mo</td><td>$975</td><td>$1,199</td></tr>
+                <tr><td>84 mo</td><td>$1,199</td><td>$1,409</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="font-size:13.5px;color:var(--muted);margin-top:8px;">Cosmetic Rim Repair add-on from $599: repairs alloy/machined-finish rim damage up to $200/incident, incl. shipping &amp; rental up to $150.</p>
+          <ul class="lg-list" style="margin-top:10px;">
+            <li>Zero deductible</li>
+            <li>Covers all tires &amp; rims purchased during contract term, incl. snow tires</li>
+            <li>Repair/replace at any Lexus dealer in Canada</li>
+            <li>Food &amp; lodging up to $100/day (3 days) if stranded 400km+ from home</li>
+            <li>Vehicle rental up to $70/day (3 days)</li>
+            <li>Road service up to $100/claim</li>
+          </ul>
+        </div>
+
+        <div class="lg-section-block">
+          <h3 class="lg-h2" style="font-size:22.5px;">Road Hazard Glass (Auto Shield Canada)</h3>
+          <p style="font-size:15px;color:var(--muted);max-width:620px;margin-bottom:14px;">Exclusive coverage for all exterior glass, protecting against chips and cracks while preserving clarity and hydrophobic properties with P2 Graphene Pure Glass treatment. Ask your Dealer Representative about more comprehensive glass coverage options.</p>
+          <ul class="lg-list">
+            <li>Windshield + exterior glass repair: up to $85/repair, unlimited occurrences</li>
+            <li>Windshield + exterior glass replacement: up to $5,000</li>
+            <li>Interior cleaning after replacement: up to $100/occurrence</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- S09 -->
+      <div class="lg-page" id="page-s09">
+        <div class="lg-eyebrow">Section 09</div>
+        <h2 class="lg-h1">Platinum Loyalty Plus — Theft Protection</h2>
+        <p class="lg-lede">Underwritten by Millennium Insurance Corporation (MIC). Compensation is paid if the vehicle is declared a total loss due to theft, subject to policy terms, conditions and limitations. Coverage terms available up to 84 months.</p>
+
+        <div class="lg-section-block" style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div class="lg-price-tag"><span class="amt">$988</span><span class="lbl">Platinum Loyalty Plus</span></div>
+        </div>
+
+        <div class="lg-grid lg-grid-2 lg-section-block">
+          <div class="lg-card">
+            <h3>Coverage Features</h3>
+            <ul class="lg-list">
+              <li>Total Loss Dealer Loyalty Credit: applies if the vehicle is stolen, not recovered, and deemed a total loss</li>
+              <li>Deductible Reimbursement: applies if the vehicle is stolen, then recovered and deemed repairable</li>
+              <li>Exclusions: total loss/damage not caused by theft; vehicle stolen by anyone with access to the keys; certain vehicle types (commercial, taxi, police/emergency) and circumstances (e.g. vandalism)</li>
+            </ul>
+          </div>
+          <div class="lg-card">
+            <h3>Administrative Features</h3>
+            <ul class="lg-list">
+              <li>30-day money-back guarantee (agreement cancelled within 30 days for a full refund, less claims paid)</li>
+              <li>Policy renewable once (unless a compensation request has been made)</li>
+              <li>Fully transferable to a subsequent owner for the remainder of the term ($35 transfer fee)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lg-section-block">
+          <h3 class="lg-h2" style="font-size:22.5px;">Compensation</h3>
+          <div class="lg-table-wrap">
+            <table class="lg-table">
+              <thead><tr><th>Benefit</th><th>Amount</th></tr></thead>
+              <tbody>
+                <tr><td>Total Loss Dealer Loyalty Credit</td><td>Up to $5,000 or cash value, whichever is lower</td></tr>
+                <tr><td>Rental/accommodation (theft &gt;150km from home)</td><td>Up to $1,000 ($50/day rental, $80/day accommodation, up to 5 days)</td></tr>
+                <tr><td>Comprehensive deductible reimbursement</td><td>Up to $1,000/claim</td></tr>
+                <tr><td>Home insurance deductible (stolen property)</td><td>Up to $1,000/claim</td></tr>
+                <tr><td>Aggregate benefit maximum</td><td>$7,000 or cash value, whichever is lower</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <p class="lg-foot-disc">This page provides a summary of MIC's Platinum Loyalty Plus. For detailed terms and conditions, please refer to the actual certificate.</p>
+
+        <div class="lg-note"><b>For more information, please contact your sales representative.</b> All prices shown throughout this guide are subject to change without notice. Prices are pre-tax; applicable taxes are extra.</div>
+        <p class="lg-copy">© 2026 Andrew Cho. All rights reserved. This guide and its contents may not be reproduced, distributed, or transmitted in any form without prior written permission.</p>
+      </div>
+
+    </div>
+
+    <!-- FOOTBAR -->
+    <div class="lg-footbar">
+      <span id="lgPageLabel">Front Page</span>
+      <span><span class="lg-pageno" id="lgPageNo">1</span> / 12</span>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+<script>
+(function(){
+  try {
+    if (window.QRious) {
+      window.lgQrSmall = new QRious({
+        element: document.getElementById('lgQrCanvas'),
+        value: 'https://loc-protection-guide.vercel.app',
+        size: 160,
+        background: '#ffffff',
+        foreground: '#8a6a2e',
+        level: 'M'
+      });
+      window.lgQrLarge = new QRious({
+        element: document.getElementById('lgQrCanvasLarge'),
+        value: 'https://loc-protection-guide.vercel.app',
+        size: 220,
+        background: '#ffffff',
+        foreground: '#8a6a2e',
+        level: 'M'
+      });
+    }
+  } catch (e) {
+    console.error('QR render failed', e);
+  }
+
+  window.lgOpenQrModal = function(){
+    var bd = document.getElementById('lgQrBackdrop');
+    if (bd) bd.classList.add('is-open');
+  };
+  window.lgCloseQrModal = function(){
+    var bd = document.getElementById('lgQrBackdrop');
+    if (bd) bd.classList.remove('is-open');
+  };
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') window.lgCloseQrModal();
+  });
+})();
+</script>
+<script>
+(function(){
+  var order = ['front','contents','s01','s02','s03','s04','s04b','s05','s06','s07','s08','s09'];
+  var labels = {
+    front: 'Front Page', contents: 'Contents',
+    s01: '01 · Lexus ECP Platinum Program',
+    s02: '02 · Lexus Certified Pre-Owned Programs',
+    s03: '03 · Owner Protection Overview',
+    s04: '04 · Lubrico Extended Vehicle Warranties',
+    s04b: '04 · Certified Powertrain Plus',
+    s05: '05 · Paint & Surface Protection',
+    s06: '06 · The Smart Program',
+    s07: '07 · Wear Pass & Wear Pass Plus',
+    s08: '08 · Tire & Rim / Road Hazard Glass',
+    s09: '09 · Theft Protection'
+  };
+  var current = 0;
+  var viewport = document.getElementById('lgViewport');
+
+  function render(){
+    var key = order[current];
+    document.querySelectorAll('.lg-page').forEach(function(p){ p.classList.remove('active'); });
+    var el = document.getElementById('page-' + key);
+    if (el) el.classList.add('active');
+    if (viewport) viewport.scrollTop = 0;
+    var lbl = document.getElementById('lgPageLabel');
+    var no = document.getElementById('lgPageNo');
+    if (lbl) lbl.textContent = labels[key] || key;
+    if (no) no.textContent = String(current + 1);
+    var prevBtn = document.getElementById('lgPrevBtn');
+    var nextBtn = document.getElementById('lgNextBtn');
+    if (prevBtn) prevBtn.disabled = (current === 0);
+    if (nextBtn) nextBtn.disabled = (current === order.length - 1);
+  }
+
+  window.lgGoTo = function(key){
+    var idx = order.indexOf(key);
+    if (idx === -1) return;
     current = idx;
     render();
   };
