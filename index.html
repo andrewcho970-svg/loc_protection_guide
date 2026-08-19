@@ -391,6 +391,21 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   box-shadow: 0 10px 26px rgba(156,122,58,0.22), 0 0 0 1px var(--gold);
 }
 .lg-hero-cat:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.lg-hero-cat.lg-startup-flash {
+  animation: lgHeroFlash 1.1s ease !important;
+  border-color: var(--gold);
+}
+@keyframes lgHeroFlash {
+  0% { box-shadow: 0 0 6px rgba(198,166,100,0.25), 0 0 0 1px rgba(198,166,100,0.25); }
+  35% { box-shadow: 0 0 30px rgba(198,166,100,0.9), 0 0 0 1.5px rgba(198,166,100,0.95); }
+  100% { box-shadow: 0 0 6px rgba(198,166,100,0.25), 0 0 0 1px rgba(198,166,100,0.25); }
+}
+.lg-root.lg-light .lg-hero-cat.lg-startup-flash { animation-name: lgHeroFlashLight !important; }
+@keyframes lgHeroFlashLight {
+  0% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); }
+  35% { box-shadow: 0 0 26px rgba(156,122,58,0.75), 0 0 0 1.5px rgba(156,122,58,0.85); }
+  100% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); }
+}
 .lg-hero-cat b { display: block; color: var(--platinum); font-family: var(--font-display); font-size: 16.5px; font-weight: 600; margin-bottom: 2px;}
 .lg-front-foot {
   border-top: 1px solid var(--line);
@@ -1423,6 +1438,34 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
     document.addEventListener('DOMContentLoaded', attach);
   } else {
     attach();
+  }
+})();
+
+(function(){
+  function shuffle(arr){
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+    }
+    return arr;
+  }
+  function runStartupGlow(){
+    var boxes = shuffle(Array.prototype.slice.call(document.querySelectorAll('.lg-hero-cat')));
+    var stagger = 260; // ms between each box starting its flash
+    boxes.forEach(function(el, i){
+      setTimeout(function(){
+        el.classList.add('lg-startup-flash');
+        el.addEventListener('animationend', function handler(){
+          el.classList.remove('lg-startup-flash');
+          el.removeEventListener('animationend', handler);
+        });
+      }, i * stagger);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runStartupGlow);
+  } else {
+    runStartupGlow();
   }
 })();
 </script>
