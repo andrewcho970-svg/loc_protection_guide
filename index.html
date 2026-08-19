@@ -284,8 +284,8 @@ table.lg-table td {
 }
 table.lg-table tr:last-child td { border-bottom: none; }
 table.lg-table.lg-table-fixed { table-layout: fixed; }
-table.lg-table.lg-table-fixed th:first-child,
-table.lg-table.lg-table-fixed td:first-child { white-space: normal; }
+table.lg-table.lg-table-fixed th,
+table.lg-table.lg-table-fixed td { white-space: normal; }
 table.lg-table tr:hover td { background: rgba(255,255,255,0.02); }
 table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 
@@ -1032,7 +1032,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
           <h3 class="lg-h2" style="font-size:20px;">Charges Waived at Lease-End</h3>
           <div class="lg-table-wrap">
             <table class="lg-table lg-table-fixed">
-              <colgroup><col style="width:46%"><col style="width:27%"><col style="width:27%"></colgroup>
+              <colgroup><col style="width:32%"><col style="width:34%"><col style="width:34%"></colgroup>
               <thead><tr><th></th><th>Wear Pass</th><th>Wear Pass Plus</th></tr></thead>
               <tbody>
                 <tr><td>Maximum charges waived</td><td>$7,500</td><td>$10,000</td></tr>
@@ -1051,7 +1051,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
           <h3 class="lg-h2" style="font-size:20px;">Charges Waived During Lease</h3>
           <div class="lg-table-wrap">
             <table class="lg-table lg-table-fixed">
-              <colgroup><col style="width:46%"><col style="width:27%"><col style="width:27%"></colgroup>
+              <colgroup><col style="width:32%"><col style="width:34%"><col style="width:34%"></colgroup>
               <thead><tr><th></th><th>Wear Pass</th><th>Wear Pass Plus</th></tr></thead>
               <tbody>
                 <tr><td>Up to $3,500 in repair charges</td><td>—</td><td>✓</td></tr>
@@ -1068,7 +1068,8 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <div class="lg-section-block">
           <h3 class="lg-h2" style="font-size:20px;">Wear Pass Plus — Repair Benefit Limits</h3>
           <div class="lg-table-wrap">
-            <table class="lg-table">
+            <table class="lg-table lg-table-fixed">
+              <colgroup><col style="width:32%"><col style="width:34%"><col style="width:34%"></colgroup>
               <thead><tr><th>Benefit</th><th>Dollar Limit</th><th>Repair Limit</th></tr></thead>
               <tbody>
                 <tr><td>Paintless dent repair</td><td>Lesser of $125+tax each or limit remaining</td><td>Up to 3/day/visit</td></tr>
@@ -1307,11 +1308,13 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
     });
   }
 
-  // Mouse click navigation: click right side of viewport = next, left side = previous
+  // Mouse click navigation: click right side of viewport = next, left side = previous.
+  // Ignore clicks on interactive elements AND inside horizontally-scrollable areas
+  // (e.g. wide tables) so tapping/dragging a table to view its columns doesn't
+  // accidentally flip the page.
   if (viewport) {
     viewport.addEventListener('click', function(e){
-      // Ignore clicks on interactive elements (links, buttons, inputs, etc.)
-      if (e.target.closest('a, button, input, select, textarea, [onclick]')) return;
+      if (e.target.closest('a, button, input, select, textarea, [onclick], .lg-table-wrap')) return;
       var rect = viewport.getBoundingClientRect();
       var clickX = e.clientX - rect.left;
       var half = rect.width / 2;
@@ -1323,18 +1326,23 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
     });
   }
 
-  // Swipe navigation (touch): swipe left = next, swipe right = previous
+  // Swipe navigation (touch): swipe left = next, swipe right = previous.
+  // A swipe that starts inside a horizontally-scrollable element (like a wide
+  // pricing table) is treated as that element's own scroll gesture and must
+  // NOT trigger page navigation.
   if (viewport) {
     var touchStartX = 0;
     var touchStartY = 0;
     var touchEndX = 0;
     var touchEndY = 0;
+    var touchStartTarget = null;
     var SWIPE_THRESHOLD = 50;
 
     viewport.addEventListener('touchstart', function(e){
       var t = e.changedTouches[0];
       touchStartX = t.screenX;
       touchStartY = t.screenY;
+      touchStartTarget = e.target;
     }, { passive: true });
 
     viewport.addEventListener('touchend', function(e){
@@ -1343,6 +1351,17 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
       touchEndY = t.screenY;
       var dx = touchEndX - touchStartX;
       var dy = touchEndY - touchStartY;
+
+      // If the touch began inside a table's horizontal scroll container that
+      // actually has overflow to scroll, let it scroll the table and skip
+      // page navigation entirely — regardless of swipe direction/distance.
+      var scrollWrap = touchStartTarget && touchStartTarget.closest
+        ? touchStartTarget.closest('.lg-table-wrap')
+        : null;
+      if (scrollWrap && scrollWrap.scrollWidth > scrollWrap.clientWidth) {
+        return;
+      }
+
       // Only treat as a horizontal swipe if horizontal movement dominates vertical
       if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
         if (dx < 0) {
