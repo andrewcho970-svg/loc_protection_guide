@@ -7,20 +7,17 @@
 <meta name="description" content="Explore the Lexus Care Protection Guide — ECP Platinum, Certified Pre-Owned coverage, extended warranties, paint & surface protection, tire & rim, and theft protection plans for your Lexus.">
 <meta name="robots" content="index, follow">
 
-<!-- Open Graph (Facebook, LinkedIn, etc.) -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Lexus Care Protection Guide">
 <meta property="og:description" content="A complete guide to Lexus Care protection products: ECP Platinum, Certified Pre-Owned programs, extended warranties, and more.">
 <meta property="og:site_name" content="">
 
-<!-- Twitter/X Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Lexus Care Protection Guide">
 <meta name="twitter:description" content="Lexus Care protection products explained: ECP Platinum, CPO programs, extended warranties, paint & surface protection, and more.">
 
 <link rel="icon" type="image/png" href="/favicon.png">
 
-<!-- JSON-LD structured data -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -42,302 +39,110 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
 
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  background: #0a0b0d;
-}
+html, body { height: 100%; margin: 0; padding: 0; background: #0a0b0d; }
 
 .lg-root {
-  --bg: #0a0b0d;
-  --panel: #141519;
-  --panel-2: #1a1c21;
-  --line: #292c32;
-  --platinum: #e4e6ea;
-  --muted: #9096a3;
-  --muted-2: #5c6270;
-  --gold: #c6a664;
-  --gold-soft: rgba(198,166,100,0.14);
-  --radius: 2px;
-  font-family: var(--font-body);
-  background: var(--bg);
-  color: var(--platinum);
+  --bg: #0a0b0d; --panel: #141519; --panel-2: #1a1c21; --line: #292c32;
+  --platinum: #e4e6ea; --muted: #9096a3; --muted-2: #5c6270;
+  --gold: #c6a664; --gold-soft: rgba(198,166,100,0.14); --radius: 2px;
+  font-family: var(--font-body); background: var(--bg); color: var(--platinum);
   --font-display: 'Space Grotesk', 'Inter', sans-serif;
   --font-body: 'Inter', -apple-system, sans-serif;
-  width: 100%;
-  height: 100vh;
-  position: relative;
-  border: 1px solid var(--line);
+  width: 100%; height: 100vh; position: relative; border: 1px solid var(--line);
   transition: background .25s ease, color .25s ease;
 }
-
 .lg-root * { box-sizing: border-box; }
-
 .lg-root.lg-light {
-  --bg: #f6f5f1;
-  --panel: #ffffff;
-  --panel-2: #efece4;
-  --line: #ddd7c8;
-  --platinum: #1c1d1f;
-  --muted: #55585f;
-  --muted-2: #82858c;
-  --gold: #9c7a3a;
-  --gold-soft: rgba(156,122,58,0.12);
+  --bg: #f6f5f1; --panel: #ffffff; --panel-2: #efece4; --line: #ddd7c8;
+  --platinum: #1c1d1f; --muted: #55585f; --muted-2: #82858c;
+  --gold: #9c7a3a; --gold-soft: rgba(156,122,58,0.12);
 }
+.lg-shell { display: flex; flex-direction: column; height: 100%; }
 
-.lg-shell {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-/* ---- Top Nav ---- */
 .lg-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 14px 22px;
-  border-bottom: 1px solid var(--line);
-  background: linear-gradient(180deg, #101114, #0d0e10);
-  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 14px 22px; border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, #101114, #0d0e10); flex-shrink: 0;
 }
-.lg-root.lg-light .lg-nav {
-  background: linear-gradient(180deg, #ffffff, #f8f6f1);
-}
-.lg-brand {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.05;
-  cursor: pointer;
-  user-select: none;
-}
-.lg-brand b {
-  font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--platinum);
-}
-.lg-brand span {
-  font-size: 10.5px;
-  letter-spacing: 0.22em;
-  color: var(--gold);
-  text-transform: uppercase;
-  margin-top: 2px;
-}
+.lg-root.lg-light .lg-nav { background: linear-gradient(180deg, #ffffff, #f8f6f1); }
+.lg-brand { display: flex; flex-direction: column; line-height: 1.05; cursor: pointer; user-select: none; }
+.lg-brand b { font-family: var(--font-display); font-size: 20px; font-weight: 600; letter-spacing: 0.04em; color: var(--platinum); }
+.lg-brand span { font-size: 10.5px; letter-spacing: 0.22em; color: var(--gold); text-transform: uppercase; margin-top: 2px; }
 .lg-nav-actions { display: flex; align-items: center; gap: 8px; }
 .lg-btn {
-  font-family: var(--font-body);
-  font-size: 13px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
-  background: transparent;
-  border: 1px solid var(--line);
-  padding: 8px 14px;
-  border-radius: var(--radius);
-  cursor: pointer;
+  font-family: var(--font-body); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--muted); background: transparent; border: 1px solid var(--line); padding: 8px 14px;
+  border-radius: var(--radius); cursor: pointer;
   transition: border-color .18s ease, color .18s ease, background .18s ease, transform .18s ease, box-shadow .18s ease;
-  white-space: nowrap;
-  display: inline-block;
-  text-decoration: none;
-  line-height: 1.3;
-  vertical-align: middle;
+  white-space: nowrap; display: inline-block; text-decoration: none; line-height: 1.3; vertical-align: middle;
 }
 .lg-btn:hover {
-  color: var(--platinum);
-  border-color: var(--gold);
-  background: var(--gold-soft);
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 8px 18px rgba(198,166,100,0.3), 0 0 0 1px var(--gold);
+  color: var(--platinum); border-color: var(--gold); background: var(--gold-soft);
+  transform: translateY(-2px) scale(1.05); box-shadow: 0 8px 18px rgba(198,166,100,0.3), 0 0 0 1px var(--gold);
 }
 .lg-root.lg-light .lg-btn:hover { box-shadow: 0 8px 18px rgba(156,122,58,0.24), 0 0 0 1px var(--gold); }
 .lg-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .lg-btn.lg-icon { padding: 8px 11px; }
 .lg-btn:disabled { opacity: .3; cursor: default; }
 .lg-btn:disabled:hover { background: transparent; border-color: var(--line); color: var(--muted); transform: none; box-shadow: none; }
-.lg-btn-gold {
-  color: #0a0b0d;
-  background: var(--gold);
-  border-color: var(--gold);
-  font-weight: 600;
-}
-.lg-btn-gold:hover {
-  background: #d6b878;
-  border-color: #d6b878;
-  color: #0a0b0d;
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 8px 18px rgba(198,166,100,0.4);
-}
-.lg-btn-glow {
-  border-color: var(--gold);
-  animation: lgHeroGlow 3s ease-in-out infinite;
-}
+.lg-btn-gold { color: #0a0b0d; background: var(--gold); border-color: var(--gold); font-weight: 600; }
+.lg-btn-gold:hover { background: #d6b878; border-color: #d6b878; color: #0a0b0d; transform: translateY(-2px) scale(1.05); box-shadow: 0 8px 18px rgba(198,166,100,0.4); }
+.lg-btn-glow { border-color: var(--gold); animation: lgHeroGlow 3s ease-in-out infinite; }
 .lg-root.lg-light .lg-btn-glow { animation: lgHeroGlowLight 3s ease-in-out infinite; }
 .lg-btn-glow:hover { animation-play-state: paused; }
 
-/* ---- Viewport ---- */
 .lg-viewport { flex: 1 1 auto; min-height: 0; overflow-y: auto; position: relative; }
 
-/* ---- Hover-zone nav arrows ---- */
-.lg-hover-zone {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 50%;
-  display: flex;
-  align-items: center;
-  pointer-events: none;
-  z-index: 5;
-}
+.lg-hover-zone { position: absolute; top: 0; bottom: 0; width: 50%; display: flex; align-items: center; pointer-events: none; z-index: 5; }
 .lg-hover-zone.lg-zone-left { left: 0; justify-content: flex-start; }
 .lg-hover-zone.lg-zone-right { right: 0; justify-content: flex-end; }
-.lg-hover-arrow {
-  font-family: var(--font-display);
-  font-size: 30px;
-  line-height: 1;
-  color: var(--gold);
-  opacity: 0;
-  padding: 14px 10px;
-  transition: opacity .2s ease;
-  user-select: none;
-}
+.lg-hover-arrow { font-family: var(--font-display); font-size: 30px; line-height: 1; color: var(--gold); opacity: 0; padding: 14px 10px; transition: opacity .2s ease; user-select: none; }
 .lg-zone-left .lg-hover-arrow { margin-left: 14px; }
 .lg-zone-right .lg-hover-arrow { margin-right: 14px; }
-.lg-hover-zone.is-visible .lg-hover-arrow {
-  opacity: .55;
-  animation: lgArrowBlink 1.6s ease-in-out infinite;
-}
-@keyframes lgArrowBlink {
-  0%, 100% { opacity: .28; }
-  50% { opacity: .75; }
-}
+.lg-hover-zone.is-visible .lg-hover-arrow { opacity: .55; animation: lgArrowBlink 1.6s ease-in-out infinite; }
+@keyframes lgArrowBlink { 0%, 100% { opacity: .28; } 50% { opacity: .75; } }
 .lg-page { display: none; padding: 46px 56px 40px; animation: lgFade .35s ease; }
 .lg-page.active { display: block; }
 @keyframes lgFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-.lg-eyebrow {
-  font-size: 12.5px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--gold);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
-}
+.lg-eyebrow { font-size: 12.5px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .lg-eyebrow::before { content: ''; width: 26px; height: 1px; background: var(--gold); display: inline-block; }
 
-.lg-h1 {
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 49.5px;
-  letter-spacing: 0.01em;
-  color: var(--platinum);
-  margin: 0 0 10px;
-}
-.lg-h2 {
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 32px;
-  color: var(--platinum);
-  margin: 0 0 6px;
-}
+.lg-h1 { font-family: var(--font-display); font-weight: 500; font-size: 49.5px; letter-spacing: 0.01em; color: var(--platinum); margin: 0 0 10px; }
+.lg-h2 { font-family: var(--font-display); font-weight: 500; font-size: 32px; color: var(--platinum); margin: 0 0 6px; }
 .lg-lede { font-size: 16.5px; color: var(--muted); max-width: 640px; line-height: 1.65; margin-bottom: 30px; }
 
-/* corner-bracket signature card */
-.lg-card {
-  position: relative;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  padding: 22px 22px 20px;
-  border-radius: var(--radius);
-}
-.lg-card::before, .lg-card::after {
-  content: '';
-  position: absolute;
-  width: 10px; height: 10px;
-  border-color: var(--gold);
-  opacity: .8;
-}
+.lg-card { position: relative; background: var(--panel); border: 1px solid var(--line); padding: 22px 22px 20px; border-radius: var(--radius); }
+.lg-card::before, .lg-card::after { content: ''; position: absolute; width: 10px; height: 10px; border-color: var(--gold); opacity: .8; }
 .lg-card::before { top: -1px; left: -1px; border-top: 1.5px solid var(--gold); border-left: 1.5px solid var(--gold); }
 .lg-card::after { bottom: -1px; right: -1px; border-bottom: 1.5px solid var(--gold); border-right: 1.5px solid var(--gold); }
 
 .lg-grid { display: grid; gap: 16px; }
 .lg-grid-2 { grid-template-columns: repeat(2, 1fr); }
 .lg-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.lg-grid > * { min-width: 0; }
 
-.lg-card h3 {
-  font-family: var(--font-display);
-  font-size: 22.5px;
-  font-weight: 600;
-  margin: 0 0 10px;
-  color: var(--platinum);
-}
+.lg-card h3 { font-family: var(--font-display); font-size: 22.5px; font-weight: 600; margin: 0 0 10px; color: var(--platinum); }
 .lg-card p { font-size: 15px; color: var(--muted); line-height: 1.6; margin: 0 0 8px; }
 .lg-list { list-style: none; margin: 0; padding: 0; }
-.lg-list li {
-  font-size: 15px;
-  color: var(--muted);
-  padding: 5px 0 5px 18px;
-  position: relative;
-  line-height: 1.55;
-}
+.lg-list li { font-size: 15px; color: var(--muted); padding: 5px 0 5px 18px; position: relative; line-height: 1.55; }
 .lg-list li::before { content: '—'; position: absolute; left: 0; color: var(--gold); }
 
-.lg-price-tag {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-  background: var(--gold-soft);
-  border: 1px solid rgba(198,166,100,0.35);
-  padding: 6px 12px;
-  border-radius: 3px;
-  margin: 4px 8px 4px 0;
-}
+.lg-price-tag { display: inline-flex; align-items: baseline; gap: 6px; background: var(--gold-soft); border: 1px solid rgba(198,166,100,0.35); padding: 6px 12px; border-radius: 3px; margin: 4px 8px 4px 0; }
 .lg-price-tag .amt { font-family: var(--font-display); font-size: 23.5px; color: var(--gold); font-weight: 600; }
 .lg-price-tag .lbl { font-size: 12.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
 
 .lg-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); }
 table.lg-table { width: 100%; border-collapse: collapse; min-width: 560px; }
-table.lg-table th {
-  text-align: left;
-  font-size: 12px;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: var(--gold);
-  background: var(--panel-2);
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--line);
-  white-space: nowrap;
-  position: sticky;
-  top: 0;
-}
-table.lg-table td {
-  font-size: 15px;
-  color: var(--platinum);
-  padding: 9px 12px;
-  border-bottom: 1px solid var(--line);
-  white-space: nowrap;
-}
+table.lg-table th { text-align: left; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); background: var(--panel-2); padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; position: sticky; top: 0; }
+table.lg-table td { font-size: 15px; color: var(--platinum); padding: 9px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
 table.lg-table tr:last-child td { border-bottom: none; }
 table.lg-table.lg-table-fixed { table-layout: fixed; }
-table.lg-table.lg-table-fixed th,
-table.lg-table.lg-table-fixed td { white-space: normal; }
+table.lg-table.lg-table-fixed th, table.lg-table.lg-table-fixed td { white-space: normal; }
 table.lg-table tr:hover td { background: rgba(255,255,255,0.02); }
 table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 
-.lg-note {
-  margin-top: 22px;
-  padding: 14px 16px;
-  border-left: 2px solid var(--gold);
-  background: var(--panel-2);
-  font-size: 14px;
-  color: var(--muted);
-  line-height: 1.6;
-}
+.lg-note { margin-top: 22px; padding: 14px 16px; border-left: 2px solid var(--gold); background: var(--panel-2); font-size: 14px; color: var(--muted); line-height: 1.6; }
 .lg-note b { color: var(--platinum); font-weight: 600; }
 
 .lg-foot-disc { margin-top: 28px; font-size: 12.5px; color: var(--muted-2); line-height: 1.6; border-top: 1px solid var(--line); padding-top: 14px; }
@@ -345,329 +150,83 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 .lg-section-block { margin-bottom: 34px; }
 .lg-section-block:last-child { margin-bottom: 0; }
 
-/* Front page */
 .lg-front { padding: 0; height: 100%; display: flex; flex-direction: column; }
-.lg-hero {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 40px 30px;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(198,166,100,0.10), transparent 55%),
-    linear-gradient(180deg, #0d0e11, #0a0b0d 60%);
-  position: relative;
-}
-.lg-root.lg-light .lg-hero {
-  background:
-    radial-gradient(circle at 50% 0%, rgba(156,122,58,0.10), transparent 55%),
-    linear-gradient(180deg, #fbfaf6, #f6f5f1 60%);
-}
-.lg-hero-mark {
-  width: 46px; height: 46px;
-  border: 1px solid var(--gold);
-  transform: rotate(45deg);
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 30px;
-}
+.lg-hero { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px 30px;
+  background: radial-gradient(circle at 50% 0%, rgba(198,166,100,0.10), transparent 55%), linear-gradient(180deg, #0d0e11, #0a0b0d 60%); position: relative; }
+.lg-root.lg-light .lg-hero { background: radial-gradient(circle at 50% 0%, rgba(156,122,58,0.10), transparent 55%), linear-gradient(180deg, #fbfaf6, #f6f5f1 60%); }
+.lg-hero-mark { width: 46px; height: 46px; border: 1px solid var(--gold); transform: rotate(45deg); display: flex; align-items: center; justify-content: center; margin-bottom: 30px; }
 .lg-hero-mark span { transform: rotate(-45deg); color: var(--gold); font-family: var(--font-display); font-size: 21px; font-weight: 600; }
 .lg-hero .lg-eyebrow { justify-content: center; margin-bottom: 20px; }
 .lg-hero .lg-eyebrow::before { display: none; }
-.lg-hero h1 {
-  font-family: var(--font-display);
-  font-size: 61.5px;
-  font-weight: 500;
-  color: var(--platinum);
-  margin: 0 0 14px;
-  letter-spacing: 0.01em;
-}
+.lg-hero h1 { font-family: var(--font-display); font-size: 61.5px; font-weight: 500; color: var(--platinum); margin: 0 0 14px; letter-spacing: 0.01em; }
 .lg-hero p { max-width: 520px; color: var(--muted); font-size: 16.5px; line-height: 1.7; margin: 0 0 30px; }
-.lg-hero-cats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(150px,1fr));
-  grid-auto-rows: 1fr;
-  gap: 10px;
-  max-width: 640px;
-  margin: 0 0 32px;
-}
+.lg-hero-cats { display: grid; grid-template-columns: repeat(3, minmax(150px,1fr)); grid-auto-rows: 1fr; gap: 10px; max-width: 640px; margin: 0 0 32px; }
 .lg-hero-cat {
-  border: 1px solid var(--gold);
-  padding: 12px 10px;
-  font-size: 12.5px;
-  letter-spacing: .04em;
-  color: var(--muted);
-  text-align: center;
-  border-radius: var(--radius);
-  background: transparent;
-  font-family: var(--font-body);
-  cursor: pointer;
+  border: 1px solid var(--gold); padding: 12px 10px; font-size: 12.5px; letter-spacing: .04em; color: var(--muted);
+  text-align: center; border-radius: var(--radius); background: transparent; font-family: var(--font-body); cursor: pointer;
   transition: border-color .18s ease, background .18s ease, transform .18s ease, box-shadow .18s ease;
-  animation: lgHeroGlow 5s ease-in-out infinite;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
+  animation: lgHeroGlow 5s ease-in-out infinite; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;
 }
-@keyframes lgHeroGlow {
-  0%, 100% { box-shadow: 0 0 6px rgba(198,166,100,0.25), 0 0 0 1px rgba(198,166,100,0.25); }
-  50% { box-shadow: 0 0 18px rgba(198,166,100,0.6), 0 0 0 1px rgba(198,166,100,0.6); }
-}
+@keyframes lgHeroGlow { 0%, 100% { box-shadow: 0 0 6px rgba(198,166,100,0.25), 0 0 0 1px rgba(198,166,100,0.25); } 50% { box-shadow: 0 0 18px rgba(198,166,100,0.6), 0 0 0 1px rgba(198,166,100,0.6); } }
 .lg-root.lg-light .lg-hero-cat { animation: lgHeroGlowLight 5s ease-in-out infinite; }
-@keyframes lgHeroGlowLight {
-  0%, 100% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); }
-  50% { box-shadow: 0 0 18px rgba(156,122,58,0.5), 0 0 0 1px rgba(156,122,58,0.5); }
-}
-.lg-hero-cat:hover {
-  border-color: var(--gold);
-  background: var(--gold-soft);
-  transform: translateY(-4px) scale(1.035);
-  animation-play-state: paused;
-  box-shadow: 0 10px 26px rgba(198,166,100,0.28), 0 0 0 1px var(--gold);
-}
-.lg-root.lg-light .lg-hero-cat:hover {
-  box-shadow: 0 10px 26px rgba(156,122,58,0.22), 0 0 0 1px var(--gold);
-}
+@keyframes lgHeroGlowLight { 0%, 100% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); } 50% { box-shadow: 0 0 18px rgba(156,122,58,0.5), 0 0 0 1px rgba(156,122,58,0.5); } }
+.lg-hero-cat:hover { border-color: var(--gold); background: var(--gold-soft); transform: translateY(-4px) scale(1.035); animation-play-state: paused; box-shadow: 0 10px 26px rgba(198,166,100,0.28), 0 0 0 1px var(--gold); }
+.lg-root.lg-light .lg-hero-cat:hover { box-shadow: 0 10px 26px rgba(156,122,58,0.22), 0 0 0 1px var(--gold); }
 .lg-hero-cat:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-.lg-hero-cat.lg-startup-flash {
-  animation: lgHeroFlash 1.24s ease !important;
-  border-color: var(--gold);
-}
-@keyframes lgHeroFlash {
-  0% { box-shadow: 0 0 6px rgba(198,166,100,0.25), 0 0 0 1px rgba(198,166,100,0.25); }
-  35% { box-shadow: 0 0 30px rgba(198,166,100,0.9), 0 0 0 1.5px rgba(198,166,100,0.95); }
-  100% { box-shadow: 0 0 6px rgba(198,166,100,0.25), 0 0 0 1px rgba(198,166,100,0.25); }
-}
+.lg-hero-cat.lg-startup-flash { animation: lgHeroFlash 1.24s ease !important; border-color: var(--gold); }
+@keyframes lgHeroFlash { 0% { box-shadow: 0 0 6px rgba(198,166,100,0.25), 0 0 0 1px rgba(198,166,100,0.25); } 35% { box-shadow: 0 0 30px rgba(198,166,100,0.9), 0 0 0 1.5px rgba(198,166,100,0.95); } 100% { box-shadow: 0 0 6px rgba(198,166,100,0.25), 0 0 0 1px rgba(198,166,100,0.25); } }
 .lg-root.lg-light .lg-hero-cat.lg-startup-flash { animation-name: lgHeroFlashLight !important; }
-@keyframes lgHeroFlashLight {
-  0% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); }
-  35% { box-shadow: 0 0 26px rgba(156,122,58,0.75), 0 0 0 1.5px rgba(156,122,58,0.85); }
-  100% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); }
-}
+@keyframes lgHeroFlashLight { 0% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); } 35% { box-shadow: 0 0 26px rgba(156,122,58,0.75), 0 0 0 1.5px rgba(156,122,58,0.85); } 100% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); } }
 .lg-hero-cat b { display: block; color: var(--platinum); font-family: var(--font-display); font-size: 16.5px; font-weight: 600; margin-bottom: 2px;}
-.lg-front-foot {
-  border-top: 1px solid var(--line);
-  padding: 16px 30px;
-  text-align: center;
-  font-size: 12px;
-  color: var(--muted-2);
-  flex-shrink: 0;
-}
+.lg-front-foot { border-top: 1px solid var(--line); padding: 16px 30px; text-align: center; font-size: 12px; color: var(--muted-2); flex-shrink: 0; }
 
-/* Contents */
 .lg-toc { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
-.lg-toc-item {
-  display: flex;
-  align-items: baseline;
-  gap: 18px;
-  padding: 15px 14px;
-  border-bottom: 1px solid var(--line);
-  cursor: pointer;
-  background: transparent;
-  border-left: 2px solid transparent;
-  border-radius: 0;
-  width: 100%;
-  text-align: left;
-  transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease;
-  position: relative;
-}
-.lg-toc-item:hover {
-  background: var(--gold-soft);
-  border-left-color: var(--gold);
-  transform: translateX(6px) scale(1.01);
-  box-shadow: 0 8px 22px rgba(198,166,100,0.22), inset 0 0 0 1px rgba(198,166,100,0.3);
-  z-index: 1;
-}
-.lg-root.lg-light .lg-toc-item:hover {
-  box-shadow: 0 8px 22px rgba(156,122,58,0.18), inset 0 0 0 1px rgba(156,122,58,0.25);
-}
+.lg-toc-item { display: flex; align-items: baseline; gap: 18px; padding: 15px 14px; border-bottom: 1px solid var(--line); cursor: pointer; background: transparent; border-left: 2px solid transparent; border-radius: 0; width: 100%; text-align: left; transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease; position: relative; }
+.lg-toc-item:hover { background: var(--gold-soft); border-left-color: var(--gold); transform: translateX(6px) scale(1.01); box-shadow: 0 8px 22px rgba(198,166,100,0.22), inset 0 0 0 1px rgba(198,166,100,0.3); z-index: 1; }
+.lg-root.lg-light .lg-toc-item:hover { box-shadow: 0 8px 22px rgba(156,122,58,0.18), inset 0 0 0 1px rgba(156,122,58,0.25); }
 .lg-toc-item:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
-.lg-toc-item.lg-startup-flash {
-  animation: lgTocFlash 1.24s ease !important;
-  border-left-color: var(--gold);
-}
-@keyframes lgTocFlash {
-  0% { box-shadow: none; background: transparent; }
-  35% { box-shadow: 0 8px 22px rgba(198,166,100,0.35), inset 0 0 0 1px rgba(198,166,100,0.45); background: var(--gold-soft); }
-  100% { box-shadow: none; background: transparent; }
-}
+.lg-toc-item.lg-startup-flash { animation: lgTocFlash 1.24s ease !important; border-left-color: var(--gold); }
+@keyframes lgTocFlash { 0% { box-shadow: none; background: transparent; } 35% { box-shadow: 0 8px 22px rgba(198,166,100,0.35), inset 0 0 0 1px rgba(198,166,100,0.45); background: var(--gold-soft); } 100% { box-shadow: none; background: transparent; } }
 .lg-root.lg-light .lg-toc-item.lg-startup-flash { animation-name: lgTocFlashLight !important; }
-@keyframes lgTocFlashLight {
-  0% { box-shadow: none; background: transparent; }
-  35% { box-shadow: 0 8px 22px rgba(156,122,58,0.28), inset 0 0 0 1px rgba(156,122,58,0.38); background: var(--gold-soft); }
-  100% { box-shadow: none; background: transparent; }
-}
+@keyframes lgTocFlashLight { 0% { box-shadow: none; background: transparent; } 35% { box-shadow: 0 8px 22px rgba(156,122,58,0.28), inset 0 0 0 1px rgba(156,122,58,0.38); background: var(--gold-soft); } 100% { box-shadow: none; background: transparent; } }
 .lg-toc-item:hover .lg-toc-num { color: var(--platinum); transform: scale(1.08); }
 .lg-toc-num { font-family: var(--font-display); font-size: 23.5px; color: var(--gold); width: 30px; flex-shrink: 0; transition: color .18s ease, transform .18s ease; display: inline-block; }
 .lg-toc-body b { display: block; font-size: 17px; color: var(--platinum); font-weight: 600; margin-bottom: 3px; }
 .lg-toc-body span { font-size: 14px; color: var(--muted); line-height: 1.5; }
 
-/* footer bar with page indicator */
-.lg-footbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 22px;
-  border-top: 1px solid var(--line);
-  background: #0d0e10;
-  flex-shrink: 0;
-  font-size: 12.5px;
-  color: var(--muted-2);
-  letter-spacing: .05em;
-}
+.lg-footbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 22px; border-top: 1px solid var(--line); background: #0d0e10; flex-shrink: 0; font-size: 12.5px; color: var(--muted-2); letter-spacing: .05em; }
 .lg-root.lg-light .lg-footbar { background: #f8f6f1; }
 .lg-footbar .lg-pageno { font-family: var(--font-display); color: var(--gold); font-size: 15.5px; }
 
-.lg-copy {
-  text-align: center;
-  font-size: 12px;
-  color: var(--muted-2);
-  margin-top: 30px;
-  letter-spacing: .04em;
-}
+.lg-copy { text-align: center; font-size: 12px; color: var(--muted-2); margin-top: 30px; letter-spacing: .04em; }
 
-/* ---- Theme toggle + QR (top right) ---- */
-.lg-theme-switch {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  width: 46px;
-  height: 24px;
-  border-radius: 12px;
-  border: 1px solid var(--line);
-  background: var(--panel-2);
-  cursor: pointer;
-  padding: 0;
-  flex-shrink: 0;
-  transition: background .2s ease, border-color .2s ease;
-}
-.lg-theme-switch:hover {
-  border-color: var(--gold);
-  background: var(--gold-soft);
-  transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(198,166,100,0.32);
-}
+.lg-theme-switch { position: relative; display: inline-flex; align-items: center; width: 46px; height: 24px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel-2); cursor: pointer; padding: 0; flex-shrink: 0; transition: background .2s ease, border-color .2s ease; }
+.lg-theme-switch:hover { border-color: var(--gold); background: var(--gold-soft); transform: scale(1.1); box-shadow: 0 6px 16px rgba(198,166,100,0.32); }
 .lg-root.lg-light .lg-theme-switch:hover { box-shadow: 0 6px 16px rgba(156,122,58,0.25); }
 .lg-theme-switch:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-.lg-theme-switch-knob {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--gold);
-  color: #0a0b0d;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  line-height: 1;
-  transition: transform .22s ease;
-}
+.lg-theme-switch-knob { position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: var(--gold); color: #0a0b0d; display: flex; align-items: center; justify-content: center; font-size: 10px; line-height: 1; transition: transform .22s ease; }
 .lg-theme-switch.is-light .lg-theme-switch-knob { transform: translateX(22px); }
 
 .lg-qr-img { cursor: pointer; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
-.lg-qr-img:hover {
-  transform: scale(1.25);
-  border-color: var(--gold);
-  box-shadow: 0 8px 22px rgba(198,166,100,0.4), 0 0 0 1px var(--gold);
-}
+.lg-qr-img:hover { transform: scale(1.25); border-color: var(--gold); box-shadow: 0 8px 22px rgba(198,166,100,0.4), 0 0 0 1px var(--gold); }
 .lg-root.lg-light .lg-qr-img:hover { box-shadow: 0 8px 22px rgba(156,122,58,0.3), 0 0 0 1px var(--gold); }
 .lg-qr-img:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
-.lg-contact-btn {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: 1px solid var(--gold);
-  background: transparent;
-  color: var(--gold);
-  font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 500;
-  text-decoration: none;
-  flex-shrink: 0;
-  cursor: pointer;
-  transition: background .2s ease, box-shadow .2s ease, transform .2s ease, color .2s ease;
-}
-.lg-contact-btn::before {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  border: 1px solid var(--gold);
-  opacity: .35;
-  transition: opacity .2s ease, transform .2s ease;
-}
-.lg-contact-btn:hover {
-  background: var(--gold);
-  color: #0a0b0d;
-  transform: scale(1.08);
-  box-shadow: 0 6px 18px rgba(198,166,100,0.4);
-}
+.lg-contact-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--gold); background: transparent; color: var(--gold); font-family: var(--font-display); font-size: 16px; font-weight: 500; text-decoration: none; flex-shrink: 0; cursor: pointer; transition: background .2s ease, box-shadow .2s ease, transform .2s ease, color .2s ease; }
+.lg-contact-btn::before { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid var(--gold); opacity: .35; transition: opacity .2s ease, transform .2s ease; }
+.lg-contact-btn:hover { background: var(--gold); color: #0a0b0d; transform: scale(1.08); box-shadow: 0 6px 18px rgba(198,166,100,0.4); }
 .lg-contact-btn:hover::before { opacity: .7; transform: scale(1.08); }
 .lg-contact-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 
-.lg-qr-modal-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 50;
-}
+.lg-qr-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 50; }
 .lg-qr-modal-backdrop.is-open { display: flex; }
-.lg-qr-modal {
-  position: relative;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  padding: 28px 30px 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-  max-width: 90%;
-}
-.lg-qr-modal-close {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  background: var(--panel-2);
-  color: var(--muted);
-  font-size: 15px;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+.lg-qr-modal { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 28px 30px 24px; display: flex; flex-direction: column; align-items: center; gap: 14px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); max-width: 90%; }
+.lg-qr-modal-close { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line); background: var(--panel-2); color: var(--muted); font-size: 15px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .lg-qr-modal-close:hover { color: var(--platinum); border-color: var(--gold); }
 .lg-qr-modal-title { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--platinum); margin: 0; }
 .lg-qr-modal-sub { font-size: 12.5px; color: var(--muted); text-align: center; max-width: 220px; line-height: 1.5; margin: 0; }
 .lg-qr-modal canvas { border-radius: 3px; border: 1px solid var(--line); background: #fff; padding: 10px; }
-.lg-qr-img {
-  width: 34px;
-  height: 34px;
-  border-radius: 3px;
-  border: 1px solid var(--line);
-  background: transparent;
-  padding: 2px;
-  display: block;
-}
+.lg-qr-img { width: 34px; height: 34px; border-radius: 3px; border: 1px solid var(--line); background: transparent; padding: 2px; display: block; }
 
 @media (max-width: 720px) {
   .lg-page { padding: 30px 20px 30px; }
@@ -677,15 +236,8 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   .lg-nav { padding: 12px 14px; flex-wrap: wrap; row-gap: 10px; }
   .lg-nav-actions { flex-wrap: wrap; row-gap: 8px; }
   .lg-btn span.lg-btn-label { display: none; }
-
-  /* Force tables to fit the screen width instead of requiring horizontal scroll */
   table.lg-table { min-width: 0; table-layout: fixed; }
-  table.lg-table th, table.lg-table td {
-    white-space: normal;
-    word-break: break-word;
-    padding: 7px 8px;
-    font-size: 12.5px;
-  }
+  table.lg-table th, table.lg-table td { white-space: normal; word-break: break-word; padding: 7px 8px; font-size: 12.5px; }
 }
 </style>
 </head>
@@ -694,7 +246,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 <div class="lg-root">
   <div class="lg-shell">
 
-    <!-- NAV -->
     <div class="lg-nav">
       <div class="lg-brand" onclick="lgGoTo('front')" tabindex="0" role="button" aria-label="Go to front page">
         <span>Lexus Care · Protection Guide</span>
@@ -714,7 +265,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
       </div>
     </div>
 
-    <!-- QR MODAL -->
     <div class="lg-qr-modal-backdrop" id="lgQrBackdrop" onclick="if(event.target===this){lgCloseQrModal();}">
       <div class="lg-qr-modal" role="dialog" aria-modal="true" aria-label="Enlarged QR code">
         <button class="lg-qr-modal-close" onclick="lgCloseQrModal()" aria-label="Close">✕</button>
@@ -724,12 +274,10 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
       </div>
     </div>
 
-    <!-- VIEWPORT -->
     <div class="lg-viewport" id="lgViewport">
       <div class="lg-hover-zone lg-zone-left" id="lgZoneLeft"><span class="lg-hover-arrow">‹</span></div>
       <div class="lg-hover-zone lg-zone-right" id="lgZoneRight"><span class="lg-hover-arrow">›</span></div>
 
-      <!-- FRONT -->
       <div class="lg-page active" id="page-front">
         <div class="lg-front">
           <div class="lg-hero">
@@ -750,7 +298,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         </div>
       </div>
 
-      <!-- CONTENTS -->
       <div class="lg-page" id="page-contents">
         <div class="lg-eyebrow">Contents</div>
         <h2 class="lg-h1" style="font-size:40px;">What's Inside</h2>
@@ -769,7 +316,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <p class="lg-foot-disc">Lexus ECP · Vehicle Service Contracts · Surface Protection · Wear Pass / Wear Pass Plus · Tire, Rim &amp; Glass · Theft Protection</p>
       </div>
 
-      <!-- S01 -->
       <div class="lg-page" id="page-s01">
         <div class="lg-eyebrow">Section 01</div>
         <h2 class="lg-h1">Lexus ECP Platinum Program</h2>
@@ -835,7 +381,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <p class="lg-foot-disc">Every new Lexus includes a 48-month/80,000km Comprehensive warranty and a 72-month/110,000km Powertrain warranty. Active dealer demos are not ECP-eligible; ECP plans are not to be registered in the dealership name. Plans, terms and surcharges are subject to change without notice; acceptance is at the sole discretion of the ECP Division and Lexus.</p>
       </div>
 
-      <!-- S02 -->
       <div class="lg-page" id="page-s02">
         <div class="lg-eyebrow">Section 02</div>
         <h2 class="lg-h1">Lexus Certified Pre-Owned Programs</h2>
@@ -889,7 +434,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <p class="lg-foot-disc">LCPO Beyond Warranty upgrades — YLF15 (60mo/100,000km base → +60mo/100,000km added), YTF24 (72mo/120,000km base → +48mo/80,000km added), YLF33 (84mo/140,000km base → +36mo/60,000km added) — are reflected in the plan table above.</p>
       </div>
 
-      <!-- S03 -->
       <div class="lg-page" id="page-s03">
         <div class="lg-eyebrow">Section 03</div>
         <h2 class="lg-h1">Lexus LCPO Protection — Coverage Overview</h2>
@@ -939,7 +483,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <p class="lg-foot-disc">This section summarizes publicly available product highlight sheets for informational purposes only. Pricing, terms, eligibility and exclusions are subject to change without notice and vary by vehicle, province and underwriter. Please refer to the applicable certificate of insurance or contract for full terms and conditions, and speak with your sales representative to confirm current availability and pricing.</p>
       </div>
 
-      <!-- S04 -->
       <div class="lg-page" id="page-s04">
         <div class="lg-eyebrow">Section 04</div>
         <h2 class="lg-h1">Lubrico Extended Vehicle Warranties</h2>
@@ -1004,7 +547,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <p class="lg-foot-disc">Class 2 vehicles (Cadillac, Camaro, Challenger, Mustang, Transit, Genesis, Infiniti, Lincoln, Ram Vans, Saab, VW, ½-ton trucks) and Class 3 vehicles (exotic/performance brands and heavy-duty diesel trucks) carry additional surcharges. See full rate sheets for complete vehicle exclusions and surcharge tables.</p>
       </div>
 
-      <!-- S04b -->
       <div class="lg-page" id="page-s04b">
         <div class="lg-eyebrow">Section 04 · Continued</div>
         <h2 class="lg-h1">Certified Powertrain Plus</h2>
@@ -1045,7 +587,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <p class="lg-foot-disc">Class 2 surcharge from $65 · Class 3 surcharge from $275. Commercial vehicles are excluded from unlimited-km terms. See Lubrico rate sheet for full vehicle class listings and exclusions.</p>
       </div>
 
-      <!-- S05 -->
       <div class="lg-page" id="page-s05">
         <div class="lg-eyebrow">Section 05</div>
         <h2 class="lg-h1">Paint &amp; Surface Protection</h2>
@@ -1095,7 +636,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         </div>
       </div>
 
-      <!-- S06 -->
       <div class="lg-page" id="page-s06">
         <div class="lg-eyebrow">Section 06</div>
         <h2 class="lg-h1">The Smart Program</h2>
@@ -1124,7 +664,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         </div>
       </div>
 
-      <!-- S07 -->
       <div class="lg-page" id="page-s07">
         <div class="lg-eyebrow">Section 07</div>
         <h2 class="lg-h1">Wear Pass &amp; Wear Pass Plus</h2>
@@ -1189,7 +728,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         </div>
       </div>
 
-      <!-- S08 -->
       <div class="lg-page" id="page-s08">
         <div class="lg-eyebrow">Section 08</div>
         <h2 class="lg-h1">Tire &amp; Rim Protection · Road Hazard Glass</h2>
@@ -1231,7 +769,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         </div>
       </div>
 
-      <!-- S09 -->
       <div class="lg-page" id="page-s09">
         <div class="lg-eyebrow">Section 09</div>
         <h2 class="lg-h1">Platinum Loyalty Plus — Theft Protection</h2>
@@ -1284,7 +821,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 
     </div>
 
-    <!-- FOOTBAR -->
     <div class="lg-footbar">
       <span id="lgPageLabel">Front Page</span>
       <span><span class="lg-pageno" id="lgPageNo">1</span> / 12</span>
@@ -1388,13 +924,11 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
     render();
   };
 
-  // Keyboard arrow navigation
   document.addEventListener('keydown', function(e){
     if (e.key === 'ArrowRight') { lgStep(1); }
     else if (e.key === 'ArrowLeft') { lgStep(-1); }
   });
 
-  // Hover-zone arrow indicators
   var zoneLeft = document.getElementById('lgZoneLeft');
   var zoneRight = document.getElementById('lgZoneRight');
   if (viewport && zoneLeft && zoneRight) {
@@ -1422,14 +956,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
     });
   }
 
-  // Mouse click navigation: click right side of viewport = next, left side = previous.
-  // Ignore clicks on interactive elements AND inside horizontally-scrollable areas
-  // (e.g. wide tables) so tapping/dragging a table to view its columns doesn't
-  // accidentally flip the page.
-  // Tracks when a touch interaction last happened on the viewport, so the
-  // synthetic 'click' event that mobile browsers fire right after touchend
-  // doesn't ALSO trigger navigation (that double-fire was causing pages to
-  // skip by 2, e.g. 1 -> 3 instead of 1 -> 2).
   var lastTouchNavTime = 0;
   var TOUCH_CLICK_SUPPRESS_MS = 700;
 
@@ -1448,10 +974,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
     });
   }
 
-  // Swipe navigation (touch): swipe left = next, swipe right = previous.
-  // A swipe that starts inside a horizontally-scrollable element (like a wide
-  // pricing table) is treated as that element's own scroll gesture and must
-  // NOT trigger page navigation.
   if (viewport) {
     var touchStartX = 0;
     var touchStartY = 0;
@@ -1474,14 +996,8 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
       var dx = touchEndX - touchStartX;
       var dy = touchEndY - touchStartY;
 
-      // Any touch on the viewport (tap or swipe) will be followed by a
-      // synthetic click event; suppress that upcoming click so navigation
-      // isn't double-triggered.
       lastTouchNavTime = Date.now();
 
-      // If the touch began inside a table's horizontal scroll container that
-      // actually has overflow to scroll, let it scroll the table and skip
-      // page navigation entirely — regardless of swipe direction/distance.
       var scrollWrap = touchStartTarget && touchStartTarget.closest
         ? touchStartTarget.closest('.lg-table-wrap')
         : null;
@@ -1489,12 +1005,11 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         return;
       }
 
-      // Only treat as a horizontal swipe if horizontal movement dominates vertical
       if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
         if (dx < 0) {
-          lgStep(1); // swipe left -> next page
+          lgStep(1);
         } else {
-          lgStep(-1); // swipe right -> previous page
+          lgStep(-1);
         }
       }
     }, { passive: true });
@@ -1539,7 +1054,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
     master.gain.setValueAtTime(0.012, now);
     master.connect(filter);
 
-    // fundamental: warm, low bell-like tone
     var osc1 = ac.createOscillator();
     var g1 = ac.createGain();
     osc1.type = 'sine';
@@ -1551,7 +1065,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
     osc1.connect(g1);
     g1.connect(master);
 
-    // quiet octave overtone for shimmer
     var osc2 = ac.createOscillator();
     var g2 = ac.createGain();
     osc2.type = 'sine';
@@ -1593,7 +1106,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
     return true;
   }
   function flashOrder(order){
-    var stagger = 80; // ms between each box starting its flash
+    var stagger = 80;
     order.forEach(function(el, i){
       setTimeout(function(){
         el.classList.add('lg-startup-flash');
@@ -1630,8 +1143,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
     initFrontGlow();
   }
 
-  // Repeat the glow effect every 5s on page 1 and page 2, only while that page is active,
-  // with a shuffled order guaranteed to differ from the previous run.
   setInterval(function(){
     var frontPage = document.getElementById('page-front');
     var contentsPage = document.getElementById('page-contents');
