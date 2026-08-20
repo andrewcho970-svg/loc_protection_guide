@@ -1458,15 +1458,8 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   var baseIncluded = false;
   var downIncluded = false;
   var cartEmptyEl = document.getElementById('lgCalcCartEmpty');
-  var REMOVED_LIMIT = 5;
-
   function pushRemoved(id, item){
     removed[id] = item;
-    var ids = Object.keys(removed);
-    while (ids.length > REMOVED_LIMIT) {
-      delete removed[ids[0]];
-      ids.shift();
-    }
   }
 
   function restoreItem(id){
