@@ -431,7 +431,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
               <label for="lgCalcDown">Down Payment ($)</label>
               <button type="button" class="lg-mini-toggle is-off" id="lgCalcDownToggle" onclick="lgToggleDown()" aria-pressed="false" disabled>Inactive</button>
             </div>
-            <input type="number" id="lgCalcDown" min="0" step="0.01" inputmode="decimal" placeholder="0.00" value="0" oninput="lgRecalc()" disabled>
+            <input type="number" id="lgCalcDown" min="0" step="0.01" inputmode="decimal" placeholder="0.00" value="0" oninput="lgRecalc()" disabled style="display:none;">
           </div>
         </div>
 
@@ -1674,13 +1674,11 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 
   window.lgToggleBase = function(){
     baseIncluded = !baseIncluded;
-    var wrap = document.getElementById('lgCalcBaseWrap');
     var input = document.getElementById('lgCalcBase');
     var pay = document.getElementById('lgCalcBasePay');
     var btn = document.getElementById('lgCalcBaseToggle');
     if (input) input.style.display = baseIncluded ? '' : 'none';
     if (pay) pay.style.display = baseIncluded ? '' : 'none';
-    if (wrap) wrap.classList.toggle('is-hidden', !baseIncluded);
     if (btn) {
       btn.textContent = baseIncluded ? 'Included' : 'Hidden';
       btn.setAttribute('aria-pressed', baseIncluded ? 'true' : 'false');
@@ -1697,7 +1695,10 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     downIncluded = !downIncluded;
     var input = document.getElementById('lgCalcDown');
     var btn = document.getElementById('lgCalcDownToggle');
-    if (input) input.disabled = !downIncluded;
+    if (input) {
+      input.disabled = !downIncluded;
+      input.style.display = downIncluded ? '' : 'none';
+    }
     if (btn) {
       btn.textContent = downIncluded ? 'Active' : 'Inactive';
       btn.setAttribute('aria-pressed', downIncluded ? 'true' : 'false');
