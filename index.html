@@ -225,6 +225,93 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 .lg-qr-modal canvas { border-radius: 3px; border: 1px solid var(--line); background: #fff; padding: 10px; }
 .lg-qr-img { width: 34px; height: 34px; border-radius: 3px; border: 1px solid var(--line); background: transparent; padding: 2px; display: block; }
 
+/* ---- Payment Calculator ---- */
+.lg-calc-btn { position: relative; }
+.lg-calc-summary {
+  display: none; align-items: center; gap: 7px; font-size: 12px; color: var(--muted);
+  white-space: nowrap; padding: 7px 12px; border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--panel-2);
+}
+.lg-calc-summary.is-visible { display: flex; }
+.lg-calc-summary-item { display: inline-flex; align-items: baseline; gap: 3px; }
+.lg-calc-summary-item b { font-family: var(--font-display); font-weight: 600; font-size: 13.5px; color: var(--gold); }
+.lg-calc-summary-sep { color: var(--muted-2); }
+.lg-calc-badge {
+  position: absolute; top: -7px; right: -7px; min-width: 17px; height: 17px; padding: 0 3px; border-radius: 9px;
+  background: var(--gold); color: #0a0b0d; font-family: var(--font-display); font-size: 10.5px; font-weight: 700;
+  display: none; align-items: center; justify-content: center; line-height: 1; box-shadow: 0 0 0 2px var(--panel);
+}
+.lg-calc-badge.is-visible { display: flex; }
+
+.lg-add-btn {
+  display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-body); font-size: 10.5px; font-weight: 600;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--gold); background: transparent; border: 1px solid var(--gold);
+  border-radius: 10px; padding: 2px 8px; margin-left: 8px; cursor: pointer; white-space: nowrap; vertical-align: middle;
+  transition: background .15s ease, color .15s ease, transform .15s ease, box-shadow .15s ease;
+}
+.lg-add-btn:hover { background: var(--gold-soft); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(198,166,100,0.28); }
+.lg-add-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.lg-add-btn.is-added { background: var(--gold); color: #0a0b0d; }
+.lg-price-tag .lg-add-btn { margin-left: 10px; }
+table.lg-table td .lg-add-btn { margin-left: 6px; }
+
+.lg-calc-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 60; padding: 20px; }
+.lg-calc-modal-backdrop.is-open { display: flex; }
+.lg-calc-modal {
+  position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 26px 26px 22px;
+  display: flex; flex-direction: column; gap: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); width: 100%; max-width: 540px;
+  max-height: 88%; overflow-y: auto;
+}
+.lg-calc-modal-close { position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line); background: var(--panel-2); color: var(--muted); font-size: 15px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.lg-calc-modal-close:hover { color: var(--platinum); border-color: var(--gold); }
+.lg-calc-title { font-family: var(--font-display); font-size: 19px; font-weight: 600; color: var(--platinum); margin: 0; padding-right: 24px; }
+.lg-calc-sub { font-size: 12.5px; color: var(--muted); margin: -10px 0 0; line-height: 1.5; }
+
+.lg-calc-cart { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel-2); }
+.lg-calc-cart-empty { padding: 14px; font-size: 13px; color: var(--muted); text-align: center; }
+.lg-cart-item { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+.lg-cart-item:last-child { border-bottom: none; }
+.lg-cart-item-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.lg-cart-item-label { font-size: 13px; color: var(--platinum); line-height: 1.4; }
+.lg-cart-item-pay { font-size: 11px; color: var(--muted); }
+.lg-cart-item-price { font-family: var(--font-display); font-size: 13.5px; color: var(--gold); white-space: nowrap; }
+.lg-cart-item-remove { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line); background: transparent; color: var(--muted); font-size: 12px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.lg-cart-item-remove:hover { color: var(--platinum); border-color: var(--gold); }
+.lg-calc-subtotal { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 12px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); }
+.lg-calc-subtotal b { font-family: var(--font-display); font-size: 15px; color: var(--platinum); font-weight: 600; }
+
+.lg-calc-field { display: flex; flex-direction: column; gap: 5px; }
+.lg-calc-field label { font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--gold); }
+.lg-calc-field-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.lg-calc-item-pay { font-size: 11px; color: var(--muted); margin: 2px 0 0; }
+.lg-mini-toggle {
+  font-family: var(--font-body); font-size: 10.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--gold); background: var(--gold-soft); border: 1px solid var(--gold); border-radius: 10px; padding: 2px 9px;
+  cursor: pointer; white-space: nowrap; transition: background .15s ease, color .15s ease, opacity .15s ease;
+}
+.lg-mini-toggle.is-off { color: var(--muted); background: transparent; border-color: var(--line); opacity: .8; }
+.lg-calc-field input {
+  font-family: var(--font-body); font-size: 15px; color: var(--platinum); background: var(--panel-2); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 9px 11px; width: 100%;
+}
+.lg-calc-field input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+.lg-calc-term-presets { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+.lg-calc-rate-presets { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+.lg-calc-term-btn, .lg-calc-rate-btn {
+  font-family: var(--font-body); font-size: 11.5px; color: var(--muted); background: transparent;
+  border: 1px solid var(--line); padding: 4px 9px; border-radius: var(--radius); cursor: pointer;
+  transition: border-color .15s ease, color .15s ease, background .15s ease;
+}
+.lg-calc-term-btn:hover, .lg-calc-rate-btn:hover { border-color: var(--gold); color: var(--platinum); background: var(--gold-soft); }
+.lg-calc-term-btn.is-active, .lg-calc-rate-btn.is-active { border-color: var(--gold); color: #0a0b0d; background: var(--gold); font-weight: 600; }
+.lg-calc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.lg-calc-results { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 2px; }
+.lg-calc-result { border: 1px solid rgba(198,166,100,0.35); background: var(--gold-soft); border-radius: var(--radius); padding: 12px 14px; text-align: center; }
+.lg-calc-result .lbl { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; }
+.lg-calc-result .val { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--gold); }
+.lg-calc-foot { font-size: 11.5px; color: var(--muted-2); line-height: 1.55; margin: 0; }
+
 @media (max-width: 720px) {
   .lg-page { padding: 30px 20px 30px; }
   .lg-grid-2, .lg-grid-3 { grid-template-columns: 1fr; }
@@ -237,6 +324,10 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   table.lg-table:not(.lg-table-wide):not(.lg-table-nobreak) th, table.lg-table:not(.lg-table-wide):not(.lg-table-nobreak) td { white-space: normal; word-break: break-word; padding: 7px 8px; font-size: 12.5px; }
   table.lg-table.lg-table-wide th, table.lg-table.lg-table-wide td,
   table.lg-table.lg-table-nobreak th, table.lg-table.lg-table-nobreak td { padding: 8px 10px; font-size: 12.5px; }
+  .lg-calc-row, .lg-calc-results { grid-template-columns: 1fr; }
+  .lg-calc-summary { gap: 5px; font-size: 11px; padding: 6px 9px; }
+  .lg-calc-summary-item b { font-size: 12.5px; }
+  .lg-add-btn { margin-left: 6px; padding: 2px 6px; font-size: 10px; }
 }
 </style>
 </head>
@@ -254,6 +345,14 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <button class="lg-btn" onclick="lgGoTo('contents')">Contents</button>
         <button class="lg-btn lg-icon" onclick="lgStep(-1)" id="lgPrevBtn" aria-label="Previous page">‹</button>
         <button class="lg-btn lg-icon" onclick="lgStep(1)" id="lgNextBtn" aria-label="Next page">›</button>
+        <button class="lg-btn lg-calc-btn" onclick="lgOpenCalc()" aria-label="Open payment calculator"><span class="lg-btn-label">Calculator</span><span class="lg-calc-badge" id="lgCalcBadge">0</span></button>
+        <div class="lg-calc-summary" id="lgCalcSummary" aria-live="polite">
+          <span class="lg-calc-summary-item"><b id="lgCalcSummaryTotal">$0</b><span>total</span></span>
+          <span class="lg-calc-summary-sep">·</span>
+          <span class="lg-calc-summary-item"><b id="lgCalcSummaryMonthly">$0</b><span>/mo</span></span>
+          <span class="lg-calc-summary-sep">·</span>
+          <span class="lg-calc-summary-item"><b id="lgCalcSummaryBiweekly">$0</b><span>/bi-wk</span></span>
+        </div>
         <button class="lg-theme-switch" id="lgThemeSwitch" onclick="lgToggleTheme()" role="switch" aria-checked="false" aria-label="Toggle bright and dark mode">
           <span class="lg-theme-switch-knob" id="lgThemeKnob">☾</span>
         </button>
@@ -270,6 +369,65 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <p class="lg-qr-modal-title">Scan to Share</p>
         <canvas id="lgQrCanvasLarge" width="220" height="220"></canvas>
         <p class="lg-qr-modal-sub">loc-protection-guide.vercel.app</p>
+      </div>
+    </div>
+
+    <div class="lg-calc-modal-backdrop" id="lgCalcBackdrop" onclick="if(event.target===this){lgCloseCalc();}">
+      <div class="lg-calc-modal" role="dialog" aria-modal="true" aria-label="Payment calculator">
+        <button class="lg-calc-modal-close" onclick="lgCloseCalc()" aria-label="Close">✕</button>
+        <p class="lg-calc-title">Payment Calculator</p>
+
+        <div class="lg-calc-cart" id="lgCalcCart">
+          <div class="lg-calc-cart-empty" id="lgCalcCartEmpty">No products added yet</div>
+        </div>
+        <div class="lg-calc-subtotal">
+          <span>Products Subtotal</span>
+          <b id="lgCalcSubtotal">$0.00</b>
+        </div>
+        <button type="button" class="lg-mini-toggle" id="lgCalcResetBtn" onclick="lgResetCalc()" aria-label="Reset all calculator values" style="align-self:flex-end;">Reset All</button>
+
+        <div class="lg-calc-row">
+          <div class="lg-calc-field" id="lgCalcBaseWrap">
+            <div class="lg-calc-field-head">
+              <label for="lgCalcBase">Vehicle Amount ($)</label>
+              <button type="button" class="lg-mini-toggle is-off" id="lgCalcBaseToggle" onclick="lgToggleBase()" aria-pressed="false">Hidden</button>
+            </div>
+            <input type="number" id="lgCalcBase" min="0" step="0.01" inputmode="decimal" placeholder="0.00" value="0" oninput="lgRecalc()" style="display:none;">
+            <p class="lg-calc-item-pay" id="lgCalcBasePay"></p>
+          </div>
+          <div class="lg-calc-field">
+            <div class="lg-calc-field-head">
+              <label for="lgCalcDown">Down Payment ($)</label>
+              <button type="button" class="lg-mini-toggle is-off" id="lgCalcDownToggle" onclick="lgToggleDown()" aria-pressed="false">Inactive</button>
+            </div>
+            <input type="number" id="lgCalcDown" min="0" step="0.01" inputmode="decimal" placeholder="0.00" value="0" oninput="lgRecalc()" disabled>
+          </div>
+        </div>
+
+        <div class="lg-calc-row">
+          <div class="lg-calc-field">
+            <label for="lgCalcRate">Interest Rate (% APR)</label>
+            <input type="number" id="lgCalcRate" min="0" step="0.5" inputmode="decimal" placeholder="0.00" value="6.9" oninput="lgRecalc(); lgSyncRatePreset();">
+            <div class="lg-calc-rate-presets" id="lgCalcRatePresets"></div>
+          </div>
+          <div class="lg-calc-field">
+            <label for="lgCalcTerm">Term (Months)</label>
+            <input type="number" id="lgCalcTerm" min="1" step="1" inputmode="numeric" placeholder="60" value="60" oninput="lgRecalc(); lgSyncTermPreset();">
+            <div class="lg-calc-term-presets" id="lgCalcTermPresets"></div>
+          </div>
+        </div>
+
+        <div class="lg-calc-results">
+          <div class="lg-calc-result">
+            <span class="lbl">Monthly</span>
+            <span class="val" id="lgCalcMonthly">$0</span>
+          </div>
+          <div class="lg-calc-result">
+            <span class="lbl">Bi-Weekly</span>
+            <span class="val" id="lgCalcBiweekly">$0</span>
+          </div>
+        </div>
+        <p class="lg-calc-foot">Amount financed: <span id="lgCalcFinanced">$0.00</span>. Estimate only — excludes taxes, levies and dealer fees. Tax is extra. Confirm exact payments with your finance manager.</p>
       </div>
     </div>
 
@@ -303,7 +461,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <p class="lg-lede">Select any section to jump straight to it.</p>
         <div class="lg-toc">
           <button class="lg-toc-item" onclick="lgGoTo('s01')"><span class="lg-toc-num">01</span><span class="lg-toc-body"><b>Lexus ECP Platinum Program</b><span>Manufacturer-backed Extra Care Protection with an Included Maintenance Benefits Program, roadside assistance and trip interruption benefits.</span></span></button>
-          <button class="lg-toc-item" onclick="lgGoTo('s02')"><span class="lg-toc-num">02</span><span class="lg-toc-body"><b>Lexus Certified Pre-Owned Programs</b><span>LCPO roadside/powertrain minimums, Comprehensive Upgrade plans and the Platinum Program with Included Maintenance.</span></span></button>
+          <button class="lg-toc-item" onclick="lgGoTo('s02')"><span class="lg-toc-num">02</span><span class="lg-toc-body"><b>Lexus Certified Pre-Owned Programs</b><span>LCPO roadside/powertrain minimums, Comprehensive Upgrade plans and the ECP LCPO w/incl. Maintenance.</span></span></button>
           <button class="lg-toc-item" onclick="lgGoTo('s03')"><span class="lg-toc-num">03</span><span class="lg-toc-body"><b>Lexus LCPO Protection Overview</b><span>A summary of standard and certified pre-owned coverage components across every system.</span></span></button>
           <button class="lg-toc-item" onclick="lgGoTo('s04')"><span class="lg-toc-num">04</span><span class="lg-toc-body"><b>Lubrico Extended Vehicle Warranties</b><span>Everest, Sierra, Superior Protection, Driver's Shield and Certified Powertrain Plus mechanical breakdown coverage.</span></span></button>
           <button class="lg-toc-item" onclick="lgGoTo('s05')"><span class="lg-toc-num">05</span><span class="lg-toc-body"><b>Paint &amp; Surface Protection</b><span>XPEL Ultimate Plus paint protection film and CeramX ceramic paint &amp; interior coatings.</span></span></button>
@@ -335,7 +493,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         </div>
 
         <div class="lg-section-block">
-          <h3 class="lg-h2" style="font-size:21px;">Pricing by Term / Code</h3>
+          <h3 class="lg-h2" style="font-size:21px;">ECP</h3>
           <div class="lg-table-wrap">
             <table class="lg-table lg-table-wide">
               <thead><tr>
@@ -354,8 +512,8 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
               <tbody>
                 <tr>
                   <td>Price (CAD)</td>
-                  <td>$2,145</td><td>$2,625</td><td>$2,525</td><td>$3,145</td><td>$3,635</td>
-                  <td>$3,915</td><td>$3,770</td><td>$4,395</td><td>$5,095</td><td>$5,895</td>
+                  <td data-calc-label="ECP - 48/100 NLF45">$2,145</td><td data-calc-label="ECP - 48/120 NLF46">$2,625</td><td data-calc-label="ECP - 60/100 NLF55">$2,525</td><td data-calc-label="ECP - 72/120 NLF66">$3,145</td><td data-calc-label="ECP - 72/160 NLF68">$3,635</td>
+                  <td data-calc-label="ECP - 72/180 NLF69">$3,915</td><td data-calc-label="ECP - 84/140 NLF77">$3,770</td><td data-calc-label="ECP - 96/120 NLF86">$4,395</td><td data-calc-label="ECP - 96/160 NLF88">$5,095</td><td data-calc-label="ECP - 96/200 NLF80">$5,895</td>
                 </tr>
               </tbody>
             </table>
@@ -366,7 +524,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
           <h3 class="lg-h2" style="font-size:21px;">Deferred Purchase Surcharges</h3>
           <div class="lg-table-wrap">
             <table class="lg-table">
-              <thead><tr><th>Term</th><th>All Plans</th></tr></thead>
+              <thead><tr><th>Term</th><th></th></tr></thead>
               <tbody>
                 <tr><td>Over 180 days, &lt;24 mo / 40,000 km</td><td>$300</td></tr>
                 <tr><td>Less than 36 mo / 60,000 km</td><td>$450</td></tr>
@@ -456,11 +614,11 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
               <colgroup><col style="width:33.33%"><col style="width:33.33%"><col style="width:33.34%"></colgroup>
               <thead><tr><th>Code</th><th>Term</th><th>Retail</th></tr></thead>
               <tbody>
-                <tr><td>ULC39</td><td>36 mo / 180,000 km</td><td>$3,600</td></tr>
-                <tr><td>ULC69</td><td>72 mo / 180,000 km</td><td>$2,950</td></tr>
-                <tr><td>ULC60</td><td>72 mo / 200,000 km</td><td>$3,100</td></tr>
-                <tr><td>ULC78</td><td>84 mo / 160,000 km</td><td>$2,950</td></tr>
-                <tr><td>ULC88</td><td>96 mo / 160,000 km</td><td>$3,150</td></tr>
+                <tr><td>ULC39</td><td>36 mo / 180,000 km</td><td data-calc-label="ECP LCPO - 36/180 ULC39">$3,600</td></tr>
+                <tr><td>ULC69</td><td>72 mo / 180,000 km</td><td data-calc-label="ECP LCPO - 72/180 ULC69">$2,950</td></tr>
+                <tr><td>ULC60</td><td>72 mo / 200,000 km</td><td data-calc-label="ECP LCPO - 72/200 ULC60">$3,100</td></tr>
+                <tr><td>ULC78</td><td>84 mo / 160,000 km</td><td data-calc-label="ECP LCPO - 84/160 ULC78">$2,950</td></tr>
+                <tr><td>ULC88</td><td>96 mo / 160,000 km</td><td data-calc-label="ECP LCPO - 96/160 ULC88">$3,150</td></tr>
               </tbody>
             </table>
           </div>
@@ -468,7 +626,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         </div>
 
         <div class="lg-section-block">
-          <h3 class="lg-h2" style="font-size:22.5px;">Platinum Program with Included Maintenance</h3>
+          <h3 class="lg-h2" style="font-size:22.5px;">ECP LCPO w/incl. Maintenance</h3>
           <p class="lg-lede" style="margin-bottom:14px;">Must be purchased from an authorized Lexus dealership at time of sale (not available to current owners); vehicle must be within 84 months / 140,000 km of the Warranty Registration Date.</p>
 
           <h4 style="font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:0 0 10px;">All Available Coverage Plans</h4>
@@ -477,17 +635,17 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
               <colgroup><col style="width:33.33%"><col style="width:33.33%"><col style="width:33.34%"></colgroup>
               <thead><tr><th>Code</th><th>Description</th><th>RETAIL</th></tr></thead>
               <tbody>
-                <tr><td>YLF01</td><td>LCPO ECP 12/20,000 in warranty</td><td>$3,000.00</td></tr>
-                <tr><td>YLF02</td><td>LCPO ECP 24/40,000 in warranty</td><td>$3,300.00</td></tr>
-                <tr><td>YLF03</td><td>LCPO ECP 36/60,000 in warranty</td><td>$4,300.00</td></tr>
-                <tr><td>YLF04</td><td>LCPO ECP 48/80,000 in warranty</td><td>$4,600.00</td></tr>
-                <tr><td>YLF05</td><td>LCPO ECP 60/100,000 in warranty</td><td>$5,100.00</td></tr>
-                <tr><td>YLF13</td><td>LCPO ECP 36/60,000 under 60/100</td><td>$4,700.00</td></tr>
-                <tr><td>YLF14</td><td>LCPO ECP 48/80,000 under 60/100</td><td>$5,100.00</td></tr>
-                <tr><td>YLF15</td><td>LCPO ECP 60/100,000 under 60/100</td><td>$5,700.00</td></tr>
-                <tr><td>YLF23</td><td>LCPO ECP 36/60,000 under 72/120</td><td>$5,300.00</td></tr>
-                <tr><td>YLF24</td><td>LCPO ECP 48/80,000 under 72/120</td><td>$5,800.00</td></tr>
-                <tr><td>YLF33</td><td>LCPO ECP 36/60,000 under 84/140</td><td>$6,200.00</td></tr>
+                <tr><td>YLF01</td><td>LCPO ECP 12/20,000 in warranty</td><td data-calc-label="ECP LCPO w/maintenance - 12/20 YLF01">$3,000.00</td></tr>
+                <tr><td>YLF02</td><td>LCPO ECP 24/40,000 in warranty</td><td data-calc-label="ECP LCPO w/maintenance - 24/40 YLF02">$3,300.00</td></tr>
+                <tr><td>YLF03</td><td>LCPO ECP 36/60,000 in warranty</td><td data-calc-label="ECP LCPO w/maintenance - 36/60 YLF03">$4,300.00</td></tr>
+                <tr><td>YLF04</td><td>LCPO ECP 48/80,000 in warranty</td><td data-calc-label="ECP LCPO w/maintenance - 48/80 YLF04">$4,600.00</td></tr>
+                <tr><td>YLF05</td><td>LCPO ECP 60/100,000 in warranty</td><td data-calc-label="ECP LCPO w/maintenance - 60/100 YLF05">$5,100.00</td></tr>
+                <tr><td>YLF13</td><td>LCPO ECP 36/60,000 under 60/100</td><td data-calc-label="ECP LCPO w/maintenance - 36/60 YLF13">$4,700.00</td></tr>
+                <tr><td>YLF14</td><td>LCPO ECP 48/80,000 under 60/100</td><td data-calc-label="ECP LCPO w/maintenance - 48/80 YLF14">$5,100.00</td></tr>
+                <tr><td>YLF15</td><td>LCPO ECP 60/100,000 under 60/100</td><td data-calc-label="ECP LCPO w/maintenance - 60/100 YLF15">$5,700.00</td></tr>
+                <tr><td>YLF23</td><td>LCPO ECP 36/60,000 under 72/120</td><td data-calc-label="ECP LCPO w/maintenance - 36/60 YLF23">$5,300.00</td></tr>
+                <tr><td>YLF24</td><td>LCPO ECP 48/80,000 under 72/120</td><td data-calc-label="ECP LCPO w/maintenance - 48/80 YLF24">$5,800.00</td></tr>
+                <tr><td>YLF33</td><td>LCPO ECP 36/60,000 under 84/140</td><td data-calc-label="ECP LCPO w/maintenance - 36/60 YLF33">$6,200.00</td></tr>
               </tbody>
             </table>
           </div>
@@ -553,14 +711,14 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 
         <div class="lg-grid lg-grid-2 lg-section-block">
           <div class="lg-card">
-            <h3>NTL Everest — Comprehensive, no time limit</h3>
+            <h3>NTL Everest</h3>
             <p>Available on current + 7 prior model years, up to 200,000 km. $20,000 per-claim limit with no deductible. Covers nearly every major vehicle system, including air bags, technology equipment, suspension and turbo/supercharger.</p>
             <div class="lg-table-wrap">
               <table class="lg-table lg-table-nobreak">
                 <thead><tr><th>Distance</th><th>120,000km</th><th>160,000km</th><th>200,000km</th></tr></thead>
                 <tbody>
-                  <tr><td>0–60,000 km</td><td>$5,999</td><td>$6,799</td><td>$7,699</td></tr>
-                  <tr><td>Top bracket</td><td>$6,199</td><td>$6,899</td><td>$7,999</td></tr>
+                  <tr><td>0–60,000 km</td><td data-calc-label="NTL Everest — 120,000km (Initial)">$5,999</td><td data-calc-label="NTL Everest — 160,000km (Initial)">$6,799</td><td data-calc-label="NTL Everest — 200,000km (Initial)">$7,699</td></tr>
+                  <tr><td>Top bracket</td><td data-calc-label="NTL Everest — 120,000km (Top)">$6,199</td><td data-calc-label="NTL Everest — 160,000km (Top)">$6,899</td><td data-calc-label="NTL Everest — 200,000km (Top)">$7,999</td></tr>
                 </tbody>
               </table>
             </div>
@@ -574,8 +732,8 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
               <table class="lg-table lg-table-nobreak">
                 <thead><tr><th>Distance</th><th>125,000km</th><th>150,000km</th><th>200,000km</th></tr></thead>
                 <tbody>
-                  <tr><td>0–60,000 km</td><td>$4,199</td><td>$4,319</td><td>$4,839</td></tr>
-                  <tr><td>Top bracket</td><td>$4,259</td><td>$4,459</td><td>$4,929</td></tr>
+                  <tr><td>0–60,000 km</td><td data-calc-label="NTL Sierra — 125,000km (Initial)">$4,199</td><td data-calc-label="NTL Sierra — 150,000km (Initial)">$4,319</td><td data-calc-label="NTL Sierra — 200,000km (Initial)">$4,839</td></tr>
+                  <tr><td>Top bracket</td><td data-calc-label="NTL Sierra — 125,000km (Top)">$4,259</td><td data-calc-label="NTL Sierra — 150,000km (Top)">$4,459</td><td data-calc-label="NTL Sierra — 200,000km (Top)">$4,929</td></tr>
                 </tbody>
               </table>
             </div>
@@ -588,7 +746,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
             <div class="lg-table-wrap">
               <table class="lg-table lg-table-nobreak">
                 <thead><tr><th>0–60,000 km</th><th>12 mo</th><th>24 mo</th><th>36 mo</th><th>48 mo</th></tr></thead>
-                <tbody><tr><td>Price</td><td>$3,849</td><td>$4,099</td><td>$4,279</td><td>$4,449</td></tr></tbody>
+                <tbody><tr><td>Price</td><td data-calc-label="Superior Protection — 12 mo">$3,849</td><td data-calc-label="Superior Protection — 24 mo">$4,099</td><td data-calc-label="Superior Protection — 36 mo">$4,279</td><td data-calc-label="Superior Protection — 48 mo">$4,449</td></tr></tbody>
               </table>
             </div>
           </div>
@@ -599,7 +757,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
             <div class="lg-table-wrap">
               <table class="lg-table lg-table-nobreak">
                 <thead><tr><th>Term</th><th>3 mo</th><th>12 mo</th><th>24 mo</th><th>48 mo</th></tr></thead>
-                <tbody><tr><td>Price</td><td>$1,239</td><td>$1,569</td><td>$2,329</td><td>$2,729</td></tr></tbody>
+                <tbody><tr><td>Price</td><td data-calc-label="Driver's Shield — 3 mo">$1,239</td><td data-calc-label="Driver's Shield — 12 mo">$1,569</td><td data-calc-label="Driver's Shield — 24 mo">$2,329</td><td data-calc-label="Driver's Shield — 48 mo">$2,729</td></tr></tbody>
               </table>
             </div>
           </div>
@@ -616,14 +774,14 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <p class="lg-lede">Certified Powertrain Plus pairs an initial short-term Comprehensive coverage period with long-term Powertrain protection — functioning just like a manufacturer's warranty. Available on any vehicle with up to 200,000 km.</p>
 
         <div class="lg-section-block">
-          <h3 class="lg-h2" style="font-size:21px;">How It Works</h3>
+          <h3 class="lg-h2" style="font-size:21px;">CPP</h3>
           <div class="lg-table-wrap">
             <table class="lg-table lg-table-nobreak">
-              <thead><tr><th>Total Term</th><th>Initial Comprehensive</th><th>Per-Claim Limit</th><th>Price</th></tr></thead>
+              <thead><tr><th>Total Term</th><th>Initial Comprehensive</th><th>Per-Claim Limit</th><th></th></tr></thead>
               <tbody>
-                <tr><td>24 mo / Unlimited km*</td><td>3 mo / Unlimited km*</td><td>$3,000</td><td>$2,949</td></tr>
-                <tr><td>36 mo / 60,000 km</td><td>8 mo / 12,000 km</td><td>$4,000</td><td>$3,099</td></tr>
-                <tr><td>48 mo / 80,000 km — Best Value</td><td>12 mo / 24,000 km</td><td>$5,000</td><td>$3,379</td></tr>
+                <tr><td>24 mo / Unlimited km*</td><td>3 mo / Unlimited km*</td><td class="lg-no-add">$3,000</td><td data-calc-label="Lubrico CPP - 24/Unl">$2,949</td></tr>
+                <tr><td>36 mo / 60,000 km</td><td>8 mo / 12,000 km</td><td class="lg-no-add">$4,000</td><td data-calc-label="Lubrico CPP - 36/60">$3,099</td></tr>
+                <tr><td>48 mo / 80,000 km</td><td>12 mo / 24,000 km</td><td class="lg-no-add">$5,000</td><td data-calc-label="Lubrico CPP - 48/80">$3,379</td></tr>
               </tbody>
             </table>
           </div>
@@ -656,11 +814,11 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <p class="lg-lede">XPEL Ultimate Plus paint protection film and CeramX ceramic paint &amp; interior coatings.</p>
 
         <div class="lg-section-block">
-          <h3 class="lg-h2" style="font-size:22.5px;">XPEL Ultimate Plus™ Paint Protection Film</h3>
+          <h3 class="lg-h2" style="font-size:22.5px;">XPEL</h3>
           <p style="font-size:15px;color:var(--muted);max-width:620px;margin-bottom:14px;">A high-performance, self-healing, clear film that protects against rock chips, scuffs and light scratches — backed by a 10-year warranty.</p>
           <div class="lg-table-wrap">
             <table class="lg-table">
-              <thead><tr><th>Package</th><th>Price</th><th>Coverage</th></tr></thead>
+              <thead><tr><th>Package</th><th></th><th>Coverage</th></tr></thead>
               <tbody>
                 <tr><td>Standard</td><td>$1,188</td><td>24" hood/fenders, A-pillars, roofline, mirror backs, door cups</td></tr>
                 <tr><td>Premium</td><td>$1,899</td><td>Standard + painted front bumper</td></tr>
@@ -674,7 +832,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <div class="lg-grid lg-grid-2">
           <div class="lg-card">
             <h3>CeramX Paint Protection</h3>
-            <div class="lg-price-tag"><span class="amt">$1,788</span><span class="lbl">Full Application</span></div>
+            <div class="lg-price-tag" data-calc-label="CeramX Paint Protection"><span class="amt">$1,788</span></div>
             <p style="margin-top:10px;">A revolutionary ceramic paint coating (Silicon Carbide, 9H hardness on the Mohs scale) providing lifetime protection with a single application. Independently tested and certified by Exova.</p>
             <ul class="lg-list">
               <li>UV resistant</li>
@@ -686,7 +844,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
           </div>
           <div class="lg-card">
             <h3>CeramX Interior Protection</h3>
-            <div class="lg-price-tag"><span class="amt">$699</span><span class="lbl">Full Application</span></div>
+            <div class="lg-price-tag" data-calc-label="CeramX Interior Protection"><span class="amt">$699</span></div>
             <p style="margin-top:10px;">Penetrates deep into fabric, leather and vinyl to seal and strengthen fibers — without altering colour, texture or adding odour.</p>
             <ul class="lg-list">
               <li>Seals &amp; strengthens fibers</li>
@@ -744,7 +902,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
               <colgroup><col style="width:32%"><col style="width:34%"><col style="width:34%"></colgroup>
               <thead><tr><th></th><th>Wear Pass</th><th>Wear Pass Plus</th></tr></thead>
               <tbody>
-                <tr><td>Maximum charges waived</td><td>$7,500</td><td>$10,000</td></tr>
+                <tr><td>Maximum charges waived</td><td class="lg-no-add">$7,500</td><td class="lg-no-add">$10,000</td></tr>
                 <tr><td>Excess kilometres travelled</td><td>1,000 km</td><td>2,500 km</td></tr>
                 <tr><td>Body panel dents/dings/scratches/chips</td><td>✓</td><td>✓</td></tr>
                 <tr><td>Interior cuts, tears, stains, burn holes</td><td>✓</td><td>✓</td></tr>
@@ -801,12 +959,12 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
           <p style="font-size:15px;color:var(--muted);max-width:620px;margin-bottom:14px;">Protects against unexpected tire and rim repair costs from potholes, curbs, nails and glass. A typical replacement (tire, rim, labour, valve, levy, towing &amp; taxes) totals $1,145 — this plan covers it.</p>
           <div class="lg-table-wrap">
             <table class="lg-table">
-              <thead><tr><th>Term</th><th>Price</th><th>+ Cosmetic Rim</th></tr></thead>
+              <thead><tr><th>Term</th><th></th><th>+ Cosmetic Rim</th></tr></thead>
               <tbody>
-                <tr><td>12 mo</td><td>$399</td><td>$599</td></tr>
-                <tr><td>36 mo</td><td>$629</td><td>$829</td></tr>
-                <tr><td>60 mo</td><td>$975</td><td>$1,199</td></tr>
-                <tr><td>84 mo</td><td>$1,199</td><td>$1,409</td></tr>
+                <tr><td>12 mo</td><td data-calc-label="Lexus Tire & Rim - 12 mo">$399</td><td data-calc-label="Lexus Tire & Rim - 12 mo + Cosmetic Rim">$599</td></tr>
+                <tr><td>36 mo</td><td data-calc-label="Lexus Tire & Rim - 36 mo">$629</td><td data-calc-label="Lexus Tire & Rim - 36 mo + Cosmetic Rim">$829</td></tr>
+                <tr><td>60 mo</td><td data-calc-label="Lexus Tire & Rim - 60 mo">$975</td><td data-calc-label="Lexus Tire & Rim - 60 mo + Cosmetic Rim">$1,199</td></tr>
+                <tr><td>84 mo</td><td data-calc-label="Lexus Tire & Rim - 84 mo">$1,199</td><td data-calc-label="Lexus Tire & Rim - 84 mo + Cosmetic Rim">$1,409</td></tr>
               </tbody>
             </table>
           </div>
@@ -822,19 +980,19 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         </div>
 
         <div class="lg-section-block">
-          <h3 class="lg-h2" style="font-size:22.5px;">Road Hazard Glass (Auto Shield Canada)</h3>
+          <h3 class="lg-h2" style="font-size:22.5px;">Road Hazard Glass</h3>
           <p style="font-size:15px;color:var(--muted);max-width:620px;margin-bottom:14px;">Exclusive coverage for all exterior glass, protecting against chips and cracks while preserving clarity and hydrophobic properties with P2 Graphene Pure Glass treatment. Ask your Dealer Representative about more comprehensive glass coverage options.</p>
           <div class="lg-table-wrap">
             <table class="lg-table">
               <thead><tr><th>Term</th><th>Price</th></tr></thead>
               <tbody>
-                <tr><td>Glass 24</td><td>$1,899.00</td></tr>
-                <tr><td>Glass 36</td><td>$1,999.00</td></tr>
-                <tr><td>Glass 39</td><td>$2,049.00</td></tr>
-                <tr><td>Glass 48</td><td>$2,099.00</td></tr>
-                <tr><td>Glass 60</td><td>$2,199.00</td></tr>
-                <tr><td>Glass 72</td><td>$2,299.00</td></tr>
-                <tr><td>Glass 84</td><td>$2,399.00</td></tr>
+                <tr><td>Glass 24</td><td data-calc-label="Glass 24">$1,899.00</td></tr>
+                <tr><td>Glass 36</td><td data-calc-label="Glass 36">$1,999.00</td></tr>
+                <tr><td>Glass 39</td><td data-calc-label="Glass 39">$2,049.00</td></tr>
+                <tr><td>Glass 48</td><td data-calc-label="Glass 48">$2,099.00</td></tr>
+                <tr><td>Glass 60</td><td data-calc-label="Glass 60">$2,199.00</td></tr>
+                <tr><td>Glass 72</td><td data-calc-label="Glass 72">$2,299.00</td></tr>
+                <tr><td>Glass 84</td><td data-calc-label="Glass 84">$2,399.00</td></tr>
               </tbody>
             </table>
           </div>
@@ -1098,6 +1256,400 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   };
 
   render();
+})();
+</script>
+<script>
+(function(){
+  var cart = {};
+  var counter = 0;
+  var baseIncluded = false;
+  var downIncluded = false;
+
+  function fmtMoney(n){
+    if (!isFinite(n)) n = 0;
+    return '$' + n.toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function parsePrice(text){
+    var t = text.replace(/\s+/g, ' ').trim();
+    if (!/^\$[\d,]+(\.\d{1,2})?$/.test(t)) return null;
+    var num = parseFloat(t.replace(/[^0-9.]/g, ''));
+    return isNaN(num) ? null : num;
+  }
+
+  function headerText(th){
+    var clone = th.cloneNode(true);
+    clone.querySelectorAll('br').forEach(function(br){
+      br.parentNode.replaceChild(document.createTextNode(' '), br);
+    });
+    return clone.textContent.replace(/\s+/g, ' ').trim();
+  }
+
+  function paymentFor(principal, rate, term){
+    if (!principal || principal <= 0 || !term || term <= 0) return { monthly: 0, biweekly: 0 };
+    if (rate <= 0) {
+      return { monthly: principal / term, biweekly: principal / (term * 26 / 12) };
+    }
+    var rm = (rate / 100) / 12;
+    var monthly = principal * rm / (1 - Math.pow(1 + rm, -term));
+    var periodsBW = term * 26 / 12;
+    var rb = (rate / 100) / 26;
+    var biweekly = principal * rb / (1 - Math.pow(1 + rb, -periodsBW));
+    return { monthly: monthly, biweekly: biweekly };
+  }
+
+  function makeToggleBtn(price, label){
+    counter++;
+    var id = 'i' + counter;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'lg-add-btn';
+    btn.textContent = '+ Add';
+    btn.setAttribute('aria-label', 'Add ' + label + ' to calculator');
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      if (cart[id]) {
+        delete cart[id];
+        btn.textContent = '+ Add';
+        btn.classList.remove('is-added');
+      } else {
+        cart[id] = { price: price, label: label };
+        btn.textContent = '✓ Added';
+        btn.classList.add('is-added');
+      }
+      window.lgRecalc();
+    });
+    return btn;
+  }
+
+  function scanPrices(){
+    document.querySelectorAll('.lg-price-tag').forEach(function(tag){
+      if (tag.querySelector('.lg-add-btn')) return;
+      if (tag.classList.contains('lg-no-add')) return;
+      var amtEl = tag.querySelector('.amt');
+      var lblEl = tag.querySelector('.lbl');
+      if (!amtEl) return;
+      var price = parsePrice(amtEl.textContent);
+      if (price === null) return;
+      var label;
+      if (tag.dataset.calcLabel) {
+        label = tag.dataset.calcLabel;
+      } else {
+        label = lblEl ? lblEl.textContent.trim() : amtEl.textContent.trim();
+        var card = tag.closest('.lg-card');
+        var cardTitle = card ? card.querySelector('h3') : null;
+        if (cardTitle && cardTitle.textContent.trim() !== label) {
+          label = cardTitle.textContent.trim() + ' — ' + label;
+        }
+      }
+      tag.appendChild(makeToggleBtn(price, label));
+    });
+
+    document.querySelectorAll('table.lg-table').forEach(function(table){
+      var headers = [];
+      table.querySelectorAll('thead th').forEach(function(th){ headers.push(headerText(th)); });
+
+      var page = table.closest('.lg-page');
+      var pageTitleEl = page ? page.querySelector('h2.lg-h1') : null;
+      var pageTitle = pageTitleEl ? pageTitleEl.textContent.replace(/\s+/g, ' ').trim() : '';
+
+      var block = table.closest('.lg-section-block');
+      var subEl = block ? block.querySelector('h3, h4') : null;
+      var sectionTitle = subEl ? subEl.textContent.replace(/\s+/g, ' ').trim() : '';
+
+      table.querySelectorAll('tbody tr').forEach(function(row){
+        var cells = Array.prototype.slice.call(row.querySelectorAll('td'));
+        var originalTexts = cells.map(function(c){ return c.textContent.replace(/\s+/g, ' ').trim(); });
+
+        cells.forEach(function(cell, idx){
+          if (cell.classList.contains('lg-no-add')) return;
+          var text = originalTexts[idx];
+          var price = parsePrice(text);
+          if (price === null) return;
+
+          var label;
+          if (cell.dataset.calcLabel) {
+            label = cell.dataset.calcLabel;
+          } else {
+            var rowLabelRaw = originalTexts[0] || '';
+            var rowLabelUsable = !!rowLabelRaw && rowLabelRaw !== text && parsePrice(rowLabelRaw) === null;
+            var colHeaderRaw = headers[idx] || '';
+            var colHeaderUsable = !!colHeaderRaw && colHeaderRaw !== text && colHeaderRaw !== rowLabelRaw;
+
+            var parts = [];
+            if (rowLabelUsable) {
+              var ctx = sectionTitle || pageTitle;
+              if (ctx) parts.push(ctx);
+              parts.push(rowLabelRaw);
+              if (colHeaderUsable) parts.push(colHeaderRaw);
+            } else {
+              if (pageTitle) parts.push(pageTitle);
+              if (colHeaderUsable) parts.push(colHeaderRaw);
+            }
+            label = parts.length ? parts.join(' — ') : text;
+          }
+
+          cell.appendChild(makeToggleBtn(price, label));
+        });
+      });
+    });
+  }
+
+  function cartTotal(){
+    var total = 0;
+    Object.keys(cart).forEach(function(id){ total += cart[id].price; });
+    return total;
+  }
+
+  function num(id){
+    var el = document.getElementById(id);
+    if (!el) return 0;
+    var v = parseFloat(el.value);
+    return isNaN(v) ? 0 : v;
+  }
+
+  function renderCartList(rate, term){
+    var list = document.getElementById('lgCalcCart');
+    var empty = document.getElementById('lgCalcCartEmpty');
+    var badge = document.getElementById('lgCalcBadge');
+    if (!list) return;
+
+    var ids = Object.keys(cart);
+    list.innerHTML = '';
+    if (ids.length === 0) {
+      if (empty) { empty.style.display = ''; list.appendChild(empty); }
+    } else {
+      ids.forEach(function(id){
+        var item = cart[id];
+        var row = document.createElement('div');
+        row.className = 'lg-cart-item';
+
+        var main = document.createElement('div');
+        main.className = 'lg-cart-item-main';
+
+        var label = document.createElement('span');
+        label.className = 'lg-cart-item-label';
+        label.textContent = item.label;
+        main.appendChild(label);
+
+        var pay = paymentFor(item.price, rate, term);
+        if (pay.monthly > 0) {
+          var payLine = document.createElement('span');
+          payLine.className = 'lg-cart-item-pay';
+          payLine.textContent = '≈ ' + fmtMoney(pay.monthly) + '/mo · ' + fmtMoney(pay.biweekly) + '/bi-wk on its own';
+          main.appendChild(payLine);
+        }
+
+        var price = document.createElement('span');
+        price.className = 'lg-cart-item-price';
+        price.textContent = fmtMoney(item.price);
+
+        var remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'lg-cart-item-remove';
+        remove.setAttribute('aria-label', 'Remove ' + item.label);
+        remove.textContent = '✕';
+        remove.addEventListener('click', function(){
+          delete cart[id];
+          document.querySelectorAll('.lg-add-btn.is-added').forEach(function(b){
+            if (b.getAttribute('aria-label') === 'Add ' + item.label + ' to calculator') {
+              b.textContent = '+ Add';
+              b.classList.remove('is-added');
+            }
+          });
+          window.lgRecalc();
+        });
+
+        row.appendChild(main);
+        row.appendChild(price);
+        row.appendChild(remove);
+        list.appendChild(row);
+      });
+    }
+
+    var subtotalEl = document.getElementById('lgCalcSubtotal');
+    if (subtotalEl) subtotalEl.textContent = fmtMoney(cartTotal());
+    if (badge) {
+      badge.textContent = String(ids.length);
+      badge.classList.toggle('is-visible', ids.length > 0);
+    }
+  }
+
+  window.lgToggleBase = function(){
+    baseIncluded = !baseIncluded;
+    var wrap = document.getElementById('lgCalcBaseWrap');
+    var input = document.getElementById('lgCalcBase');
+    var pay = document.getElementById('lgCalcBasePay');
+    var btn = document.getElementById('lgCalcBaseToggle');
+    if (input) input.style.display = baseIncluded ? '' : 'none';
+    if (pay) pay.style.display = baseIncluded ? '' : 'none';
+    if (wrap) wrap.classList.toggle('is-hidden', !baseIncluded);
+    if (btn) {
+      btn.textContent = baseIncluded ? 'Included' : 'Hidden';
+      btn.setAttribute('aria-pressed', baseIncluded ? 'true' : 'false');
+      btn.classList.toggle('is-off', !baseIncluded);
+    }
+    if (baseIncluded && !downIncluded) { window.lgToggleDown(); }
+    if (!baseIncluded && downIncluded) { window.lgToggleDown(); }
+    window.lgRecalc();
+  };
+
+  window.lgToggleDown = function(){
+    downIncluded = !downIncluded;
+    var input = document.getElementById('lgCalcDown');
+    var btn = document.getElementById('lgCalcDownToggle');
+    if (input) input.disabled = !downIncluded;
+    if (btn) {
+      btn.textContent = downIncluded ? 'Active' : 'Inactive';
+      btn.setAttribute('aria-pressed', downIncluded ? 'true' : 'false');
+      btn.classList.toggle('is-off', !downIncluded);
+    }
+    window.lgRecalc();
+  };
+
+  window.lgRecalc = function(){
+    var rate = num('lgCalcRate');
+    var term = Math.max(1, Math.round(num('lgCalcTerm')) || 60);
+    var base = baseIncluded ? num('lgCalcBase') : 0;
+    var down = downIncluded ? num('lgCalcDown') : 0;
+
+    renderCartList(rate, term);
+
+    var basePayEl = document.getElementById('lgCalcBasePay');
+    if (basePayEl) {
+      if (baseIncluded && base > 0) {
+        var basePay = paymentFor(base, rate, term);
+        basePayEl.textContent = '≈ ' + fmtMoney(basePay.monthly) + '/mo · ' + fmtMoney(basePay.biweekly) + '/bi-wk on its own';
+      } else {
+        basePayEl.textContent = '';
+      }
+    }
+
+    var principal = base + cartTotal() - down;
+    if (principal < 0) principal = 0;
+    var totals = paymentFor(principal, rate, term);
+
+    var financedEl = document.getElementById('lgCalcFinanced');
+    var monthlyEl = document.getElementById('lgCalcMonthly');
+    var biweeklyEl = document.getElementById('lgCalcBiweekly');
+    if (financedEl) financedEl.textContent = fmtMoney(principal);
+    if (monthlyEl) monthlyEl.textContent = fmtMoney(totals.monthly);
+    if (biweeklyEl) biweeklyEl.textContent = fmtMoney(totals.biweekly);
+
+    var summary = document.getElementById('lgCalcSummary');
+    var hasItems = Object.keys(cart).length > 0;
+    if (summary) {
+      summary.classList.toggle('is-visible', hasItems);
+      if (hasItems) {
+        var sTotal = document.getElementById('lgCalcSummaryTotal');
+        var sMonthly = document.getElementById('lgCalcSummaryMonthly');
+        var sBiweekly = document.getElementById('lgCalcSummaryBiweekly');
+        if (sTotal) sTotal.textContent = fmtMoney(principal);
+        if (sMonthly) sMonthly.textContent = fmtMoney(totals.monthly);
+        if (sBiweekly) sBiweekly.textContent = fmtMoney(totals.biweekly);
+      }
+    }
+  };
+
+  window.lgResetCalc = function(){
+    Object.keys(cart).forEach(function(id){ delete cart[id]; });
+    document.querySelectorAll('.lg-add-btn.is-added').forEach(function(b){
+      b.textContent = '+ Add';
+      b.classList.remove('is-added');
+    });
+
+    var base = document.getElementById('lgCalcBase');
+    var down = document.getElementById('lgCalcDown');
+    var rate = document.getElementById('lgCalcRate');
+    var term = document.getElementById('lgCalcTerm');
+    if (base) base.value = '0';
+    if (down) down.value = '0';
+    if (rate) rate.value = '6.9';
+    if (term) term.value = '60';
+    window.lgSyncTermPreset();
+    window.lgSyncRatePreset();
+
+    if (baseIncluded) { window.lgToggleBase(); }
+    if (downIncluded) { window.lgToggleDown(); }
+    window.lgRecalc();
+  };
+
+  window.lgOpenCalc = function(){
+    var bd = document.getElementById('lgCalcBackdrop');
+    if (bd) bd.classList.add('is-open');
+  };
+  window.lgCloseCalc = function(){
+    var bd = document.getElementById('lgCalcBackdrop');
+    if (bd) bd.classList.remove('is-open');
+  };
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') window.lgCloseCalc();
+  });
+
+  var lgTermOptions = [24, 36, 39, 48, 60, 72, 84, 96];
+  var lgRateOptions = [2.9, 3.9, 4.9, 5.9, 6.9, 7.9, 8.9, 9.9];
+
+  window.lgSyncTermPreset = function(){
+    var termVal = Math.round(num('lgCalcTerm'));
+    document.querySelectorAll('.lg-calc-term-btn').forEach(function(b){
+      b.classList.toggle('is-active', Number(b.dataset.term) === termVal);
+    });
+  };
+
+  window.lgSyncRatePreset = function(){
+    var rateVal = num('lgCalcRate');
+    document.querySelectorAll('.lg-calc-rate-btn').forEach(function(b){
+      b.classList.toggle('is-active', Math.abs(Number(b.dataset.rate) - rateVal) < 0.001);
+    });
+  };
+
+  function buildTermPresets(){
+    var wrap = document.getElementById('lgCalcTermPresets');
+    if (!wrap) return;
+    lgTermOptions.forEach(function(months){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'lg-calc-term-btn';
+      b.textContent = months + ' mo';
+      b.dataset.term = String(months);
+      b.setAttribute('aria-label', 'Set term to ' + months + ' months');
+      b.addEventListener('click', function(){
+        var input = document.getElementById('lgCalcTerm');
+        if (input) input.value = String(months);
+        window.lgSyncTermPreset();
+        window.lgRecalc();
+      });
+      wrap.appendChild(b);
+    });
+    window.lgSyncTermPreset();
+  }
+
+  function buildRatePresets(){
+    var wrap = document.getElementById('lgCalcRatePresets');
+    if (!wrap) return;
+    lgRateOptions.forEach(function(rate){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'lg-calc-rate-btn';
+      b.textContent = rate + '%';
+      b.dataset.rate = String(rate);
+      b.setAttribute('aria-label', 'Set interest rate to ' + rate + ' percent');
+      b.addEventListener('click', function(){
+        var input = document.getElementById('lgCalcRate');
+        if (input) input.value = String(rate);
+        window.lgSyncRatePreset();
+        window.lgRecalc();
+      });
+      wrap.appendChild(b);
+    });
+    window.lgSyncRatePreset();
+  }
+
+  scanPrices();
+  buildTermPresets();
+  buildRatePresets();
+  lgRecalc();
 })();
 </script>
 </body>
