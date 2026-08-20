@@ -1860,6 +1860,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   };
 
   window.lgResetCalc = function(){
+    if (!window.confirm('Reset all calculator values? This will clear the cart and restore defaults.')) return;
     emptyCart(false);
     Object.keys(removed).forEach(function(id){ delete removed[id]; });
 
