@@ -414,6 +414,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         </div>
         <div class="lg-calc-action-row">
           <button type="button" class="lg-mini-toggle lg-calc-print-btn" id="lgCalcPrintBtn" onclick="lgPrintCalc()" aria-label="Print calculator summary">Print</button>
+          <button type="button" class="lg-mini-toggle" id="lgCalcClearBtn" onclick="lgClearCart()" aria-label="Remove all added products, keep other values">Clear Cart</button>
           <button type="button" class="lg-mini-toggle" id="lgCalcResetBtn" onclick="lgResetCalc()" aria-label="Reset all calculator values">Reset All</button>
         </div>
 
@@ -1749,6 +1750,15 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         if (sBiweekly) sBiweekly.textContent = fmtMoney(totals.biweekly);
       }
     }
+  };
+
+  window.lgClearCart = function(){
+    Object.keys(cart).forEach(function(id){ delete cart[id]; });
+    document.querySelectorAll('.lg-add-btn.is-added').forEach(function(b){
+      b.textContent = '+ Add';
+      b.classList.remove('is-added');
+    });
+    window.lgRecalc();
   };
 
   window.lgResetCalc = function(){
