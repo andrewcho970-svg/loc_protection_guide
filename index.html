@@ -1436,6 +1436,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   var tableGroupCounter = 0;
   var baseIncluded = false;
   var downIncluded = false;
+  var cartEmptyEl = document.getElementById('lgCalcCartEmpty');
 
   function fmtMoney(n){
     if (!isFinite(n)) n = 0;
@@ -1602,14 +1603,13 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 
   function renderCartList(rate, term){
     var list = document.getElementById('lgCalcCart');
-    var empty = document.getElementById('lgCalcCartEmpty');
     var badge = document.getElementById('lgCalcBadge');
     if (!list) return;
 
     var ids = Object.keys(cart);
     list.innerHTML = '';
     if (ids.length === 0) {
-      if (empty) { empty.style.display = ''; list.appendChild(empty); }
+      if (cartEmptyEl) { cartEmptyEl.style.display = ''; list.appendChild(cartEmptyEl); }
     } else {
       ids.forEach(function(id){
         var item = cart[id];
