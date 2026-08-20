@@ -231,6 +231,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 
 /* ---- Payment Calculator ---- */
 .lg-calc-btn { position: relative; }
+.lg-calc-icon { display: block; color: currentColor; }
 .lg-calc-summary {
   display: none; align-items: center; gap: 7px; font-size: 12px; color: var(--muted);
   white-space: nowrap; padding: 7px 12px; border: 1px solid var(--line); border-radius: var(--radius);
@@ -372,7 +373,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         <button class="lg-btn lg-btn-glow" onclick="lgGoTo('contents')">Contents</button>
         <button class="lg-btn lg-icon" onclick="lgStep(-1)" id="lgPrevBtn" aria-label="Previous page">‹</button>
         <button class="lg-btn lg-icon" onclick="lgStep(1)" id="lgNextBtn" aria-label="Next page">›</button>
-        <button class="lg-btn lg-calc-btn" onclick="lgOpenCalc()" aria-label="Open payment calculator"><span class="lg-btn-label">Calculator</span><span class="lg-calc-badge" id="lgCalcBadge">0</span></button>
+        <button class="lg-btn lg-icon lg-calc-btn" onclick="lgOpenCalc()" aria-label="Open payment calculator" title="Payment Calculator"><svg class="lg-calc-icon" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false"><rect x="4.5" y="2.5" width="15" height="19" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="7" y="5.2" width="10" height="4" rx="0.8" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="13.4" r="0.95" fill="currentColor"/><circle cx="12" cy="13.4" r="0.95" fill="currentColor"/><circle cx="16" cy="13.4" r="0.95" fill="currentColor"/><circle cx="8" cy="17.2" r="0.95" fill="currentColor"/><circle cx="12" cy="17.2" r="0.95" fill="currentColor"/><circle cx="16" cy="17.2" r="0.95" fill="currentColor"/></svg><span class="lg-calc-badge" id="lgCalcBadge">0</span></button>
         <div class="lg-calc-summary" id="lgCalcSummary" aria-live="polite">
           <span class="lg-calc-summary-item"><b id="lgCalcSummaryTotal">$0</b><span>total</span></span>
           <span class="lg-calc-summary-sep">·</span>
