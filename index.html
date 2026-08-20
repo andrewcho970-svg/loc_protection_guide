@@ -296,6 +296,28 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 }
 .lg-mini-toggle.is-off { color: var(--muted); background: transparent; border-color: var(--line); opacity: .8; }
 .lg-mini-toggle:disabled { cursor: not-allowed; opacity: .45; pointer-events: none; }
+.lg-calc-action-row { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.lg-calc-print-btn { color: var(--platinum); background: transparent; border-color: var(--line); }
+.lg-calc-print-btn:hover { color: var(--gold); border-color: var(--gold); }
+
+#lgPrintArea { display: none; }
+@media print {
+  html, body { background: #fff !important; }
+  body * { visibility: hidden; }
+  #lgPrintArea, #lgPrintArea * { visibility: visible; }
+  #lgPrintArea {
+    display: block; position: absolute; top: 0; left: 0; width: 100%;
+    padding: 24px; font-family: Arial, Helvetica, sans-serif; color: #111; background: #fff;
+  }
+  #lgPrintArea h2 { font-size: 20px; margin: 0 0 4px; }
+  #lgPrintArea .lg-print-sub { font-size: 12px; color: #555; margin: 0 0 18px; }
+  #lgPrintArea table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+  #lgPrintArea th, #lgPrintArea td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #ccc; font-size: 13px; }
+  #lgPrintArea .lg-print-results { display: flex; gap: 24px; margin: 14px 0; }
+  #lgPrintArea .lg-print-result b { display: block; font-size: 20px; }
+  #lgPrintArea .lg-print-result span { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #555; }
+  #lgPrintArea .lg-print-foot { font-size: 11px; color: #555; margin-top: 18px; border-top: 1px solid #ccc; padding-top: 10px; }
+}
 .lg-calc-field input {
   font-family: var(--font-body); font-size: 15px; color: var(--platinum); background: var(--panel-2); border: 1px solid var(--line);
   border-radius: var(--radius); padding: 9px 11px; width: 100%;
@@ -390,7 +412,10 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
           <span>Products Subtotal</span>
           <b id="lgCalcSubtotal">$0.00</b>
         </div>
-        <button type="button" class="lg-mini-toggle" id="lgCalcResetBtn" onclick="lgResetCalc()" aria-label="Reset all calculator values" style="align-self:flex-end;">Reset All</button>
+        <div class="lg-calc-action-row">
+          <button type="button" class="lg-mini-toggle lg-calc-print-btn" id="lgCalcPrintBtn" onclick="lgPrintCalc()" aria-label="Print calculator summary">Print</button>
+          <button type="button" class="lg-mini-toggle" id="lgCalcResetBtn" onclick="lgResetCalc()" aria-label="Reset all calculator values">Reset All</button>
+        </div>
 
         <div class="lg-calc-row">
           <div class="lg-calc-field" id="lgCalcBaseWrap">
@@ -436,6 +461,8 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         <p class="lg-calc-foot">Amount financed: <span id="lgCalcFinanced">$0.00</span>. Estimate only — excludes taxes, levies and dealer fees. Tax is extra. Confirm exact payments with your finance manager.</p>
       </div>
     </div>
+
+    <div id="lgPrintArea"></div>
 
     <div class="lg-viewport" id="lgViewport">
       <div class="lg-hover-zone lg-zone-left" id="lgZoneLeft"><span class="lg-hover-arrow">‹</span></div>
@@ -723,8 +750,8 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
               <table class="lg-table lg-table-nobreak">
                 <thead><tr><th>Distance</th><th>120,000km</th><th>160,000km</th><th>200,000km</th></tr></thead>
                 <tbody>
-                  <tr><td>0–60,000 km</td><td data-calc-label="NTL Everest — 120,000km (Initial)">$5,999</td><td data-calc-label="NTL Everest — 160,000km (Initial)">$6,799</td><td data-calc-label="NTL Everest — 200,000km (Initial)">$7,699</td></tr>
-                  <tr><td>Top bracket</td><td data-calc-label="NTL Everest — 120,000km (Top)">$6,199</td><td data-calc-label="NTL Everest — 160,000km (Top)">$6,899</td><td data-calc-label="NTL Everest — 200,000km (Top)">$7,999</td></tr>
+                  <tr><td>0–60,000 km</td><td data-calc-label="NTL Everest — 120,000km">$5,999</td><td data-calc-label="NTL Everest — 160,000km">$6,799</td><td data-calc-label="NTL Everest — 200,000km">$7,699</td></tr>
+                  <tr><td>Top bracket</td><td data-calc-label="NTL Everest — 120,000km">$6,199</td><td data-calc-label="NTL Everest — 160,000km">$6,899</td><td data-calc-label="NTL Everest — 200,000km">$7,999</td></tr>
                 </tbody>
               </table>
             </div>
@@ -738,8 +765,8 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
               <table class="lg-table lg-table-nobreak">
                 <thead><tr><th>Distance</th><th>125,000km</th><th>150,000km</th><th>200,000km</th></tr></thead>
                 <tbody>
-                  <tr><td>0–60,000 km</td><td data-calc-label="NTL Sierra — 125,000km (Initial)">$4,199</td><td data-calc-label="NTL Sierra — 150,000km (Initial)">$4,319</td><td data-calc-label="NTL Sierra — 200,000km (Initial)">$4,839</td></tr>
-                  <tr><td>Top bracket</td><td data-calc-label="NTL Sierra — 125,000km (Top)">$4,259</td><td data-calc-label="NTL Sierra — 150,000km (Top)">$4,459</td><td data-calc-label="NTL Sierra — 200,000km (Top)">$4,929</td></tr>
+                  <tr><td>0–60,000 km</td><td data-calc-label="NTL Sierra — 125,000km">$4,199</td><td data-calc-label="NTL Sierra — 150,000km">$4,319</td><td data-calc-label="NTL Sierra — 200,000km">$4,839</td></tr>
+                  <tr><td>Top bracket</td><td data-calc-label="NTL Sierra — 125,000km">$4,259</td><td data-calc-label="NTL Sierra — 150,000km">$4,459</td><td data-calc-label="NTL Sierra — 200,000km">$4,929</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1744,6 +1771,46 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     if (baseIncluded) { window.lgToggleBase(); }
     if (downIncluded) { window.lgToggleDown(); }
     window.lgRecalc();
+  };
+
+  window.lgPrintCalc = function(){
+    var rate = num('lgCalcRate');
+    var term = Math.max(1, Math.round(num('lgCalcTerm')) || 60);
+    var base = baseIncluded ? num('lgCalcBase') : 0;
+    var down = downIncluded ? num('lgCalcDown') : 0;
+    var principal = base + cartTotal() - down;
+    if (principal < 0) principal = 0;
+    var totals = paymentFor(principal, rate, term);
+
+    var rows = '';
+    if (baseIncluded && base > 0) {
+      rows += '<tr><td>Vehicle Amount</td><td>' + fmtMoney(base) + '</td></tr>';
+    }
+    Object.keys(cart).forEach(function(id){
+      var item = cart[id];
+      rows += '<tr><td>' + item.label + '</td><td>' + fmtMoney(item.price) + '</td></tr>';
+    });
+    if (downIncluded && down > 0) {
+      rows += '<tr><td>Down Payment</td><td>-' + fmtMoney(down) + '</td></tr>';
+    }
+    if (!rows) {
+      rows = '<tr><td colspan="2">No items added</td></tr>';
+    }
+
+    var area = document.getElementById('lgPrintArea');
+    if (!area) return;
+    area.innerHTML =
+      '<h2>Lexus Care — Payment Calculator Summary</h2>' +
+      '<p class="lg-print-sub">' + new Date().toLocaleDateString() + ' · Rate: ' + rate + '% APR · Term: ' + term + ' months</p>' +
+      '<table><thead><tr><th>Item</th><th>Amount</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+      '<div class="lg-print-results">' +
+        '<div class="lg-print-result"><b>' + fmtMoney(principal) + '</b><span>Amount Financed</span></div>' +
+        '<div class="lg-print-result"><b>' + fmtMoney(totals.monthly) + '</b><span>Monthly</span></div>' +
+        '<div class="lg-print-result"><b>' + fmtMoney(totals.biweekly) + '</b><span>Bi-Weekly</span></div>' +
+      '</div>' +
+      '<p class="lg-print-foot">Estimate only — excludes taxes, levies and dealer fees. Tax is extra. Confirm exact payments with your finance manager.</p>';
+
+    window.print();
   };
 
   window.lgOpenCalc = function(){
