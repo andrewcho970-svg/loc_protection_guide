@@ -925,8 +925,8 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         <p class="lg-lede">An official product of Lexus Financial Services. Whether returning your vehicle at lease-end or simply keeping it looking new, Wear Pass waives excess wear and tear charges.</p>
 
         <div class="lg-section-block" style="display:flex; gap:10px; flex-wrap:wrap;">
-          <div class="lg-price-tag"><span class="amt">$1,050</span><span class="lbl">Wear Pass</span></div>
-          <div class="lg-price-tag"><span class="amt">$1,499</span><span class="lbl">Wear Pass Plus</span></div>
+          <div class="lg-price-tag" data-calc-group="wear-pass"><span class="amt">$1,050</span><span class="lbl">Wear Pass</span></div>
+          <div class="lg-price-tag" data-calc-group="wear-pass"><span class="amt">$1,499</span><span class="lbl">Wear Pass Plus</span></div>
         </div>
 
         <div class="lg-section-block">
@@ -1530,7 +1530,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
           label = cardTitle.textContent.trim() + ' — ' + label;
         }
       }
-      tag.appendChild(makeToggleBtn(price, label));
+      tag.appendChild(makeToggleBtn(price, label, tag.dataset.calcGroup));
     });
 
     document.querySelectorAll('table.lg-table').forEach(function(table){
