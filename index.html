@@ -87,9 +87,7 @@ html, body { height: 100%; margin: 0; padding: 0; background: #0a0b0d; }
 .lg-btn:disabled:hover { background: transparent; border-color: var(--line); color: var(--muted); transform: none; box-shadow: none; }
 .lg-btn-gold { color: #0a0b0d; background: var(--gold); border-color: var(--gold); font-weight: 600; }
 .lg-btn-gold:hover { background: #d6b878; border-color: #d6b878; color: #0a0b0d; transform: translateY(-2px) scale(1.05); box-shadow: 0 8px 18px rgba(198,166,100,0.4); }
-.lg-btn-glow { border-color: var(--gold); animation: lgHeroGlow 1.5s ease-in-out infinite; }
-.lg-root.lg-light .lg-btn-glow { animation: lgHeroGlowLight 1.5s ease-in-out infinite; }
-.lg-btn-glow:hover { animation-play-state: paused; }
+
 
 .lg-viewport { flex: 1 1 auto; min-height: 0; overflow-y: auto; position: relative; }
 
@@ -184,24 +182,10 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 .lg-front-foot { border-top: 1px solid var(--line); padding: 16px 30px; text-align: center; font-size: 12px; color: var(--muted-2); flex-shrink: 0; }
 
 .lg-toc { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
-.lg-toc-item { display: flex; align-items: baseline; gap: 18px; padding: 15px 14px; border-bottom: 1px solid var(--line); cursor: pointer; background: transparent; border-left: 2px solid transparent; border-radius: 0; width: 100%; text-align: left; transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease; position: relative;
-  animation: lgTocGlow 2.5s ease-in-out infinite;
-}
-.lg-toc-item:hover { background: var(--gold-soft); border-left-color: var(--gold); transform: translateX(6px) scale(1.01); box-shadow: 0 8px 22px rgba(198,166,100,0.22), inset 0 0 0 1px rgba(198,166,100,0.3); animation-play-state: paused; z-index: 1; }
+.lg-toc-item { display: flex; align-items: baseline; gap: 18px; padding: 15px 14px; border-bottom: 1px solid var(--line); cursor: pointer; background: transparent; border-left: 2px solid transparent; border-radius: 0; width: 100%; text-align: left; transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease; position: relative; }
+.lg-toc-item:hover { background: var(--gold-soft); border-left-color: var(--gold); box-shadow: 0 8px 22px rgba(198,166,100,0.22), inset 0 0 0 1px rgba(198,166,100,0.3); z-index: 1; }
 .lg-root.lg-light .lg-toc-item:hover { box-shadow: 0 8px 22px rgba(156,122,58,0.18), inset 0 0 0 1px rgba(156,122,58,0.25); }
 .lg-toc-item:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
-@keyframes lgTocGlow { 0%, 100% { box-shadow: none; background: transparent; border-left-color: transparent; } 50% { box-shadow: 0 8px 24px rgba(198,166,100,0.28), inset 0 0 0 1.5px rgba(198,166,100,0.35); background: var(--gold-soft); border-left-color: var(--gold); } }
-.lg-root.lg-light .lg-toc-item { animation-name: lgTocGlowLight; }
-@keyframes lgTocGlowLight { 0%, 100% { box-shadow: none; background: transparent; border-left-color: transparent; } 50% { box-shadow: 0 8px 24px rgba(156,122,58,0.22), inset 0 0 0 1.5px rgba(156,122,58,0.28); background: var(--gold-soft); border-left-color: var(--gold); } }
-.lg-toc-item:nth-child(1) { animation-delay: -1.667s; }
-.lg-toc-item:nth-child(2) { animation-delay: -0.833s; }
-.lg-toc-item:nth-child(3) { animation-delay: -2.222s; }
-.lg-toc-item:nth-child(4) { animation-delay: 0s; }
-.lg-toc-item:nth-child(5) { animation-delay: -1.389s; }
-.lg-toc-item:nth-child(6) { animation-delay: -0.278s; }
-.lg-toc-item:nth-child(7) { animation-delay: -1.944s; }
-.lg-toc-item:nth-child(8) { animation-delay: -1.111s; }
-.lg-toc-item:nth-child(9) { animation-delay: -0.556s; }
 .lg-toc-item:hover .lg-toc-num { color: var(--platinum); transform: scale(1.08); }
 .lg-toc-num { font-family: var(--font-display); font-size: 23.5px; color: var(--gold); width: 30px; flex-shrink: 0; transition: color .18s ease, transform .18s ease; display: inline-block; }
 .lg-toc-body b { display: block; font-size: 17px; color: var(--platinum); font-weight: 600; margin-bottom: 3px; }
@@ -266,8 +250,8 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
         <span>Lexus Care · Protection Guide</span>
       </div>
       <div class="lg-nav-actions">
-        <button class="lg-btn lg-btn-glow" onclick="lgGoTo('front')">Front Page</button>
-        <button class="lg-btn lg-btn-glow" onclick="lgGoTo('contents')">Contents</button>
+        <button class="lg-btn" onclick="lgGoTo('front')">Front Page</button>
+        <button class="lg-btn" onclick="lgGoTo('contents')">Contents</button>
         <button class="lg-btn lg-icon" onclick="lgStep(-1)" id="lgPrevBtn" aria-label="Previous page">‹</button>
         <button class="lg-btn lg-icon" onclick="lgStep(1)" id="lgNextBtn" aria-label="Next page">›</button>
         <button class="lg-theme-switch" id="lgThemeSwitch" onclick="lgToggleTheme()" role="switch" aria-checked="false" aria-label="Toggle bright and dark mode">
@@ -1114,70 +1098,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   };
 
   render();
-})();
-</script>
-<script>
-(function(){
-  var ctx = null;
-  function getCtx(){
-    if (!ctx) {
-      var AC = window.AudioContext || window.webkitAudioContext;
-      if (AC) ctx = new AC();
-    }
-    return ctx;
-  }
-  function playHoverTone(){
-    var ac = getCtx();
-    if (!ac) return;
-    if (ac.state === 'suspended') ac.resume();
-    var now = ac.currentTime;
-
-    var filter = ac.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(2200, now);
-    filter.Q.value = 0.7;
-    filter.connect(ac.destination);
-
-    var master = ac.createGain();
-    master.gain.setValueAtTime(0.012, now);
-    master.connect(filter);
-
-    var osc1 = ac.createOscillator();
-    var g1 = ac.createGain();
-    osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(392, now);
-    osc1.frequency.exponentialRampToValueAtTime(370, now + 0.5);
-    g1.gain.setValueAtTime(0, now);
-    g1.gain.linearRampToValueAtTime(1, now + 0.02);
-    g1.gain.exponentialRampToValueAtTime(0.0001, now + 0.55);
-    osc1.connect(g1);
-    g1.connect(master);
-
-    var osc2 = ac.createOscillator();
-    var g2 = ac.createGain();
-    osc2.type = 'sine';
-    osc2.frequency.setValueAtTime(784, now);
-    g2.gain.setValueAtTime(0, now);
-    g2.gain.linearRampToValueAtTime(0.28, now + 0.015);
-    g2.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
-    osc2.connect(g2);
-    g2.connect(master);
-
-    osc1.start(now);
-    osc1.stop(now + 0.55);
-    osc2.start(now);
-    osc2.stop(now + 0.3);
-  }
-  function attach(){
-    document.querySelectorAll('.lg-btn-glow').forEach(function(el){
-      el.addEventListener('mouseenter', playHoverTone);
-    });
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', attach);
-  } else {
-    attach();
-  }
 })();
 </script>
 </body>
