@@ -1263,6 +1263,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 (function(){
   var cart = {};
   var counter = 0;
+  var tableGroupCounter = 0;
   var baseIncluded = false;
   var downIncluded = false;
 
@@ -1299,7 +1300,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     return { monthly: monthly, biweekly: biweekly };
   }
 
-  function makeToggleBtn(price, label){
+  function makeToggleBtn(price, label, groupId){
     counter++;
     var id = 'i' + counter;
     var btn = document.createElement('button');
@@ -1307,6 +1308,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     btn.className = 'lg-add-btn';
     btn.textContent = '+ Add';
     btn.setAttribute('aria-label', 'Add ' + label + ' to calculator');
+    if (groupId) btn.dataset.groupId = groupId;
     btn.addEventListener('click', function(e){
       e.preventDefault();
       e.stopPropagation();
@@ -1315,7 +1317,19 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         btn.textContent = '+ Add';
         btn.classList.remove('is-added');
       } else {
-        cart[id] = { price: price, label: label };
+        if (groupId) {
+          Object.keys(cart).forEach(function(otherId){
+            if (cart[otherId].groupId === groupId) {
+              var otherBtn = cart[otherId].btn;
+              if (otherBtn) {
+                otherBtn.textContent = '+ Add';
+                otherBtn.classList.remove('is-added');
+              }
+              delete cart[otherId];
+            }
+          });
+        }
+        cart[id] = { price: price, label: label, groupId: groupId, btn: btn };
         btn.textContent = '✓ Added';
         btn.classList.add('is-added');
       }
@@ -1348,6 +1362,12 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     });
 
     document.querySelectorAll('table.lg-table').forEach(function(table){
+      if (!table.dataset.calcGroup) {
+        tableGroupCounter++;
+        table.dataset.calcGroup = 'tbl' + tableGroupCounter;
+      }
+      var groupId = table.dataset.calcGroup;
+
       var headers = [];
       table.querySelectorAll('thead th').forEach(function(th){ headers.push(headerText(th)); });
 
@@ -1391,7 +1411,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
             label = parts.length ? parts.join(' — ') : text;
           }
 
-          cell.appendChild(makeToggleBtn(price, label));
+          cell.appendChild(makeToggleBtn(price, label, groupId));
         });
       });
     });
@@ -1453,12 +1473,17 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         remove.textContent = '✕';
         remove.addEventListener('click', function(){
           delete cart[id];
-          document.querySelectorAll('.lg-add-btn.is-added').forEach(function(b){
-            if (b.getAttribute('aria-label') === 'Add ' + item.label + ' to calculator') {
-              b.textContent = '+ Add';
-              b.classList.remove('is-added');
-            }
-          });
+          if (item.btn) {
+            item.btn.textContent = '+ Add';
+            item.btn.classList.remove('is-added');
+          } else {
+            document.querySelectorAll('.lg-add-btn.is-added').forEach(function(b){
+              if (b.getAttribute('aria-label') === 'Add ' + item.label + ' to calculator') {
+                b.textContent = '+ Add';
+                b.classList.remove('is-added');
+              }
+            });
+          }
           window.lgRecalc();
         });
 
