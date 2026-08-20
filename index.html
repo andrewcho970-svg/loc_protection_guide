@@ -209,7 +209,7 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 .lg-theme-switch-knob { position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: var(--gold); color: #0a0b0d; display: flex; align-items: center; justify-content: center; font-size: 10px; line-height: 1; transition: transform .22s ease; }
 .lg-theme-switch.is-light .lg-theme-switch-knob { transform: translateX(22px); }
 
-.lg-qr-img { cursor: pointer; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+.lg-qr-img { width: 34px; height: 34px; border-radius: 3px; border: 1px solid var(--line); background: transparent; padding: 2px; display: block; cursor: pointer; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
 .lg-qr-img:hover { transform: scale(1.25); border-color: var(--gold); box-shadow: 0 8px 22px rgba(198,166,100,0.4), 0 0 0 1px var(--gold); }
 .lg-root.lg-light .lg-qr-img:hover { box-shadow: 0 8px 22px rgba(156,122,58,0.3), 0 0 0 1px var(--gold); }
 .lg-qr-img:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
@@ -228,7 +228,6 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 .lg-qr-modal-title { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--platinum); margin: 0; }
 .lg-qr-modal-sub { font-size: 12.5px; color: var(--muted); text-align: center; max-width: 220px; line-height: 1.5; margin: 0; }
 .lg-qr-modal canvas { border-radius: 3px; border: 1px solid var(--line); background: #fff; padding: 10px; }
-.lg-qr-img { width: 34px; height: 34px; border-radius: 3px; border: 1px solid var(--line); background: transparent; padding: 2px; display: block; }
 
 /* ---- Payment Calculator ---- */
 .lg-calc-btn { position: relative; }
@@ -1752,21 +1751,21 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     }
   };
 
-  window.lgClearCart = function(){
+  function emptyCart(){
     Object.keys(cart).forEach(function(id){ delete cart[id]; });
     document.querySelectorAll('.lg-add-btn.is-added').forEach(function(b){
       b.textContent = '+ Add';
       b.classList.remove('is-added');
     });
+  }
+
+  window.lgClearCart = function(){
+    emptyCart();
     window.lgRecalc();
   };
 
   window.lgResetCalc = function(){
-    Object.keys(cart).forEach(function(id){ delete cart[id]; });
-    document.querySelectorAll('.lg-add-btn.is-added').forEach(function(b){
-      b.textContent = '+ Add';
-      b.classList.remove('is-added');
-    });
+    emptyCart();
 
     var base = document.getElementById('lgCalcBase');
     var down = document.getElementById('lgCalcDown');
