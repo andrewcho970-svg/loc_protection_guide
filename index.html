@@ -87,6 +87,9 @@ html, body { height: 100%; margin: 0; padding: 0; background: #0a0b0d; }
 .lg-btn:disabled:hover { background: transparent; border-color: var(--line); color: var(--muted); transform: none; box-shadow: none; }
 .lg-btn-gold { color: #0a0b0d; background: var(--gold); border-color: var(--gold); font-weight: 600; }
 .lg-btn-gold:hover { background: #d6b878; border-color: #d6b878; color: #0a0b0d; transform: translateY(-2px) scale(1.05); box-shadow: 0 8px 18px rgba(198,166,100,0.4); }
+.lg-btn-glow { border-color: var(--gold); animation: lgHeroGlow 3s ease-in-out infinite; }
+.lg-root.lg-light .lg-btn-glow { animation: lgHeroGlowLight 3s ease-in-out infinite; }
+.lg-btn-glow:hover { animation-play-state: paused; }
 
 
 .lg-viewport { flex: 1 1 auto; min-height: 0; overflow-y: auto; position: relative; }
@@ -164,28 +167,30 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
   border: 1px solid var(--gold); padding: 12px 10px; font-size: 12.5px; letter-spacing: .04em; color: var(--muted);
   text-align: center; border-radius: var(--radius); background: transparent; font-family: var(--font-body); cursor: pointer;
   transition: border-color .18s ease, background .18s ease, transform .18s ease, box-shadow .18s ease;
-  animation: lgHeroGlow 2.5s ease-in-out infinite; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;
+  animation: lgHeroGlow 5s ease-in-out infinite; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;
 }
-@keyframes lgHeroGlow { 0%, 100% { box-shadow: 0 0 6px rgba(198,166,100,0.3), 0 0 0 1px rgba(198,166,100,0.3); } 50% { box-shadow: 0 0 20px rgba(198,166,100,0.7), 0 0 0 1.5px rgba(198,166,100,0.7); } }
-.lg-root.lg-light .lg-hero-cat { animation: lgHeroGlowLight 2.5s ease-in-out infinite; }
-@keyframes lgHeroGlowLight { 0%, 100% { box-shadow: 0 0 6px rgba(156,122,58,0.25), 0 0 0 1px rgba(156,122,58,0.25); } 50% { box-shadow: 0 0 20px rgba(156,122,58,0.6), 0 0 0 1.5px rgba(156,122,58,0.6); } }
+@keyframes lgHeroGlow { 0%, 100% { box-shadow: 0 0 6px rgba(198,166,100,0.25), 0 0 0 1px rgba(198,166,100,0.25); } 50% { box-shadow: 0 0 18px rgba(198,166,100,0.6), 0 0 0 1px rgba(198,166,100,0.6); } }
+.lg-root.lg-light .lg-hero-cat { animation: lgHeroGlowLight 5s ease-in-out infinite; }
+@keyframes lgHeroGlowLight { 0%, 100% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); } 50% { box-shadow: 0 0 18px rgba(156,122,58,0.5), 0 0 0 1px rgba(156,122,58,0.5); } }
 .lg-hero-cat:hover { border-color: var(--gold); background: var(--gold-soft); transform: translateY(-4px) scale(1.035); animation-play-state: paused; box-shadow: 0 10px 26px rgba(198,166,100,0.28), 0 0 0 1px var(--gold); }
 .lg-root.lg-light .lg-hero-cat:hover { box-shadow: 0 10px 26px rgba(156,122,58,0.22), 0 0 0 1px var(--gold); }
 .lg-hero-cat:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-.lg-hero-cat:nth-child(1) { animation-delay: -1.25s; }
-.lg-hero-cat:nth-child(2) { animation-delay: -2.083s; }
-.lg-hero-cat:nth-child(3) { animation-delay: 0s; }
-.lg-hero-cat:nth-child(4) { animation-delay: -1.667s; }
-.lg-hero-cat:nth-child(5) { animation-delay: -0.417s; }
-.lg-hero-cat:nth-child(6) { animation-delay: -0.833s; }
+.lg-hero-cat.lg-startup-flash { animation: lgHeroFlash 1.24s ease !important; border-color: var(--gold); }
+@keyframes lgHeroFlash { 0% { box-shadow: 0 0 6px rgba(198,166,100,0.25), 0 0 0 1px rgba(198,166,100,0.25); } 35% { box-shadow: 0 0 30px rgba(198,166,100,0.9), 0 0 0 1.5px rgba(198,166,100,0.95); } 100% { box-shadow: 0 0 6px rgba(198,166,100,0.25), 0 0 0 1px rgba(198,166,100,0.25); } }
+.lg-root.lg-light .lg-hero-cat.lg-startup-flash { animation-name: lgHeroFlashLight !important; }
+@keyframes lgHeroFlashLight { 0% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); } 35% { box-shadow: 0 0 26px rgba(156,122,58,0.75), 0 0 0 1.5px rgba(156,122,58,0.85); } 100% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); } }
 .lg-hero-cat b { display: block; color: var(--platinum); font-family: var(--font-display); font-size: 16.5px; font-weight: 600; margin-bottom: 2px;}
 .lg-front-foot { border-top: 1px solid var(--line); padding: 16px 30px; text-align: center; font-size: 12px; color: var(--muted-2); flex-shrink: 0; }
 
 .lg-toc { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
 .lg-toc-item { display: flex; align-items: baseline; gap: 18px; padding: 15px 14px; border-bottom: 1px solid var(--line); cursor: pointer; background: transparent; border-left: 2px solid transparent; border-radius: 0; width: 100%; text-align: left; transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease; position: relative; }
-.lg-toc-item:hover { background: var(--gold-soft); border-left-color: var(--gold); box-shadow: 0 8px 22px rgba(198,166,100,0.22), inset 0 0 0 1px rgba(198,166,100,0.3); z-index: 1; }
+.lg-toc-item:hover { background: var(--gold-soft); border-left-color: var(--gold); transform: translateX(6px) scale(1.01); box-shadow: 0 8px 22px rgba(198,166,100,0.22), inset 0 0 0 1px rgba(198,166,100,0.3); z-index: 1; }
 .lg-root.lg-light .lg-toc-item:hover { box-shadow: 0 8px 22px rgba(156,122,58,0.18), inset 0 0 0 1px rgba(156,122,58,0.25); }
 .lg-toc-item:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+.lg-toc-item.lg-startup-flash { animation: lgTocFlash 1.24s ease !important; border-left-color: var(--gold); }
+@keyframes lgTocFlash { 0% { box-shadow: none; background: transparent; } 35% { box-shadow: 0 8px 22px rgba(198,166,100,0.35), inset 0 0 0 1px rgba(198,166,100,0.45); background: var(--gold-soft); } 100% { box-shadow: none; background: transparent; } }
+.lg-root.lg-light .lg-toc-item.lg-startup-flash { animation-name: lgTocFlashLight !important; }
+@keyframes lgTocFlashLight { 0% { box-shadow: none; background: transparent; } 35% { box-shadow: 0 8px 22px rgba(156,122,58,0.28), inset 0 0 0 1px rgba(156,122,58,0.38); background: var(--gold-soft); } 100% { box-shadow: none; background: transparent; } }
 .lg-toc-item:hover .lg-toc-num { color: var(--platinum); transform: scale(1.08); }
 .lg-toc-num { font-family: var(--font-display); font-size: 23.5px; color: var(--gold); width: 30px; flex-shrink: 0; transition: color .18s ease, transform .18s ease; display: inline-block; }
 .lg-toc-body b { display: block; font-size: 17px; color: var(--platinum); font-weight: 600; margin-bottom: 3px; }
@@ -342,8 +347,8 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         <span>Lexus Care · Protection Guide</span>
       </div>
       <div class="lg-nav-actions">
-        <button class="lg-btn" onclick="lgGoTo('front')">Front Page</button>
-        <button class="lg-btn" onclick="lgGoTo('contents')">Contents</button>
+        <button class="lg-btn lg-btn-glow" onclick="lgGoTo('front')">Front Page</button>
+        <button class="lg-btn lg-btn-glow" onclick="lgGoTo('contents')">Contents</button>
         <button class="lg-btn lg-icon" onclick="lgStep(-1)" id="lgPrevBtn" aria-label="Previous page">‹</button>
         <button class="lg-btn lg-icon" onclick="lgStep(1)" id="lgNextBtn" aria-label="Next page">›</button>
         <button class="lg-btn lg-calc-btn" onclick="lgOpenCalc()" aria-label="Open payment calculator"><span class="lg-btn-label">Calculator</span><span class="lg-calc-badge" id="lgCalcBadge">0</span></button>
@@ -1131,6 +1136,12 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     var el = document.getElementById('page-' + key);
     if (el) el.classList.add('active');
     if (viewport) viewport.scrollTop = 0;
+    if (key === 'contents' && window.lgRunStartupGlow) {
+      window.lgRunStartupGlow('.lg-toc-item');
+    }
+    if (key === 'front' && window.lgRunStartupGlow) {
+      window.lgRunStartupGlow('.lg-hero-cat');
+    }
     var lbl = document.getElementById('lgPageLabel');
     var no = document.getElementById('lgPageNo');
     if (lbl) lbl.textContent = labels[key] || key;
@@ -1257,6 +1268,138 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   };
 
   render();
+})();
+</script>
+<script>
+(function(){
+  var ctx = null;
+  function getCtx(){
+    if (!ctx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) ctx = new AC();
+    }
+    return ctx;
+  }
+  function playHoverTone(){
+    var ac = getCtx();
+    if (!ac) return;
+    if (ac.state === 'suspended') ac.resume();
+    var now = ac.currentTime;
+
+    var filter = ac.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(2200, now);
+    filter.Q.value = 0.7;
+    filter.connect(ac.destination);
+
+    var master = ac.createGain();
+    master.gain.setValueAtTime(0.012, now);
+    master.connect(filter);
+
+    // fundamental: warm, low bell-like tone
+    var osc1 = ac.createOscillator();
+    var g1 = ac.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(392, now);
+    osc1.frequency.exponentialRampToValueAtTime(370, now + 0.5);
+    g1.gain.setValueAtTime(0, now);
+    g1.gain.linearRampToValueAtTime(1, now + 0.02);
+    g1.gain.exponentialRampToValueAtTime(0.0001, now + 0.55);
+    osc1.connect(g1);
+    g1.connect(master);
+
+    // quiet octave overtone for shimmer
+    var osc2 = ac.createOscillator();
+    var g2 = ac.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(784, now);
+    g2.gain.setValueAtTime(0, now);
+    g2.gain.linearRampToValueAtTime(0.28, now + 0.015);
+    g2.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+    osc2.connect(g2);
+    g2.connect(master);
+
+    osc1.start(now);
+    osc1.stop(now + 0.55);
+    osc2.start(now);
+    osc2.stop(now + 0.3);
+  }
+  function attach(){
+    document.querySelectorAll('.lg-hero-cat, .lg-btn-glow, .lg-toc-item').forEach(function(el){
+      el.addEventListener('mouseenter', playHoverTone);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attach);
+  } else {
+    attach();
+  }
+})();
+</script>
+<script>
+(function(){
+  function shuffle(arr){
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+    }
+    return arr;
+  }
+  function ordersEqual(a, b){
+    if (!b || a.length !== b.length) return false;
+    for (var i = 0; i < a.length; i++) { if (a[i] !== b[i]) return false; }
+    return true;
+  }
+  function flashOrder(order){
+    var stagger = 80; // ms between each box starting its flash
+    order.forEach(function(el, i){
+      setTimeout(function(){
+        el.classList.add('lg-startup-flash');
+        el.addEventListener('animationend', function handler(){
+          el.classList.remove('lg-startup-flash');
+          el.removeEventListener('animationend', handler);
+        });
+      }, i * stagger);
+    });
+  }
+  var lastOrders = {};
+  function runStartupGlow(selector){
+    var boxes = Array.prototype.slice.call(document.querySelectorAll(selector));
+    if (!boxes.length) return;
+    var order;
+    if (boxes.length <= 1) {
+      order = boxes.slice();
+    } else {
+      var attempts = 0;
+      do {
+        order = shuffle(boxes.slice());
+        attempts++;
+      } while (ordersEqual(order, lastOrders[selector]) && attempts < 10);
+    }
+    lastOrders[selector] = order;
+    flashOrder(order);
+  }
+  window.lgRunStartupGlow = runStartupGlow;
+
+  function initFrontGlow(){ runStartupGlow('.lg-hero-cat'); }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFrontGlow);
+  } else {
+    initFrontGlow();
+  }
+
+  // Repeat the glow effect every 5s on page 1 and page 2, only while that page is active,
+  // with a shuffled order guaranteed to differ from the previous run.
+  setInterval(function(){
+    var frontPage = document.getElementById('page-front');
+    var contentsPage = document.getElementById('page-contents');
+    if (frontPage && frontPage.classList.contains('active')) {
+      runStartupGlow('.lg-hero-cat');
+    }
+    if (contentsPage && contentsPage.classList.contains('active')) {
+      runStartupGlow('.lg-toc-item');
+    }
+  }, 5000);
 })();
 </script>
 <script>
