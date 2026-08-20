@@ -282,6 +282,24 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 .lg-cart-item-price { font-family: var(--font-display); font-size: 13.5px; color: var(--gold); white-space: nowrap; }
 .lg-cart-item-remove { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line); background: transparent; color: var(--muted); font-size: 12px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .lg-cart-item-remove:hover { color: var(--platinum); border-color: var(--gold); }
+
+.lg-calc-removed { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+.lg-calc-removed:empty { display: none; }
+.lg-removed-item {
+  display: flex; align-items: center; gap: 8px; padding: 7px 12px; border: 1px dashed var(--line);
+  border-radius: var(--radius); background: transparent;
+}
+.lg-removed-item-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.lg-removed-item-label { font-size: 12.5px; color: var(--muted); text-decoration: line-through; line-height: 1.4; }
+.lg-removed-item-note { font-size: 10.5px; color: var(--muted-2); text-transform: uppercase; letter-spacing: .05em; }
+.lg-removed-undo-btn {
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-body);
+  font-size: 10.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--gold);
+  background: transparent; border: 1px solid var(--gold); border-radius: 10px; padding: 3px 9px; cursor: pointer;
+  white-space: nowrap; transition: background .15s ease, color .15s ease, transform .15s ease, box-shadow .15s ease;
+}
+.lg-removed-undo-btn:hover { background: var(--gold-soft); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(198,166,100,0.28); }
+.lg-removed-undo-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .lg-calc-subtotal { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 12px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); }
 .lg-calc-subtotal b { font-family: var(--font-display); font-size: 15px; color: var(--platinum); font-weight: 600; }
 
@@ -408,6 +426,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         <div class="lg-calc-cart" id="lgCalcCart">
           <div class="lg-calc-cart-empty" id="lgCalcCartEmpty">No products added yet</div>
         </div>
+        <div class="lg-calc-removed" id="lgCalcRemoved" aria-live="polite"></div>
         <div class="lg-calc-subtotal">
           <span>Products Subtotal</span>
           <b id="lgCalcSubtotal">$0.00</b>
@@ -1433,11 +1452,46 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 <script>
 (function(){
   var cart = {};
+  var removed = {};
   var counter = 0;
   var tableGroupCounter = 0;
   var baseIncluded = false;
   var downIncluded = false;
   var cartEmptyEl = document.getElementById('lgCalcCartEmpty');
+  var REMOVED_LIMIT = 5;
+
+  function pushRemoved(id, item){
+    removed[id] = item;
+    var ids = Object.keys(removed);
+    while (ids.length > REMOVED_LIMIT) {
+      delete removed[ids[0]];
+      ids.shift();
+    }
+  }
+
+  function restoreItem(id){
+    var item = removed[id];
+    if (!item) return;
+    delete removed[id];
+    if (item.groupId) {
+      Object.keys(cart).forEach(function(otherId){
+        if (cart[otherId].groupId === item.groupId) {
+          var otherBtn = cart[otherId].btn;
+          if (otherBtn) {
+            otherBtn.textContent = '+ Add';
+            otherBtn.classList.remove('is-added');
+          }
+          delete cart[otherId];
+        }
+      });
+    }
+    cart[id] = item;
+    if (item.btn) {
+      item.btn.textContent = '✓ Added';
+      item.btn.classList.add('is-added');
+    }
+    window.lgRecalc();
+  }
 
   function fmtMoney(n){
     if (!isFinite(n)) n = 0;
@@ -1485,6 +1539,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
       e.preventDefault();
       e.stopPropagation();
       if (cart[id]) {
+        pushRemoved(id, cart[id]);
         delete cart[id];
         btn.textContent = '+ Add';
         btn.classList.remove('is-added');
@@ -1502,6 +1557,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
           });
         }
         cart[id] = { price: price, label: label, groupId: groupId, btn: btn };
+        delete removed[id];
         btn.textContent = '✓ Added';
         btn.classList.add('is-added');
       }
@@ -1643,6 +1699,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         remove.setAttribute('aria-label', 'Remove ' + item.label);
         remove.textContent = '✕';
         remove.addEventListener('click', function(){
+          pushRemoved(id, item);
           delete cart[id];
           if (item.btn) {
             item.btn.textContent = '+ Add';
@@ -1671,6 +1728,41 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
       badge.textContent = String(ids.length);
       badge.classList.toggle('is-visible', ids.length > 0);
     }
+  }
+
+  function renderRemovedList(){
+    var wrap = document.getElementById('lgCalcRemoved');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    Object.keys(removed).forEach(function(id){
+      var item = removed[id];
+      var row = document.createElement('div');
+      row.className = 'lg-removed-item';
+
+      var main = document.createElement('div');
+      main.className = 'lg-removed-item-main';
+
+      var label = document.createElement('span');
+      label.className = 'lg-removed-item-label';
+      label.textContent = item.label + ' — ' + fmtMoney(item.price);
+      main.appendChild(label);
+
+      var note = document.createElement('span');
+      note.className = 'lg-removed-item-note';
+      note.textContent = 'Removed';
+      main.appendChild(note);
+
+      var undo = document.createElement('button');
+      undo.type = 'button';
+      undo.className = 'lg-removed-undo-btn';
+      undo.setAttribute('aria-label', 'Undo remove ' + item.label);
+      undo.textContent = '↺ Undo';
+      undo.addEventListener('click', function(){ restoreItem(id); });
+
+      row.appendChild(main);
+      row.appendChild(undo);
+      wrap.appendChild(row);
+    });
   }
 
   window.lgToggleBase = function(){
@@ -1715,6 +1807,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     var down = downIncluded ? num('lgCalcDown') : 0;
 
     renderCartList(rate, term);
+    renderRemovedList();
 
     var basePayEl = document.getElementById('lgCalcBasePay');
     if (basePayEl) {
@@ -1752,8 +1845,11 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     }
   };
 
-  function emptyCart(){
-    Object.keys(cart).forEach(function(id){ delete cart[id]; });
+  function emptyCart(trackUndo){
+    Object.keys(cart).forEach(function(id){
+      if (trackUndo) pushRemoved(id, cart[id]);
+      delete cart[id];
+    });
     document.querySelectorAll('.lg-add-btn.is-added').forEach(function(b){
       b.textContent = '+ Add';
       b.classList.remove('is-added');
@@ -1761,12 +1857,18 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   }
 
   window.lgClearCart = function(){
-    emptyCart();
+    var hadItems = Object.keys(cart).length > 0;
+    if (hadItems) {
+      emptyCart(true);
+    } else {
+      Object.keys(removed).forEach(function(id){ delete removed[id]; });
+    }
     window.lgRecalc();
   };
 
   window.lgResetCalc = function(){
-    emptyCart();
+    emptyCart(false);
+    Object.keys(removed).forEach(function(id){ delete removed[id]; });
 
     var base = document.getElementById('lgCalcBase');
     var down = document.getElementById('lgCalcDown');
