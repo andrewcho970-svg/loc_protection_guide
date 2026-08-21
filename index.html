@@ -181,6 +181,8 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 @keyframes lgHeroFlashLight { 0% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); } 35% { box-shadow: 0 0 26px rgba(156,122,58,0.75), 0 0 0 1.5px rgba(156,122,58,0.85); } 100% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); } }
 .lg-hero-cat b { display: block; color: var(--platinum); font-family: var(--font-display); font-size: 16.5px; font-weight: 600; margin-bottom: 2px;}
 .lg-front-foot { border-top: 1px solid var(--line); padding: 16px 30px; text-align: center; font-size: 12px; color: var(--muted-2); flex-shrink: 0; }
+.lg-bonus-aside { transition: color .18s ease; }
+.lg-bonus-aside:hover { color: var(--gold) !important; }
 
 .lg-toc { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
 .lg-toc-item { display: flex; align-items: baseline; gap: 18px; padding: 15px 14px; border-bottom: 1px solid var(--line); cursor: pointer; background: transparent; border-left: 2px solid transparent; border-radius: 0; width: 100%; text-align: left; transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease; position: relative; }
@@ -375,6 +377,10 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   .lg-calc-summary-item b { font-size: 12.5px; }
   .lg-add-btn { margin-left: 6px; padding: 2px 6px; font-size: 10px; }
 }
+
+/* ---- Bonus page ---- */
+.lg-bonus-card { max-width: 560px; }
+.lg-bonus-link-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
 </style>
 </head>
 <body>
@@ -478,7 +484,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
             <span class="val" id="lgCalcBiweekly">$0</span>
           </div>
         </div>
-        <p class="lg-calc-foot">Amount financed: <span id="lgCalcFinanced">$0.00</span>. Estimate only — excludes taxes, levies and dealer fees. Tax is extra. Confirm exact payments with your finance manager.</p>
+        <p class="lg-calc-foot">Amount financed: <span id="lgCalcFinanced">$0.00</span>. Estimate only — excludes taxes, levies and dealer fees. Tax is extra. Confirm exact payments with your personal financial advisor.</p>
       </div>
     </div>
 
@@ -503,6 +509,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
               <button class="lg-hero-cat" onclick="lgGoTo('s09')" aria-label="Go to Theft Protection"><b>Theft Protection</b>Platinum Loyalty Plus total-loss coverage</button>
             </div>
             <button class="lg-btn lg-btn-gold" onclick="lgGoTo('contents')">View Contents →</button>
+            <button class="lg-bonus-aside" onclick="lgGoTo('s10')" style="background:none;border:none;cursor:pointer;margin-top:16px;font-family:var(--font-body);font-size:13px;color:var(--muted);letter-spacing:.02em;">✦ Also inside: Cash vs. Finance &amp; Invest</button>
           </div>
           <div class="lg-front-foot">Ask your sales representative for full terms &amp; conditions. Plans, terms and pricing subject to change without notice.</div>
         </div>
@@ -522,8 +529,9 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
           <button class="lg-toc-item" onclick="lgGoTo('s07')"><span class="lg-toc-num">07</span><span class="lg-toc-body"><b>Wear Pass &amp; Wear Pass Plus</b><span>Lexus Financial Services lease-end excess wear and tear protection.</span></span></button>
           <button class="lg-toc-item" onclick="lgGoTo('s08')"><span class="lg-toc-num">08</span><span class="lg-toc-body"><b>Tire &amp; Rim / Road Hazard Glass</b><span>Protection from potholes, curbs and road debris — tires, rims and exterior glass.</span></span></button>
           <button class="lg-toc-item" onclick="lgGoTo('s09')"><span class="lg-toc-num">09</span><span class="lg-toc-body"><b>Platinum Loyalty Plus — Theft Protection</b><span>Total-loss theft protection with dealer loyalty credit and deductible reimbursement.</span></span></button>
+          <button class="lg-toc-item" onclick="lgGoTo('s10')"><span class="lg-toc-num" style="font-size:19px;">✦</span><span class="lg-toc-body"><b>Cash vs. Finance &amp; Invest</b><span>Bonus tool — see which path puts you further ahead.</span></span></button>
         </div>
-        <p class="lg-foot-disc">Lexus ECP · Vehicle Service Contracts · Surface Protection · Wear Pass / Wear Pass Plus · Tire, Rim &amp; Glass · Theft Protection</p>
+        <p class="lg-foot-disc">Lexus ECP · Vehicle Service Contracts · Surface Protection · Wear Pass / Wear Pass Plus · Tire, Rim &amp; Glass · Theft Protection · Bonus: Cash vs. Finance</p>
       </div>
 
       <div class="lg-page" id="page-s01">
@@ -1107,11 +1115,47 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         <p class="lg-copy">© 2026 Andrew Cho. All rights reserved. This guide and its contents may not be reproduced, distributed, or transmitted in any form without prior written permission.</p>
       </div>
 
+      <div class="lg-page" id="page-s10">
+        <div class="lg-eyebrow">Bonus</div>
+        <h2 class="lg-h1">Cash vs. Finance — Which Comes Out Ahead?</h2>
+        <p class="lg-lede">Paying cash means no interest and no monthly payment. Financing frees up that same cash to be invested instead. Which path actually leaves you further ahead depends on your rate, your term and your expected return — this tool walks through it.</p>
+
+        <div class="lg-grid lg-grid-2 lg-section-block">
+          <div class="lg-card">
+            <h3>Pay Cash</h3>
+            <ul class="lg-list">
+              <li>No interest paid over the life of the loan</li>
+              <li>No monthly payment or debt obligation</li>
+              <li>Cash is no longer available to grow elsewhere</li>
+            </ul>
+          </div>
+          <div class="lg-card">
+            <h3>Finance &amp; Invest the Difference</h3>
+            <ul class="lg-list">
+              <li>Vehicle is financed at your negotiated rate</li>
+              <li>Cash you would have spent stays invested and compounds</li>
+              <li>Outcome depends on your investment return vs. your interest rate</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="lg-card lg-bonus-card">
+          <h3>Run Your Own Numbers</h3>
+          <p>Enter your purchase price, financing rate and term alongside an expected investment return to see, side by side, which path leaves you with more over time.</p>
+          <div class="lg-bonus-link-row">
+            <a class="lg-btn lg-btn-gold" href="https://investment-financing-calculator.vercel.app/" target="_blank" rel="noopener">Compare the Two Paths ↗</a>
+            <span style="font-size:13px;color:var(--muted);">investment-financing-calculator.vercel.app</span>
+          </div>
+        </div>
+
+        <p class="lg-foot-disc">This is a separate tool from the built-in payment estimate elsewhere in this guide, and is provided for illustration only — it does not account for taxes, fees, or guarantee any investment outcome. Investment returns are never guaranteed and can go down as well as up. Speak with your personal financial advisor before making a decision.</p>
+      </div>
+
     </div>
 
     <div class="lg-footbar">
       <span id="lgPageLabel">Front Page</span>
-      <span><span class="lg-pageno" id="lgPageNo">1</span> / 13</span>
+      <span><span class="lg-pageno" id="lgPageNo">1</span> / 14</span>
     </div>
 
   </div>
@@ -1159,7 +1203,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 </script>
 <script>
 (function(){
-  var order = ['front','contents','s01','s01b','s02','s03','s04','s04b','s05','s06','s07','s08','s09'];
+  var order = ['front','contents','s01','s01b','s02','s03','s04','s04b','s05','s06','s07','s08','s09','s10'];
   var labels = {
     front: 'Front Page', contents: 'Contents',
     s01: '01 · Lexus ECP Platinum Program',
@@ -1172,7 +1216,8 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     s06: '06 · The Smart Program',
     s07: '07 · Wear Pass & Wear Pass Plus',
     s08: '08 · Tire & Rim / Road Hazard Glass',
-    s09: '09 · Theft Protection'
+    s09: '09 · Theft Protection',
+    s10: 'Bonus · Cash vs. Finance & Invest'
   };
   var current = 0;
   var viewport = document.getElementById('lgViewport');
@@ -1915,7 +1960,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         '<div class="lg-print-result"><b>' + fmtMoney(totals.monthly) + '</b><span>Monthly</span></div>' +
         '<div class="lg-print-result"><b>' + fmtMoney(totals.biweekly) + '</b><span>Bi-Weekly</span></div>' +
       '</div>' +
-      '<p class="lg-print-foot">Estimate only — excludes taxes, levies and dealer fees. Tax is extra. Confirm exact payments with your finance manager.</p>';
+      '<p class="lg-print-foot">Estimate only — excludes taxes, levies and dealer fees. Tax is extra. Confirm exact payments with your personal financial advisor.</p>';
 
     window.print();
   };
