@@ -452,7 +452,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
             <input type="number" id="lgCalcManualAmount" class="lg-calc-manual-amount-input" step="0.01" inputmode="decimal" placeholder="Amount ($)" aria-label="Manual entry amount">
             <button type="button" class="lg-add-btn" id="lgCalcManualAddBtn" onclick="lgAddManualEntry()">+ Add</button>
           </div>
-          <p class="lg-calc-manual-hint">Add any other amount not listed above (e.g. a custom quote or accessory) — enter a negative number for a discount.</p>
+          <p class="lg-calc-manual-hint">Add any other amount not listed above (e.g. a custom quote or accessory) — enter a negative number for a credit.</p>
         </div>
 
         <div class="lg-calc-removed" id="lgCalcRemoved" aria-live="polite"></div>
@@ -1641,7 +1641,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
       return;
     }
 
-    var label = (labelInput && labelInput.value.trim()) ? labelInput.value.trim() : (amount < 0 ? 'Discount' : 'Manual Entry');
+    var label = (labelInput && labelInput.value.trim()) ? labelInput.value.trim() : (amount < 0 ? 'Credit' : 'Manual Entry');
 
     counter++;
     var id = 'm' + counter;
