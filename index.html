@@ -282,6 +282,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 .lg-cart-item-label { font-size: 13px; color: var(--platinum); line-height: 1.4; }
 .lg-cart-item-pay { font-size: 11px; color: var(--muted); }
 .lg-cart-item-price { font-family: var(--font-display); font-size: 13.5px; color: var(--gold); white-space: nowrap; }
+.lg-cart-item-price-neg { color: #7cb98f; }
 .lg-cart-item-remove { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line); background: transparent; color: var(--muted); font-size: 12px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .lg-cart-item-remove:hover { color: var(--platinum); border-color: var(--gold); }
 
@@ -448,10 +449,10 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         <div class="lg-calc-manual" id="lgCalcManual">
           <div class="lg-calc-manual-row">
             <input type="text" id="lgCalcManualLabel" class="lg-calc-manual-label-input" placeholder="Description (optional)" aria-label="Manual entry description">
-            <input type="number" id="lgCalcManualAmount" class="lg-calc-manual-amount-input" min="0" step="0.01" inputmode="decimal" placeholder="Amount ($)" aria-label="Manual entry amount">
+            <input type="number" id="lgCalcManualAmount" class="lg-calc-manual-amount-input" step="0.01" inputmode="decimal" placeholder="Amount ($)" aria-label="Manual entry amount">
             <button type="button" class="lg-add-btn" id="lgCalcManualAddBtn" onclick="lgAddManualEntry()">+ Add</button>
           </div>
-          <p class="lg-calc-manual-hint">Add any other amount not listed above (e.g. a custom quote or accessory).</p>
+          <p class="lg-calc-manual-hint">Add any other amount not listed above (e.g. a custom quote or accessory) — enter a negative number for a discount.</p>
         </div>
 
         <div class="lg-calc-removed" id="lgCalcRemoved" aria-live="polite"></div>
@@ -1555,7 +1556,8 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 
   function fmtMoney(n){
     if (!isFinite(n)) n = 0;
-    return '$' + n.toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    var sign = n < 0 ? '-' : '';
+    return sign + '$' + Math.abs(n).toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   function parsePrice(text){
@@ -1632,14 +1634,14 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     if (!amountInput) return;
 
     var amount = parseFloat(amountInput.value);
-    if (isNaN(amount) || amount <= 0) {
+    if (isNaN(amount) || amount === 0) {
       amountInput.focus();
       amountInput.style.borderColor = '#c0564a';
       setTimeout(function(){ amountInput.style.borderColor = ''; }, 900);
       return;
     }
 
-    var label = (labelInput && labelInput.value.trim()) ? labelInput.value.trim() : 'Manual Entry';
+    var label = (labelInput && labelInput.value.trim()) ? labelInput.value.trim() : (amount < 0 ? 'Discount' : 'Manual Entry');
 
     counter++;
     var id = 'm' + counter;
@@ -1778,6 +1780,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 
         var price = document.createElement('span');
         price.className = 'lg-cart-item-price';
+        if (item.price < 0) { price.classList.add('lg-cart-item-price-neg'); }
         price.textContent = fmtMoney(item.price);
 
         var remove = document.createElement('button');
