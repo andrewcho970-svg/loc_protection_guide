@@ -513,7 +513,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         </div>
         <div class="lg-calc-action-row">
           <button type="button" class="lg-mini-toggle lg-calc-print-btn" id="lgCalcPrintBtn" onclick="lgPrintCalc()" aria-label="Print calculator summary">Print</button>
-          <button type="button" class="lg-mini-toggle lg-calc-print-btn" id="lgCalcEmailBtn" onclick="lgEmailCalc()" aria-label="Email PDF of calculator summary">Email PDF</button>
+          <button type="button" class="lg-mini-toggle lg-calc-print-btn" id="lgCalcEmailBtn" onclick="lgEmailCalc()" aria-label="Share PDF of calculator summary">Share</button>
           <button type="button" class="lg-mini-toggle" id="lgCalcClearBtn" onclick="lgClearCart()" aria-label="Remove all added products, keep other values">Clear Cart</button>
           <button type="button" class="lg-mini-toggle" id="lgCalcResetBtn" onclick="lgResetCalc()" aria-label="Reset all calculator values">Reset All</button>
         </div>
@@ -2234,7 +2234,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 
   window.lgEmailCalc = function(){
     var btn = document.getElementById('lgCalcEmailBtn');
-    var original = 'Email PDF';
+    var original = 'Share';
     var busy = false;
 
     function showFeedback(label, ms){
@@ -2257,8 +2257,8 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
       navigator.share({
         files: [file],
-        title: 'Lexus Care Payment Summary',
-        text: 'Lexus Care Payment Summary\n\n' +
+        title: 'Lexus Care Protection Products Guide',
+        text: 'Lexus Care Protection Products Guide\n\n' +
           'Estimate only — excludes taxes, levies and dealer fees.\n\n' +
           'Full guide: https://loc-protection-guide.vercel.app'
       }).then(function(){
@@ -2281,7 +2281,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     document.body.removeChild(a);
     setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
 
-    var subject = encodeURIComponent('Lexus Care Payment Summary');
+    var subject = encodeURIComponent('Lexus Care Protection Products Guide');
     var body = encodeURIComponent(
       'Hi,\n\nPlease see the attached Lexus Care payment summary:\n\n' +
       'Amount Financed: ' + data.principal + '\n' +
