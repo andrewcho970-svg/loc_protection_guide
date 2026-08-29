@@ -1398,50 +1398,15 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     }
   });
 
-  var zoneLeft = document.getElementById('lgZoneLeft');
-  var zoneRight = document.getElementById('lgZoneRight');
-  if (viewport && zoneLeft && zoneRight) {
-    viewport.addEventListener('mousemove', function(e){
-      var rect = viewport.getBoundingClientRect();
-      var x = e.clientX - rect.left;
-      var half = rect.width / 2;
-      var overInteractive = !!e.target.closest('a, button, input, select, textarea, [onclick]');
-      if (overInteractive) {
-        zoneLeft.classList.remove('is-visible');
-        zoneRight.classList.remove('is-visible');
-        return;
-      }
-      if (x >= half) {
-        zoneRight.classList.toggle('is-visible', current < order.length - 1);
-        zoneLeft.classList.remove('is-visible');
-      } else {
-        zoneLeft.classList.toggle('is-visible', current > 0);
-        zoneRight.classList.remove('is-visible');
-      }
-    });
-    viewport.addEventListener('mouseleave', function(){
-      zoneLeft.classList.remove('is-visible');
-      zoneRight.classList.remove('is-visible');
-    });
-  }
+  // Left/right hover-zone highlighting (visual hint for click-to-navigate)
+  // disabled along with click-to-navigate itself, per user request.
 
   var lastTouchNavTime = 0;
   var TOUCH_CLICK_SUPPRESS_MS = 700;
 
-  if (viewport) {
-    viewport.addEventListener('click', function(e){
-      if (Date.now() - lastTouchNavTime < TOUCH_CLICK_SUPPRESS_MS) return;
-      if (e.target.closest('a, button, input, select, textarea, [onclick], .lg-table-wrap')) return;
-      var rect = viewport.getBoundingClientRect();
-      var clickX = e.clientX - rect.left;
-      var half = rect.width / 2;
-      if (clickX >= half) {
-        lgStep(1);
-      } else {
-        lgStep(-1);
-      }
-    });
-  }
+  // Click-to-navigate (clicking left/right half of the viewport to change pages)
+  // has been disabled per user request. Navigation is still available via the
+  // Prev/Next buttons, keyboard arrows, and touch swipe.
 
   if (viewport) {
     var touchStartX = 0;
