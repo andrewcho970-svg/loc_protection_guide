@@ -1369,6 +1369,18 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     var isFormField = tag === 'input' || tag === 'textarea' || tag === 'select' || (e.target && e.target.isContentEditable);
     if (isFormField) return;
 
+    // Don't drive slide navigation/scrolling behind an open overlay
+    // (QR modal, payment calculator, or contents drawer) — each of
+    // those has its own Escape handler and should own the keyboard
+    // while it's open.
+    var qrBd = document.getElementById('lgQrBackdrop');
+    var calcBd = document.getElementById('lgCalcBackdrop');
+    var drawer = document.getElementById('lgContentsDrawer');
+    var overlayOpen = (qrBd && qrBd.classList.contains('is-open')) ||
+      (calcBd && calcBd.classList.contains('is-open')) ||
+      (drawer && drawer.classList.contains('is-open'));
+    if (overlayOpen) return;
+
     if (e.key === 'ArrowRight' || e.key === 'PageDown') {
       e.preventDefault();
       lgStep(1);
@@ -1388,13 +1400,13 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
       if (document.activeElement && typeof document.activeElement.blur === 'function') {
         document.activeElement.blur();
       }
-      if (viewport) viewport.scrollBy({ top: 110, left: 0, behavior: 'smooth' });
+      if (viewport) viewport.scrollBy({ top: Math.round(viewport.clientHeight * 0.85), left: 0, behavior: 'smooth' });
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       if (document.activeElement && typeof document.activeElement.blur === 'function') {
         document.activeElement.blur();
       }
-      if (viewport) viewport.scrollBy({ top: -110, left: 0, behavior: 'smooth' });
+      if (viewport) viewport.scrollBy({ top: -Math.round(viewport.clientHeight * 0.85), left: 0, behavior: 'smooth' });
     }
   });
 
