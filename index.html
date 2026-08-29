@@ -210,6 +210,8 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 .lg-theme-switch:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .lg-theme-switch-knob { position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: var(--gold); color: #0a0b0d; display: flex; align-items: center; justify-content: center; font-size: 10px; line-height: 1; transition: transform .22s ease; }
 .lg-theme-switch.is-light .lg-theme-switch-knob { transform: translateX(22px); }
+.lg-theme-switch-auto-dot { position: absolute; top: -5px; right: -5px; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); border: 1.5px solid var(--panel); display: none; }
+.lg-theme-switch.is-auto .lg-theme-switch-auto-dot { display: block; }
 
 .lg-qr-img { width: 34px; height: 34px; border-radius: 3px; border: 1px solid var(--line); background: transparent; padding: 2px; display: block; cursor: pointer; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
 .lg-qr-img:hover { transform: scale(1.25); border-color: var(--gold); box-shadow: 0 8px 22px rgba(198,166,100,0.4), 0 0 0 1px var(--gold); }
@@ -398,7 +400,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 </head>
 <body>
 
-<div class="lg-root lg-light">
+<div class="lg-root">
   <div class="lg-shell">
 
     <div class="lg-nav">
@@ -418,8 +420,9 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
           <span class="lg-calc-summary-sep">·</span>
           <span class="lg-calc-summary-item"><b id="lgCalcSummaryBiweekly">$0</b><span>/bi-wk</span></span>
         </div>
-        <button class="lg-theme-switch is-light" id="lgThemeSwitch" onclick="lgToggleTheme()" role="switch" aria-checked="true" aria-label="Toggle bright and dark mode">
-          <span class="lg-theme-switch-knob" id="lgThemeKnob">☀</span>
+        <button class="lg-theme-switch" id="lgThemeSwitch" onclick="lgToggleTheme()" role="switch" aria-checked="false" aria-label="Theme: Auto">
+          <span class="lg-theme-switch-auto-dot" id="lgThemeAutoDot"></span>
+          <span class="lg-theme-switch-knob" id="lgThemeKnob">☾</span>
         </button>
         <a class="lg-contact-btn" href="mailto:lexusfinancial@lexusofcalgary.com?subject=%5BLexus%20Care%20Online%20Guide%20Inquiry%5D" title="Questions? Click to email us" aria-label="Questions? Click to email us">?</a>
         <div class="lg-qr-wrap">
@@ -1372,15 +1375,41 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     }, { passive: true });
   }
 
-  window.lgToggleTheme = function(){
+  window.lgThemeMode = 'auto'; // 'auto' | 'light' | 'dark'
+
+  function lgAutoIsLight(){
+    var h = new Date().getHours();
+    return h >= 5 && h < 17; // 5am–5pm = light, 5pm–5am = dark
+  }
+
+  function lgApplyTheme(){
+    var mode = window.lgThemeMode;
+    var isLight = mode === 'light' ? true : mode === 'dark' ? false : lgAutoIsLight();
+
     var root = document.querySelector('.lg-root');
-    var isLight = root.classList.toggle('lg-light');
     var sw = document.getElementById('lgThemeSwitch');
     var knob = document.getElementById('lgThemeKnob');
-    sw.classList.toggle('is-light', isLight);
-    sw.setAttribute('aria-checked', isLight ? 'true' : 'false');
-    knob.textContent = isLight ? '☀' : '☾';
+    if (root) root.classList.toggle('lg-light', isLight);
+    if (sw) {
+      sw.classList.toggle('is-light', isLight);
+      sw.classList.toggle('is-auto', mode === 'auto');
+      sw.setAttribute('aria-checked', isLight ? 'true' : 'false');
+      var modeLabel = mode === 'auto' ? 'Auto (' + (isLight ? 'Light' : 'Dark') + ')' : (mode === 'light' ? 'Light' : 'Dark');
+      sw.setAttribute('aria-label', 'Theme: ' + modeLabel + '. Click to change.');
+      sw.title = 'Theme: ' + modeLabel;
+    }
+    if (knob) knob.textContent = isLight ? '☀' : '☾';
+  }
+
+  window.lgToggleTheme = function(){
+    window.lgThemeMode = window.lgThemeMode === 'auto' ? 'light' : window.lgThemeMode === 'light' ? 'dark' : 'auto';
+    lgApplyTheme();
   };
+
+  lgApplyTheme();
+  setInterval(function(){
+    if (window.lgThemeMode === 'auto') lgApplyTheme();
+  }, 60000);
 
   render();
 })();
