@@ -2258,7 +2258,9 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
       navigator.share({
         files: [file],
         title: 'Lexus Care Payment Summary',
-        text: 'Lexus Care payment summary — Amount Financed ' + data.principal + ', Monthly ' + data.monthly + '.'
+        text: 'Lexus Care Payment Summary\n\n' +
+          'Estimate only — excludes taxes, levies and dealer fees.\n\n' +
+          'Full guide: https://loc-protection-guide.vercel.app'
       }).then(function(){
         showFeedback('Shared!');
       }).catch(function(err){
@@ -2281,10 +2283,13 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 
     var subject = encodeURIComponent('Lexus Care Payment Summary');
     var body = encodeURIComponent(
-      'Hi,\n\nPlease see the attached Lexus Care payment summary (Amount Financed ' + data.principal +
-      ', Monthly ' + data.monthly + ').\n\n' +
+      'Hi,\n\nPlease see the attached Lexus Care payment summary:\n\n' +
+      'Amount Financed: ' + data.principal + '\n' +
+      'Monthly Payment: ' + data.monthly + '\n' +
+      'Bi-Weekly Payment: ' + data.biweekly + '\n\n' +
       'The PDF just downloaded to your device as "' + fileName + '" — please attach it to this email before sending.\n\n' +
-      'Estimate only — excludes taxes, levies and dealer fees.'
+      'Estimate only — excludes taxes, levies and dealer fees.\n\n' +
+      'View the full Lexus Care Protection Guide: https://loc-protection-guide.vercel.app'
     );
     window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
     showFeedback('PDF downloaded', 2200);
