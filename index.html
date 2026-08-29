@@ -49,6 +49,7 @@ html, body { height: 100%; margin: 0; padding: 0; background: #0a0b0d; }
   --font-display: 'Space Grotesk', 'Inter', sans-serif;
   --font-body: 'Inter', -apple-system, sans-serif;
   width: 100%; height: 100vh; height: 100dvh; position: relative; border: 1px solid var(--line);
+  overflow: hidden;
   transition: background .25s ease, color .25s ease;
 }
 .lg-root * { box-sizing: border-box; }
@@ -85,6 +86,7 @@ html, body { height: 100%; margin: 0; padding: 0; background: #0a0b0d; }
 .lg-btn.lg-icon { padding: 8px 11px; }
 .lg-btn:disabled { opacity: .3; cursor: default; }
 .lg-btn:disabled:hover { background: transparent; border-color: var(--line); color: var(--muted); transform: none; box-shadow: none; }
+.lg-btn-glow:disabled { animation: none; box-shadow: none; }
 .lg-btn-gold { color: #0a0b0d; background: var(--gold); border-color: var(--gold); font-weight: 600; }
 .lg-btn-gold:hover { background: #d6b878; border-color: #d6b878; color: #0a0b0d; transform: translateY(-2px) scale(1.05); box-shadow: 0 8px 18px rgba(198,166,100,0.4); }
 .lg-btn-glow { border-color: var(--gold); animation: lgHeroGlow 3s ease-in-out infinite; }
@@ -181,19 +183,26 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 @keyframes lgHeroFlashLight { 0% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); } 35% { box-shadow: 0 0 26px rgba(156,122,58,0.75), 0 0 0 1.5px rgba(156,122,58,0.85); } 100% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); } }
 .lg-hero-cat b { display: block; color: var(--platinum); font-family: var(--font-display); font-size: 16.5px; font-weight: 600; margin-bottom: 2px;}
 .lg-btn-cta {
-  padding: 16px 34px; font-size: 15px; font-weight: 700; letter-spacing: .08em;
-  position: relative; animation: lgCtaPulse 2.4s ease-in-out infinite;
+  padding: 16px 40px; font-size: 12.5px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase;
+  position: relative; overflow: hidden; isolation: isolate;
+  box-shadow: 0 10px 28px rgba(198,166,100,0.28);
+  transition: box-shadow .25s ease, transform .25s ease, background .18s ease, border-color .18s ease;
 }
-.lg-btn-cta:hover { animation-play-state: paused; }
-@keyframes lgCtaPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(198,166,100,0.55), 0 4px 16px rgba(198,166,100,0.35); }
-  50% { box-shadow: 0 0 0 12px rgba(198,166,100,0), 0 4px 22px rgba(198,166,100,0.6); }
+.lg-btn-cta::before {
+  content: ''; position: absolute; top: 0; left: -60%; width: 35%; height: 100%;
+  background: linear-gradient(115deg, transparent, rgba(255,255,255,0.55), transparent);
+  transform: skewX(-18deg); pointer-events: none;
+  animation: lgCtaShine 5s ease-in-out infinite;
 }
-.lg-root.lg-light .lg-btn-cta { animation-name: lgCtaPulseLight; }
-@keyframes lgCtaPulseLight {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(156,122,58,0.45), 0 4px 16px rgba(156,122,58,0.28); }
-  50% { box-shadow: 0 0 0 12px rgba(156,122,58,0), 0 4px 22px rgba(156,122,58,0.48); }
+@keyframes lgCtaShine {
+  0% { left: -60%; }
+  28% { left: 130%; }
+  100% { left: 130%; }
 }
+.lg-btn-cta:hover { box-shadow: 0 14px 34px rgba(198,166,100,0.4); transform: translateY(-2px); }
+.lg-root.lg-light .lg-btn-cta { box-shadow: 0 10px 28px rgba(156,122,58,0.22); }
+.lg-root.lg-light .lg-btn-cta::before { background: linear-gradient(115deg, transparent, rgba(255,255,255,0.8), transparent); }
+.lg-root.lg-light .lg-btn-cta:hover { box-shadow: 0 14px 34px rgba(156,122,58,0.32); }
 
 .lg-front-foot { border-top: 1px solid var(--line); padding: 16px 30px; text-align: center; font-size: 12px; color: var(--muted-2); flex-shrink: 0; }
 .lg-bonus-aside { transition: color .18s ease; }
@@ -418,10 +427,10 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   position: absolute; top: 0; right: 0; bottom: 0; width: 33.333%; max-width: 480px;
   background: var(--panel); border-left: 1px solid var(--line); z-index: 71;
   transform: translateX(100%); transition: transform .35s cubic-bezier(.4,0,.2,1);
-  will-change: transform;
+  will-change: transform; pointer-events: none;
   display: flex; flex-direction: column; box-shadow: -8px 0 30px rgba(0,0,0,0.35);
 }
-.lg-contents-drawer.is-open { transform: translateX(0); }
+.lg-contents-drawer.is-open { transform: translateX(0); pointer-events: auto; }
 .lg-contents-drawer-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
 .lg-contents-drawer-title { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--platinum); margin: 0; }
 .lg-contents-drawer-close { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line); background: var(--panel-2); color: var(--muted); font-size: 14px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -595,7 +604,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
               <button class="lg-hero-cat" onclick="lgGoTo('s08')" aria-label="Go to Tire, Rim and Glass Protection"><b>Tire, Rim &amp; Glass</b>Road Hazard &amp; Road Hazard Glass</button>
               <button class="lg-hero-cat" onclick="lgGoTo('s09')" aria-label="Go to Theft Protection"><b>Theft Protection</b>Platinum Loyalty Plus total-loss coverage</button>
             </div>
-            <button class="lg-btn lg-btn-gold lg-btn-cta" onclick="lgGoTo('contents')">View Contents →</button>
+            <button class="lg-btn lg-btn-gold lg-btn-cta" onclick="lgGoTo('contents')">View Contents <span style="letter-spacing:normal; margin-left:4px;">→</span></button>
             <button class="lg-bonus-aside" onclick="lgGoTo('s10')" style="background:none;border:none;cursor:pointer;margin-top:16px;font-family:var(--font-body);font-size:13px;color:var(--muted);letter-spacing:.02em;">✦ Also inside: Cash vs. Finance &amp; Invest</button>
           </div>
           <div class="lg-front-foot">Ask your sales representative for full terms &amp; conditions. Plans, terms and pricing subject to change without notice.</div>
@@ -1354,8 +1363,8 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   };
 
   document.addEventListener('keydown', function(e){
-    if (e.key === 'ArrowRight') { lgStep(1); }
-    else if (e.key === 'ArrowLeft') { lgStep(-1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); lgStep(1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); lgStep(-1); }
   });
 
   var zoneLeft = document.getElementById('lgZoneLeft');
