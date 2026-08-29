@@ -180,6 +180,21 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 .lg-root.lg-light .lg-hero-cat.lg-startup-flash { animation-name: lgHeroFlashLight !important; }
 @keyframes lgHeroFlashLight { 0% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); } 35% { box-shadow: 0 0 26px rgba(156,122,58,0.75), 0 0 0 1.5px rgba(156,122,58,0.85); } 100% { box-shadow: 0 0 6px rgba(156,122,58,0.2), 0 0 0 1px rgba(156,122,58,0.2); } }
 .lg-hero-cat b { display: block; color: var(--platinum); font-family: var(--font-display); font-size: 16.5px; font-weight: 600; margin-bottom: 2px;}
+.lg-btn-cta {
+  padding: 16px 34px; font-size: 15px; font-weight: 700; letter-spacing: .08em;
+  position: relative; animation: lgCtaPulse 2.4s ease-in-out infinite;
+}
+.lg-btn-cta:hover { animation-play-state: paused; }
+@keyframes lgCtaPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(198,166,100,0.55), 0 4px 16px rgba(198,166,100,0.35); }
+  50% { box-shadow: 0 0 0 12px rgba(198,166,100,0), 0 4px 22px rgba(198,166,100,0.6); }
+}
+.lg-root.lg-light .lg-btn-cta { animation-name: lgCtaPulseLight; }
+@keyframes lgCtaPulseLight {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(156,122,58,0.45), 0 4px 16px rgba(156,122,58,0.28); }
+  50% { box-shadow: 0 0 0 12px rgba(156,122,58,0), 0 4px 22px rgba(156,122,58,0.48); }
+}
+
 .lg-front-foot { border-top: 1px solid var(--line); padding: 16px 30px; text-align: center; font-size: 12px; color: var(--muted-2); flex-shrink: 0; }
 .lg-bonus-aside { transition: color .18s ease; }
 .lg-bonus-aside:hover { color: var(--gold) !important; }
@@ -393,6 +408,30 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   .lg-add-btn { margin-left: 6px; padding: 2px 6px; font-size: 10px; }
 }
 
+/* ---- Contents Drawer ---- */
+.lg-contents-drawer-backdrop {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 70;
+  opacity: 0; pointer-events: none; transition: opacity .3s ease;
+}
+.lg-contents-drawer-backdrop.is-open { opacity: 1; pointer-events: auto; }
+.lg-contents-drawer {
+  position: absolute; top: 0; right: 0; bottom: 0; width: 33.333%; max-width: 480px;
+  background: var(--panel); border-left: 1px solid var(--line); z-index: 71;
+  transform: translateX(100%); transition: transform .35s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+  display: flex; flex-direction: column; box-shadow: -8px 0 30px rgba(0,0,0,0.35);
+}
+.lg-contents-drawer.is-open { transform: translateX(0); }
+.lg-contents-drawer-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+.lg-contents-drawer-title { font-family: var(--font-display); font-size: 17px; font-weight: 600; color: var(--platinum); margin: 0; }
+.lg-contents-drawer-close { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line); background: var(--panel-2); color: var(--muted); font-size: 14px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.lg-contents-drawer-close:hover { color: var(--platinum); border-color: var(--gold); }
+.lg-contents-drawer-body { flex: 1; overflow-y: auto; padding: 4px 0; }
+.lg-contents-drawer .lg-toc-item { padding: 13px 16px; }
+@media (max-width: 720px) {
+  .lg-contents-drawer { width: 82vw; max-width: 340px; }
+}
+
 /* ---- Bonus page ---- */
 .lg-bonus-card { max-width: 560px; }
 .lg-bonus-link-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
@@ -408,8 +447,8 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         <span>Lexus Care · Protection Guide</span>
       </div>
       <div class="lg-nav-actions">
-        <button class="lg-btn lg-btn-glow" onclick="lgGoTo('front')">Front Page</button>
-        <button class="lg-btn lg-btn-glow" onclick="lgGoTo('contents')">Contents</button>
+        <button class="lg-btn lg-btn-glow" id="lgFrontNavBtn" onclick="lgGoTo('front')">Front Page</button>
+        <button class="lg-btn lg-btn-glow" id="lgContentsNavBtn" onclick="lgOpenContentsDrawer()">Contents</button>
         <button class="lg-btn lg-icon" onclick="lgStep(-1)" id="lgPrevBtn" aria-label="Previous page">‹</button>
         <button class="lg-btn lg-icon" onclick="lgStep(1)" id="lgNextBtn" aria-label="Next page">›</button>
         <button class="lg-btn lg-icon lg-calc-btn" onclick="lgOpenCalc()" aria-label="Open payment calculator" title="Payment Calculator"><svg class="lg-calc-icon" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false"><rect x="4.5" y="2.5" width="15" height="19" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="7" y="5.2" width="10" height="4" rx="0.8" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="13.4" r="0.95" fill="currentColor"/><circle cx="12" cy="13.4" r="0.95" fill="currentColor"/><circle cx="16" cy="13.4" r="0.95" fill="currentColor"/><circle cx="8" cy="17.2" r="0.95" fill="currentColor"/><circle cx="12" cy="17.2" r="0.95" fill="currentColor"/><circle cx="16" cy="17.2" r="0.95" fill="currentColor"/></svg><span class="lg-calc-badge" id="lgCalcBadge">0</span></button>
@@ -514,6 +553,28 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
       </div>
     </div>
 
+    <div class="lg-contents-drawer-backdrop" id="lgContentsDrawerBackdrop" onclick="if(event.target===this){lgCloseContentsDrawer();}"></div>
+    <div class="lg-contents-drawer" id="lgContentsDrawer" role="dialog" aria-modal="true" aria-label="Contents">
+      <div class="lg-contents-drawer-head">
+        <p class="lg-contents-drawer-title">Contents</p>
+        <button class="lg-contents-drawer-close" onclick="lgCloseContentsDrawer()" aria-label="Close contents">✕</button>
+      </div>
+      <div class="lg-contents-drawer-body">
+        <div class="lg-toc">
+          <button class="lg-toc-item" onclick="lgCloseContentsDrawer(); lgGoTo('s01')"><span class="lg-toc-num">01</span><span class="lg-toc-body"><b>Lexus ECP Platinum Program</b><span>Manufacturer-backed Extra Care Protection with an Included Maintenance Benefits Program, roadside assistance and trip interruption benefits.</span></span></button>
+          <button class="lg-toc-item" onclick="lgCloseContentsDrawer(); lgGoTo('s02')"><span class="lg-toc-num">02</span><span class="lg-toc-body"><b>Lexus Certified Pre-Owned Programs</b><span>LCPO roadside/powertrain minimums, Comprehensive Upgrade plans and the ECP LCPO w/incl. Maintenance.</span></span></button>
+          <button class="lg-toc-item" onclick="lgCloseContentsDrawer(); lgGoTo('s03')"><span class="lg-toc-num">03</span><span class="lg-toc-body"><b>Lexus LCPO Protection Overview</b><span>A summary of standard and certified pre-owned coverage components across every system.</span></span></button>
+          <button class="lg-toc-item" onclick="lgCloseContentsDrawer(); lgGoTo('s04')"><span class="lg-toc-num">04</span><span class="lg-toc-body"><b>Lubrico Extended Vehicle Warranties</b><span>Everest, Sierra, Superior Protection, Driver's Shield and Certified Powertrain Plus mechanical breakdown coverage.</span></span></button>
+          <button class="lg-toc-item" onclick="lgCloseContentsDrawer(); lgGoTo('s05')"><span class="lg-toc-num">05</span><span class="lg-toc-body"><b>Paint &amp; Surface Protection</b><span>XPEL Ultimate Plus paint protection film and CeramX ceramic paint &amp; interior coatings.</span></span></button>
+          <button class="lg-toc-item" onclick="lgCloseContentsDrawer(); lgGoTo('s06')"><span class="lg-toc-num">06</span><span class="lg-toc-body"><b>The Smart Program</b><span>Cosmetic wear coverage — dents, scratches, windshield chips, interior rips and more.</span></span></button>
+          <button class="lg-toc-item" onclick="lgCloseContentsDrawer(); lgGoTo('s07')"><span class="lg-toc-num">07</span><span class="lg-toc-body"><b>Wear Pass &amp; Wear Pass Plus</b><span>Lexus Financial Services lease-end excess wear and tear protection.</span></span></button>
+          <button class="lg-toc-item" onclick="lgCloseContentsDrawer(); lgGoTo('s08')"><span class="lg-toc-num">08</span><span class="lg-toc-body"><b>Tire &amp; Rim / Road Hazard Glass</b><span>Protection from potholes, curbs and road debris — tires, rims and exterior glass.</span></span></button>
+          <button class="lg-toc-item" onclick="lgCloseContentsDrawer(); lgGoTo('s09')"><span class="lg-toc-num">09</span><span class="lg-toc-body"><b>Platinum Loyalty Plus — Theft Protection</b><span>Total-loss theft protection with dealer loyalty credit and deductible reimbursement.</span></span></button>
+          <button class="lg-toc-item" onclick="lgCloseContentsDrawer(); lgGoTo('s10')"><span class="lg-toc-num" style="font-size:19px;">✦</span><span class="lg-toc-body"><b>Cash vs. Finance &amp; Invest</b><span>Bonus tool — see which path puts you further ahead.</span></span></button>
+        </div>
+      </div>
+    </div>
+
     <div id="lgPrintArea"></div>
 
     <div class="lg-viewport" id="lgViewport">
@@ -534,7 +595,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
               <button class="lg-hero-cat" onclick="lgGoTo('s08')" aria-label="Go to Tire, Rim and Glass Protection"><b>Tire, Rim &amp; Glass</b>Road Hazard &amp; Road Hazard Glass</button>
               <button class="lg-hero-cat" onclick="lgGoTo('s09')" aria-label="Go to Theft Protection"><b>Theft Protection</b>Platinum Loyalty Plus total-loss coverage</button>
             </div>
-            <button class="lg-btn lg-btn-gold" onclick="lgGoTo('contents')">View Contents →</button>
+            <button class="lg-btn lg-btn-gold lg-btn-cta" onclick="lgGoTo('contents')">View Contents →</button>
             <button class="lg-bonus-aside" onclick="lgGoTo('s10')" style="background:none;border:none;cursor:pointer;margin-top:16px;font-family:var(--font-body);font-size:13px;color:var(--muted);letter-spacing:.02em;">✦ Also inside: Cash vs. Finance &amp; Invest</button>
           </div>
           <div class="lg-front-foot">Ask your sales representative for full terms &amp; conditions. Plans, terms and pricing subject to change without notice.</div>
@@ -1268,6 +1329,14 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     var nextBtn = document.getElementById('lgNextBtn');
     if (prevBtn) prevBtn.disabled = (current === 0);
     if (nextBtn) nextBtn.disabled = (current === order.length - 1);
+
+    window.lgCurrentIndex = current;
+    var frontBtn = document.getElementById('lgFrontNavBtn');
+    if (frontBtn) frontBtn.disabled = (current === 0);
+    var contentsBtn = document.getElementById('lgContentsNavBtn');
+    var drawerEligible = current >= 2;
+    if (contentsBtn) contentsBtn.disabled = !drawerEligible;
+    if (!drawerEligible && window.lgCloseContentsDrawer) window.lgCloseContentsDrawer();
   }
 
   window.lgGoTo = function(key){
@@ -1412,6 +1481,22 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   }, 60000);
 
   render();
+  window.lgOpenContentsDrawer = function(){
+    if ((window.lgCurrentIndex || 0) < 2) return;
+    var d = document.getElementById('lgContentsDrawer');
+    var bd = document.getElementById('lgContentsDrawerBackdrop');
+    if (d) d.classList.add('is-open');
+    if (bd) bd.classList.add('is-open');
+  };
+  window.lgCloseContentsDrawer = function(){
+    var d = document.getElementById('lgContentsDrawer');
+    var bd = document.getElementById('lgContentsDrawerBackdrop');
+    if (d) d.classList.remove('is-open');
+    if (bd) bd.classList.remove('is-open');
+  };
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') window.lgCloseContentsDrawer();
+  });
 })();
 </script>
 <script>
