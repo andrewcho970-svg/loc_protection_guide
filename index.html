@@ -455,6 +455,37 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 /* ---- Bonus page ---- */
 .lg-bonus-card { max-width: 560px; }
 .lg-bonus-link-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+
+/* ---- Calc change attention effects ---- */
+@keyframes lgCalcPulseGold {
+  0% { box-shadow: 0 0 0 0 rgba(198,166,100,0.55); }
+  60% { box-shadow: 0 0 0 8px rgba(198,166,100,0); }
+  100% { box-shadow: 0 0 0 0 rgba(198,166,100,0); }
+}
+.lg-root.lg-light .lg-calc-pulse,
+.lg-root.lg-light .lg-calc-pulse-soft { animation-name: lgCalcPulseGoldLight; }
+@keyframes lgCalcPulseGoldLight {
+  0% { box-shadow: 0 0 0 0 rgba(156,122,58,0.45); }
+  60% { box-shadow: 0 0 0 8px rgba(156,122,58,0); }
+  100% { box-shadow: 0 0 0 0 rgba(156,122,58,0); }
+}
+.lg-calc-result.lg-calc-pulse {
+  animation: lgCalcPulseGold .6s ease-out;
+}
+.lg-calc-result.lg-calc-pulse .val {
+  animation: lgCalcValFlash .6s ease-out;
+}
+@keyframes lgCalcValFlash {
+  0% { color: var(--platinum); transform: scale(1.08); }
+  100% { color: var(--gold); transform: scale(1); }
+}
+.lg-calc-subtotal b.lg-calc-pulse-soft,
+.lg-calc-summary-item b.lg-calc-pulse-soft {
+  animation: lgCalcValFlash .6s ease-out;
+}
+.lg-calc-badge.lg-calc-pulse {
+  animation: lgCalcPulseGold .6s ease-out;
+}
 </style>
 </head>
 <body>
@@ -564,11 +595,11 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         </div>
 
         <div class="lg-calc-results">
-          <div class="lg-calc-result">
+          <div class="lg-calc-result" id="lgCalcMonthlyResult">
             <span class="lbl">Monthly</span>
             <span class="val" id="lgCalcMonthly">$0</span>
           </div>
-          <div class="lg-calc-result">
+          <div class="lg-calc-result" id="lgCalcBiweeklyResult">
             <span class="lbl">Bi-Weekly</span>
             <span class="val" id="lgCalcBiweekly">$0</span>
           </div>
@@ -1665,6 +1696,25 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   var baseIncluded = false;
   var downIncluded = false;
   var cartEmptyEl = document.getElementById('lgCalcCartEmpty');
+
+  // Tracks the last-rendered values of the "headline" calculator outputs so
+  // lgRecalc can tell whether something actually changed and, if so, fire a
+  // brief, subtle attention pulse on the numbers that moved.
+  var lastValues = { monthly: null, biweekly: null, subtotal: null, badgeCount: null };
+
+  function pulse(el, cls){
+    if (!el) return;
+    cls = cls || 'lg-calc-pulse';
+    el.classList.remove(cls);
+    // Force reflow so the animation restarts even if it's already mid-flight.
+    void el.offsetWidth;
+    el.classList.add(cls);
+    el.addEventListener('animationend', function handler(){
+      el.classList.remove(cls);
+      el.removeEventListener('animationend', handler);
+    });
+  }
+
   function pushRemoved(id, item){
     removed[id] = item;
   }
@@ -2072,6 +2122,36 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         if (sBiweekly) sBiweekly.textContent = fmtMoney(totals.biweekly);
       }
     }
+
+    // --- Subtle "something changed" attention pulses ---
+    // Compare against the previously rendered values (rounded to the cent /
+    // nearest dollar, matching what's actually shown) so the pulse only
+    // fires on a real, visible change — not on every keystroke or re-render.
+    var roundedMonthly = Math.round(totals.monthly * 100);
+    var roundedBiweekly = Math.round(totals.biweekly * 100);
+    var roundedSubtotal = Math.round(cartTotal() * 100);
+    var badgeCount = Object.keys(cart).length;
+
+    if (lastValues.monthly !== null && roundedMonthly !== lastValues.monthly) {
+      pulse(document.getElementById('lgCalcMonthlyResult'));
+      pulse(document.getElementById('lgCalcSummaryMonthly'), 'lg-calc-pulse-soft');
+    }
+    if (lastValues.biweekly !== null && roundedBiweekly !== lastValues.biweekly) {
+      pulse(document.getElementById('lgCalcBiweeklyResult'));
+      pulse(document.getElementById('lgCalcSummaryBiweekly'), 'lg-calc-pulse-soft');
+    }
+    if (lastValues.subtotal !== null && roundedSubtotal !== lastValues.subtotal) {
+      pulse(document.getElementById('lgCalcSubtotal'), 'lg-calc-pulse-soft');
+      pulse(document.getElementById('lgCalcSummaryTotal'), 'lg-calc-pulse-soft');
+    }
+    if (lastValues.badgeCount !== null && badgeCount !== lastValues.badgeCount && badgeCount > lastValues.badgeCount) {
+      pulse(document.getElementById('lgCalcBadge'));
+    }
+
+    lastValues.monthly = roundedMonthly;
+    lastValues.biweekly = roundedBiweekly;
+    lastValues.subtotal = roundedSubtotal;
+    lastValues.badgeCount = badgeCount;
   };
 
   function emptyCart(trackUndo){
