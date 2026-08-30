@@ -1381,10 +1381,10 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
       (drawer && drawer.classList.contains('is-open'));
     if (overlayOpen) return;
 
-    if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === 'ArrowDown') {
       e.preventDefault();
       lgStep(1);
-    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'ArrowUp') {
       e.preventDefault();
       lgStep(-1);
     } else if (e.key === 'Home') {
@@ -1395,18 +1395,6 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
       e.preventDefault();
       current = order.length - 1;
       render();
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      if (document.activeElement && typeof document.activeElement.blur === 'function') {
-        document.activeElement.blur();
-      }
-      if (viewport) viewport.scrollBy({ top: Math.round(viewport.clientHeight * 0.85), left: 0, behavior: 'smooth' });
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      if (document.activeElement && typeof document.activeElement.blur === 'function') {
-        document.activeElement.blur();
-      }
-      if (viewport) viewport.scrollBy({ top: -Math.round(viewport.clientHeight * 0.85), left: 0, behavior: 'smooth' });
     }
   });
 
