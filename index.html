@@ -2269,7 +2269,8 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
       term: window.lgCashMode ? 'N/A (cash)' : term,
       rows: rows,
       dateStr: new Date().toLocaleDateString(),
-      principal: window.lgCashMode ? 'N/A (cash deal)' : fmtMoney(principal),
+      principal: fmtMoney(principal),
+      principalLabel: window.lgCashMode ? 'Total (Cash Deal)' : 'Amount Financed',
       monthly: window.lgCashMode ? '—' : fmtMoney(totals.monthly),
       biweekly: window.lgCashMode ? '—' : fmtMoney(totals.biweekly),
       cashMode: window.lgCashMode
@@ -2293,7 +2294,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
       '<p class="lg-print-sub">' + data.dateStr + (data.cashMode ? ' · Cash Deal' : (' · Rate: ' + data.rate + '% APR · Term: ' + data.term + ' months')) + '</p>' +
       '<table><thead><tr><th>Item</th><th>Amount</th></tr></thead><tbody>' + rowsHtml + '</tbody></table>' +
       '<div class="lg-print-results">' +
-        '<div class="lg-print-result"><b>' + data.principal + '</b><span>Amount Financed</span></div>' +
+        '<div class="lg-print-result"><b>' + data.principal + '</b><span>' + data.principalLabel + '</span></div>' +
         '<div class="lg-print-result"><b>' + data.monthly + '</b><span>Monthly</span></div>' +
         '<div class="lg-print-result"><b>' + data.biweekly + '</b><span>Bi-Weekly</span></div>' +
       '</div>' +
@@ -2339,7 +2340,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     y += 30;
 
     var results = [
-      ['Amount Financed', data.principal],
+      [data.principalLabel, data.principal],
       ['Monthly', data.monthly],
       ['Bi-Weekly', data.biweekly]
     ];
@@ -2423,7 +2424,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     var subject = encodeURIComponent('Lexus Care Protection Products Guide');
     var body = encodeURIComponent(
       'Hi,\n\nPlease see the attached Lexus Care payment summary:\n\n' +
-      'Amount Financed: ' + data.principal + '\n' +
+      data.principalLabel + ': ' + data.principal + '\n' +
       'Monthly Payment: ' + data.monthly + '\n' +
       'Bi-Weekly Payment: ' + data.biweekly + '\n\n' +
       'The PDF just downloaded to your device as "' + fileName + '" — please attach it to this email before sending.\n\n' +
