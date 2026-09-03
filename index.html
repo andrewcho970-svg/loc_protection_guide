@@ -365,6 +365,9 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 .lg-calc-action-row { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
 .lg-calc-print-btn { color: var(--platinum); background: transparent; border-color: var(--line); }
 .lg-calc-print-btn:hover { color: var(--gold); border-color: var(--gold); }
+.lg-calc-cash-btn { color: var(--platinum); background: transparent; border-color: var(--line); margin-right: auto; }
+.lg-calc-cash-btn:hover { color: var(--gold); border-color: var(--gold); }
+.lg-calc-cash-btn.is-active { color: #0a0b0d; background: var(--gold); border-color: var(--gold); }
 
 #lgPrintArea { display: none; }
 @media print {
@@ -405,6 +408,18 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 .lg-calc-result .lbl { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; }
 .lg-calc-result .val { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--gold); }
 .lg-calc-foot { font-size: 11.5px; color: var(--muted-2); line-height: 1.55; margin: 0; }
+
+/* ---- Cash mode: grey out rate/term/payment ---- */
+.lg-calc-row.lg-cash-disabled,
+.lg-calc-results.lg-cash-disabled { opacity: .4; filter: grayscale(65%); pointer-events: none; transition: opacity .2s ease, filter .2s ease; }
+.lg-calc-row.lg-cash-disabled input,
+.lg-calc-row.lg-cash-disabled .lg-calc-term-btn,
+.lg-calc-row.lg-cash-disabled .lg-calc-rate-btn { cursor: not-allowed; }
+.lg-calc-results.lg-cash-disabled .lg-calc-result { border-color: var(--line); background: var(--panel-2); }
+.lg-calc-results.lg-cash-disabled .val { color: var(--muted); }
+.lg-calc-cash-note { display: none; font-size: 12px; color: var(--gold); text-align: center; margin: -6px 0 0; letter-spacing: .02em; }
+.lg-calc-cash-note.is-visible { display: block; }
+.lg-calc-foot.lg-cash-disabled-foot { opacity: .55; }
 
 @media (max-width: 720px) {
   .lg-page { padding: 30px 20px 30px; }
@@ -552,6 +567,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
           <b id="lgCalcSubtotal">$0.00</b>
         </div>
         <div class="lg-calc-action-row">
+          <button type="button" class="lg-mini-toggle lg-calc-cash-btn" id="lgCalcCashBtn" onclick="lgToggleCash()" aria-pressed="false" aria-label="Toggle cash deal mode, greys out rate, term and payment">Cash</button>
           <button type="button" class="lg-mini-toggle lg-calc-print-btn" id="lgCalcPrintBtn" onclick="lgPrintCalc()" aria-label="Print calculator summary">Print</button>
           <button type="button" class="lg-mini-toggle lg-calc-print-btn" id="lgCalcEmailBtn" onclick="lgEmailCalc()" aria-label="Share PDF of calculator summary">Share</button>
           <button type="button" class="lg-mini-toggle" id="lgCalcClearBtn" onclick="lgClearCart()" aria-label="Remove all added products, keep other values">Clear Cart</button>
@@ -576,7 +592,9 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
           </div>
         </div>
 
-        <div class="lg-calc-row">
+        <p class="lg-calc-cash-note" id="lgCalcCashNote">Cash deal — rate, term and financed payment are not applicable.</p>
+
+        <div class="lg-calc-row" id="lgCalcRateTermRow">
           <div class="lg-calc-field">
             <label for="lgCalcRate">Interest Rate (% APR)</label>
             <input type="number" id="lgCalcRate" min="0" step="0.5" inputmode="decimal" placeholder="0.00" value="6.9" oninput="lgRecalc(); lgSyncRatePreset();">
@@ -589,7 +607,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
           </div>
         </div>
 
-        <div class="lg-calc-results">
+        <div class="lg-calc-results" id="lgCalcResultsRow">
           <div class="lg-calc-result" id="lgCalcMonthlyResult">
             <span class="lbl">Monthly</span>
             <span class="val" id="lgCalcMonthly">$0</span>
@@ -599,7 +617,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
             <span class="val" id="lgCalcBiweekly">$0</span>
           </div>
         </div>
-        <p class="lg-calc-foot">Amount financed: <span id="lgCalcFinanced">$0.00</span>. Estimate only — excludes taxes, levies and dealer fees. Tax is extra. Confirm exact payments with your personal financial advisor.</p>
+        <p class="lg-calc-foot" id="lgCalcFoot">Amount financed: <span id="lgCalcFinanced">$0.00</span>. Estimate only — excludes taxes, levies and dealer fees. Tax is extra. Confirm exact payments with your personal financial advisor.</p>
       </div>
     </div>
 
@@ -1691,6 +1709,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   var baseIncluded = false;
   var downIncluded = false;
   var cartEmptyEl = document.getElementById('lgCalcCartEmpty');
+  window.lgCashMode = false;
 
   // Tracks the last-rendered values of the "headline" calculator outputs so
   // lgRecalc can tell whether something actually changed and, if so, fire a
@@ -1954,12 +1973,14 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         label.textContent = item.label;
         main.appendChild(label);
 
-        var pay = paymentFor(item.price, rate, term);
-        if (pay.monthly > 0) {
-          var payLine = document.createElement('span');
-          payLine.className = 'lg-cart-item-pay';
-          payLine.textContent = '≈ ' + fmtMoney(pay.monthly) + '/mo · ' + fmtMoney(pay.biweekly) + '/bi-wk on its own';
-          main.appendChild(payLine);
+        if (!window.lgCashMode) {
+          var pay = paymentFor(item.price, rate, term);
+          if (pay.monthly > 0) {
+            var payLine = document.createElement('span');
+            payLine.className = 'lg-cart-item-pay';
+            payLine.textContent = '≈ ' + fmtMoney(pay.monthly) + '/mo · ' + fmtMoney(pay.biweekly) + '/bi-wk on its own';
+            main.appendChild(payLine);
+          }
         }
 
         var price = document.createElement('span');
@@ -2074,6 +2095,34 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     window.lgRecalc();
   };
 
+  window.lgToggleCash = function(){
+    window.lgCashMode = !window.lgCashMode;
+    var btn = document.getElementById('lgCalcCashBtn');
+    var row = document.getElementById('lgCalcRateTermRow');
+    var results = document.getElementById('lgCalcResultsRow');
+    var note = document.getElementById('lgCalcCashNote');
+    var foot = document.getElementById('lgCalcFoot');
+    var rateInput = document.getElementById('lgCalcRate');
+    var termInput = document.getElementById('lgCalcTerm');
+
+    if (btn) {
+      btn.textContent = window.lgCashMode ? '✓ Cash' : 'Cash';
+      btn.classList.toggle('is-active', window.lgCashMode);
+      btn.setAttribute('aria-pressed', window.lgCashMode ? 'true' : 'false');
+    }
+    if (row) row.classList.toggle('lg-cash-disabled', window.lgCashMode);
+    if (results) results.classList.toggle('lg-cash-disabled', window.lgCashMode);
+    if (note) note.classList.toggle('is-visible', window.lgCashMode);
+    if (foot) foot.classList.toggle('lg-cash-disabled-foot', window.lgCashMode);
+    if (rateInput) rateInput.disabled = window.lgCashMode;
+    if (termInput) termInput.disabled = window.lgCashMode;
+    document.querySelectorAll('.lg-calc-rate-btn, .lg-calc-term-btn').forEach(function(b){
+      b.disabled = window.lgCashMode;
+    });
+
+    window.lgRecalc();
+  };
+
   window.lgRecalc = function(){
     var rate = num('lgCalcRate');
     var term = Math.max(1, Math.round(num('lgCalcTerm')) || 60);
@@ -2085,7 +2134,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 
     var basePayEl = document.getElementById('lgCalcBasePay');
     if (basePayEl) {
-      if (baseIncluded && base > 0) {
+      if (baseIncluded && base > 0 && !window.lgCashMode) {
         var basePay = paymentFor(base, rate, term);
         basePayEl.textContent = '≈ ' + fmtMoney(basePay.monthly) + '/mo · ' + fmtMoney(basePay.biweekly) + '/bi-wk on its own';
       } else {
@@ -2095,14 +2144,14 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 
     var principal = base + cartTotal() - down;
     if (principal < 0) principal = 0;
-    var totals = paymentFor(principal, rate, term);
+    var totals = window.lgCashMode ? { monthly: 0, biweekly: 0 } : paymentFor(principal, rate, term);
 
     var financedEl = document.getElementById('lgCalcFinanced');
     var monthlyEl = document.getElementById('lgCalcMonthly');
     var biweeklyEl = document.getElementById('lgCalcBiweekly');
-    if (financedEl) financedEl.textContent = fmtMoney(principal);
-    if (monthlyEl) monthlyEl.textContent = fmtMoney(totals.monthly);
-    if (biweeklyEl) biweeklyEl.textContent = fmtMoney(totals.biweekly);
+    if (financedEl) financedEl.textContent = window.lgCashMode ? 'N/A (cash deal)' : fmtMoney(principal);
+    if (monthlyEl) monthlyEl.textContent = window.lgCashMode ? '—' : fmtMoney(totals.monthly);
+    if (biweeklyEl) biweeklyEl.textContent = window.lgCashMode ? '—' : fmtMoney(totals.biweekly);
 
     var summary = document.getElementById('lgCalcSummary');
     var hasItems = Object.keys(cart).length > 0;
@@ -2113,8 +2162,8 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         var sMonthly = document.getElementById('lgCalcSummaryMonthly');
         var sBiweekly = document.getElementById('lgCalcSummaryBiweekly');
         if (sTotal) sTotal.textContent = fmtMoney(principal);
-        if (sMonthly) sMonthly.textContent = fmtMoney(totals.monthly);
-        if (sBiweekly) sBiweekly.textContent = fmtMoney(totals.biweekly);
+        if (sMonthly) sMonthly.textContent = window.lgCashMode ? '—' : fmtMoney(totals.monthly);
+        if (sBiweekly) sBiweekly.textContent = window.lgCashMode ? '—' : fmtMoney(totals.biweekly);
       }
     }
 
@@ -2127,13 +2176,15 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     var roundedSubtotal = Math.round(cartTotal() * 100);
     var badgeCount = Object.keys(cart).length;
 
-    if (lastValues.monthly !== null && roundedMonthly !== lastValues.monthly) {
-      pulse(document.getElementById('lgCalcMonthlyResult'));
-      pulse(document.getElementById('lgCalcSummaryMonthly'), 'lg-calc-pulse-soft');
-    }
-    if (lastValues.biweekly !== null && roundedBiweekly !== lastValues.biweekly) {
-      pulse(document.getElementById('lgCalcBiweeklyResult'));
-      pulse(document.getElementById('lgCalcSummaryBiweekly'), 'lg-calc-pulse-soft');
+    if (!window.lgCashMode) {
+      if (lastValues.monthly !== null && roundedMonthly !== lastValues.monthly) {
+        pulse(document.getElementById('lgCalcMonthlyResult'));
+        pulse(document.getElementById('lgCalcSummaryMonthly'), 'lg-calc-pulse-soft');
+      }
+      if (lastValues.biweekly !== null && roundedBiweekly !== lastValues.biweekly) {
+        pulse(document.getElementById('lgCalcBiweeklyResult'));
+        pulse(document.getElementById('lgCalcSummaryBiweekly'), 'lg-calc-pulse-soft');
+      }
     }
     if (lastValues.subtotal !== null && roundedSubtotal !== lastValues.subtotal) {
       pulse(document.getElementById('lgCalcSubtotal'), 'lg-calc-pulse-soft');
@@ -2188,6 +2239,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 
     if (baseIncluded) { window.lgToggleBase(); }
     if (downIncluded) { window.lgToggleDown(); }
+    if (window.lgCashMode) { window.lgToggleCash(); }
     window.lgRecalc();
   };
 
@@ -2198,7 +2250,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     var down = downIncluded ? num('lgCalcDown') : 0;
     var principal = base + cartTotal() - down;
     if (principal < 0) principal = 0;
-    var totals = paymentFor(principal, rate, term);
+    var totals = window.lgCashMode ? { monthly: 0, biweekly: 0 } : paymentFor(principal, rate, term);
 
     var rows = [];
     if (baseIncluded && base > 0) {
@@ -2213,11 +2265,14 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     }
 
     return {
-      rate: rate, term: term, rows: rows,
+      rate: window.lgCashMode ? 'N/A (cash)' : rate,
+      term: window.lgCashMode ? 'N/A (cash)' : term,
+      rows: rows,
       dateStr: new Date().toLocaleDateString(),
-      principal: fmtMoney(principal),
-      monthly: fmtMoney(totals.monthly),
-      biweekly: fmtMoney(totals.biweekly)
+      principal: window.lgCashMode ? 'N/A (cash deal)' : fmtMoney(principal),
+      monthly: window.lgCashMode ? '—' : fmtMoney(totals.monthly),
+      biweekly: window.lgCashMode ? '—' : fmtMoney(totals.biweekly),
+      cashMode: window.lgCashMode
     };
   }
 
@@ -2235,14 +2290,14 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     if (!area) return;
     area.innerHTML =
       '<h2>Lexus Care — Payment Calculator Summary</h2>' +
-      '<p class="lg-print-sub">' + data.dateStr + ' · Rate: ' + data.rate + '% APR · Term: ' + data.term + ' months</p>' +
+      '<p class="lg-print-sub">' + data.dateStr + (data.cashMode ? ' · Cash Deal' : (' · Rate: ' + data.rate + '% APR · Term: ' + data.term + ' months')) + '</p>' +
       '<table><thead><tr><th>Item</th><th>Amount</th></tr></thead><tbody>' + rowsHtml + '</tbody></table>' +
       '<div class="lg-print-results">' +
         '<div class="lg-print-result"><b>' + data.principal + '</b><span>Amount Financed</span></div>' +
         '<div class="lg-print-result"><b>' + data.monthly + '</b><span>Monthly</span></div>' +
         '<div class="lg-print-result"><b>' + data.biweekly + '</b><span>Bi-Weekly</span></div>' +
       '</div>' +
-      '<p class="lg-print-foot">Estimate only — excludes taxes, levies and dealer fees. Tax is extra. Confirm exact payments with your personal financial advisor.</p>';
+      '<p class="lg-print-foot">' + (data.cashMode ? 'Cash deal — rate, term and financed payment are not applicable. ' : '') + 'Estimate only — excludes taxes, levies and dealer fees. Tax is extra. Confirm exact payments with your personal financial advisor.</p>';
 
     window.print();
   };
@@ -2261,7 +2316,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
     doc.setTextColor(90, 90, 90);
-    doc.text(data.dateStr + '   ·   Rate: ' + data.rate + '% APR   ·   Term: ' + data.term + ' months', left, y);
+    doc.text(data.dateStr + (data.cashMode ? '   ·   Cash Deal' : ('   ·   Rate: ' + data.rate + '% APR   ·   Term: ' + data.term + ' months')), left, y);
 
     y += 26;
     doc.setDrawColor(200, 200, 200);
@@ -2309,7 +2364,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     doc.setFontSize(9);
     doc.setTextColor(120, 120, 120);
     doc.text(
-      doc.splitTextToSize('Estimate only — excludes taxes, levies and dealer fees. Tax is extra. Confirm exact payments with your personal financial advisor.', pageWidth - left * 2),
+      doc.splitTextToSize((data.cashMode ? 'Cash deal — rate, term and financed payment are not applicable. ' : '') + 'Estimate only — excludes taxes, levies and dealer fees. Tax is extra. Confirm exact payments with your personal financial advisor.', pageWidth - left * 2),
       left, y
     );
 
