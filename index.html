@@ -2239,7 +2239,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 
     if (baseIncluded) { window.lgToggleBase(); }
     if (downIncluded) { window.lgToggleDown(); }
-    if (window.lgCashMode) { window.lgToggleCash(); }
+    if (!window.lgCashMode) { window.lgToggleCash(); }
     window.lgRecalc();
   };
 
@@ -2515,6 +2515,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   buildTermPresets();
   buildRatePresets();
   lgRecalc();
+  window.lgToggleCash(); // Cash Deal is the default mode
 
   var lgManualLabelInput = document.getElementById('lgCalcManualLabel');
   var lgManualAmountInput = document.getElementById('lgCalcManualAmount');
