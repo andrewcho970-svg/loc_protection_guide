@@ -1345,6 +1345,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   }
 
   window.lgOpenQrModal = function(){
+    if (window.lgCloseAllOverlays) window.lgCloseAllOverlays();
     var bd = document.getElementById('lgQrBackdrop');
     if (bd) bd.classList.add('is-open');
   };
@@ -1546,7 +1547,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   render();
   window.lgOpenContentsDrawer = function(){
     if ((window.lgCurrentIndex || 0) < 2) return;
-    if (window.lgCloseCalc) window.lgCloseCalc();
+    if (window.lgCloseAllOverlays) { window.lgCloseAllOverlays(); } else if (window.lgCloseCalc) { window.lgCloseCalc(); }
     var d = document.getElementById('lgContentsDrawer');
     var bd = document.getElementById('lgContentsDrawerBackdrop');
     if (d) d.classList.add('is-open');
@@ -2239,7 +2240,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 
     if (baseIncluded) { window.lgToggleBase(); }
     if (downIncluded) { window.lgToggleDown(); }
-    if (window.lgCashMode) { window.lgToggleCash(); }
+    if (!window.lgCashMode) { window.lgToggleCash(); }
     window.lgRecalc();
   };
 
@@ -2435,8 +2436,14 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     showFeedback('PDF downloaded', 2200);
   };
 
-  window.lgOpenCalc = function(){
+  window.lgCloseAllOverlays = function(){
+    if (window.lgCloseQrModal) window.lgCloseQrModal();
+    if (window.lgCloseCalc) window.lgCloseCalc();
     if (window.lgCloseContentsDrawer) window.lgCloseContentsDrawer();
+  };
+
+  window.lgOpenCalc = function(){
+    window.lgCloseAllOverlays();
     var bd = document.getElementById('lgCalcBackdrop');
     var d = document.getElementById('lgCalcDrawer');
     if (bd) bd.classList.add('is-open');
@@ -2450,6 +2457,10 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   };
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape') window.lgCloseCalc();
+  });
+
+  window.addEventListener('pageshow', function(){
+    if (window.lgCloseAllOverlays) window.lgCloseAllOverlays();
   });
 
   var lgTermOptions = [24, 36, 39, 48, 60, 72, 84, 96];
@@ -2515,6 +2526,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   buildTermPresets();
   buildRatePresets();
   lgRecalc();
+  window.lgToggleCash(); // Cash Deal is the default mode
 
   var lgManualLabelInput = document.getElementById('lgCalcManualLabel');
   var lgManualAmountInput = document.getElementById('lgCalcManualAmount');
