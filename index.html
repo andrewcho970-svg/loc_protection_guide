@@ -421,6 +421,28 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 .lg-calc-cash-note.is-visible { display: block; }
 .lg-calc-foot.lg-cash-disabled-foot { opacity: .55; }
 
+/* ---- Overlay mutual exclusivity (belt-and-suspenders) ----
+   Only one of the QR modal / Calculator drawer / Contents drawer should ever
+   be visible at a time. lgCloseAllOverlays() in JS enforces this on every
+   open, but this CSS guarantee makes it physically impossible to render two
+   at once even if a future code path forgets to call it. */
+.lg-shell:has(> .lg-calc-drawer.is-open) .lg-contents-drawer,
+.lg-shell:has(> .lg-calc-drawer.is-open) .lg-contents-drawer-backdrop,
+.lg-shell:has(> .lg-contents-drawer.is-open) .lg-calc-drawer,
+.lg-shell:has(> .lg-contents-drawer.is-open) .lg-calc-drawer-backdrop {
+  opacity: 0 !important; transform: translateX(100%) !important; pointer-events: none !important;
+}
+.lg-root:has(.lg-calc-drawer.is-open) .lg-qr-modal-backdrop,
+.lg-root:has(.lg-contents-drawer.is-open) .lg-qr-modal-backdrop {
+  display: none !important;
+}
+.lg-root:has(.lg-qr-modal-backdrop.is-open) .lg-calc-drawer,
+.lg-root:has(.lg-qr-modal-backdrop.is-open) .lg-calc-drawer-backdrop,
+.lg-root:has(.lg-qr-modal-backdrop.is-open) .lg-contents-drawer,
+.lg-root:has(.lg-qr-modal-backdrop.is-open) .lg-contents-drawer-backdrop {
+  opacity: 0 !important; transform: translateX(100%) !important; pointer-events: none !important;
+}
+
 @media (max-width: 720px) {
   .lg-page { padding: 30px 20px 30px; }
   .lg-grid-2, .lg-grid-3 { grid-template-columns: 1fr; }
@@ -1438,7 +1460,19 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     var overlayOpen = (qrBd && qrBd.classList.contains('is-open')) ||
       (calcBd && calcBd.classList.contains('is-open')) ||
       (drawer && drawer.classList.contains('is-open'));
-    if (overlayOpen) return;
+    if (overlayOpen) {
+      // Still cancel the browser's own default action for these keys
+      // (e.g. native Page Down scrolling the underlying document) even
+      // though we're not driving slide navigation ourselves — otherwise
+      // that native scroll can visually stack a second overlay on top
+      // of the one that's already open.
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === 'ArrowDown' ||
+          e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'ArrowUp' ||
+          e.key === 'Home' || e.key === 'End' || e.key === ' ' || e.key === 'Spacebar') {
+        e.preventDefault();
+      }
+      return;
+    }
 
     if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === 'ArrowDown') {
       e.preventDefault();
