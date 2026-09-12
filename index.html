@@ -2545,7 +2545,6 @@ window.__LG_I18N_EN__ = (function(){
 
 (function(){
   var LANG_LABELS = { en:'EN', fr:'FR', es:'ES', 'zh-CN':'中文', 'zh-HK':'廣東話', ja:'日本語', ko:'한국어' };
-  var STORAGE_KEY = 'lgLanguage';
 
   function applyLanguage(lang){
     var dict = window.__LG_I18N__ || {};
@@ -2569,7 +2568,6 @@ window.__LG_I18N_EN__ = (function(){
     document.querySelectorAll('#lgLangMenu button').forEach(function(b){
       b.classList.toggle('is-active', b.getAttribute('data-lang') === lang);
     });
-    try { localStorage.setItem(STORAGE_KEY, lang); } catch(e) {}
     window.__LG_CURRENT_LANG__ = lang;
   }
   window.lgSetLanguage = function(lang){
@@ -2589,22 +2587,7 @@ window.__LG_I18N_EN__ = (function(){
     if (wrap && !wrap.contains(e.target)) lgToggleLangMenu(false);
   });
 
-  var supported = ['en','fr','es','zh-CN','zh-HK','ja','ko'];
-  var initial = 'en';
-  try {
-    var saved = localStorage.getItem(STORAGE_KEY);
-    if (saved && supported.indexOf(saved) !== -1) initial = saved;
-    else {
-      var nav = (navigator.language || '').toLowerCase();
-      if (nav.indexOf('fr') === 0) initial = 'fr';
-      else if (nav.indexOf('es') === 0) initial = 'es';
-      else if (nav.indexOf('ja') === 0) initial = 'ja';
-      else if (nav.indexOf('ko') === 0) initial = 'ko';
-      else if (nav === 'zh-hk' || nav === 'zh-tw' || nav.indexOf('yue') === 0) initial = 'zh-HK';
-      else if (nav.indexOf('zh') === 0) initial = 'zh-CN';
-    }
-  } catch(e) {}
-  applyLanguage(initial);
+  applyLanguage('en');
 })();
 </script>
 
