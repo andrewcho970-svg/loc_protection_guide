@@ -2407,7 +2407,11 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
         var pdfFile = null;
         try { pdfFile = new File([pdfBlob], pdfName, { type: 'application/pdf' }); } catch (err) { pdfFile = null; }
         if (pdfFile && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-          navigator.share({ files: [pdfFile], title: 'Lexus Care — Payment Calculator Summary' }).catch(function(err){
+          // Note: deliberately omitting a `title` alongside `files` here — some mobile
+          // Print handlers (notably iOS's share-sheet Print action) treat a text title and
+          // a shared file as two separate print jobs, producing an extra blank title-only
+          // page ahead of the actual PDF. The PDF's own heading already carries this text.
+          navigator.share({ files: [pdfFile] }).catch(function(err){
             if (err && err.name === 'AbortError') return; // user cancelled the share sheet
             window.open(URL.createObjectURL(pdfBlob), '_blank'); // fall back to the device's own PDF viewer (has its own print/share icon)
           });
