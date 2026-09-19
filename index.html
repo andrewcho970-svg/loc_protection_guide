@@ -1346,21 +1346,131 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 <script>
 (function(){
   var order = ['front','contents','s01','s01b','s02','s03','s04','s04b','s05','s06','s07','s08','s09','s10'];
-  var labels = {
-    front: 'Front Page', contents: 'Contents',
-    s01: '01 · Lexus ECP Platinum Program',
-    s01b: '01 · Included Maintenance Benefits Program',
-    s02: '02 · Lexus Certified Pre-Owned Programs',
-    s03: '03 · Owner Protection Overview',
-    s04: '04 · Lubrico Extended Vehicle Warranties',
-    s04b: '04 · Certified Powertrain Plus',
-    s05: '05 · Paint & Surface Protection',
-    s06: '06 · The Smart Program',
-    s07: '07 · Wear Pass & Wear Pass Plus',
-    s08: '08 · Tire & Rim / Road Hazard Glass',
-    s09: '09 · Theft Protection',
-    s10: 'Bonus · Cash vs. Finance & Invest'
+  var labelsByLang = {
+    en: {
+      front: 'Front Page', contents: 'Contents',
+      s01: '01 · Lexus ECP Platinum Program',
+      s01b: '01 · Included Maintenance Benefits Program',
+      s02: '02 · Lexus Certified Pre-Owned Programs',
+      s03: '03 · Owner Protection Overview',
+      s04: '04 · Lubrico Extended Vehicle Warranties',
+      s04b: '04 · Certified Powertrain Plus',
+      s05: '05 · Paint & Surface Protection',
+      s06: '06 · The Smart Program',
+      s07: '07 · Wear Pass & Wear Pass Plus',
+      s08: '08 · Tire & Rim / Road Hazard Glass',
+      s09: '09 · Theft Protection',
+      s10: 'Bonus · Cash vs. Finance & Invest'
+    },
+    fr: {
+      front: "Page d'accueil", contents: 'Sommaire',
+      s01: '01 · Programme Lexus ECP Platine',
+      s01b: "01 · Programme d'avantages d'entretien inclus",
+      s02: "02 · Programmes Lexus certifié d'occasion",
+      s03: '03 · Aperçu de la protection du propriétaire',
+      s04: '04 · Garanties prolongées Lubrico',
+      s04b: '04 · Certified Powertrain Plus',
+      s05: '05 · Protection peinture & surface',
+      s06: '06 · Le programme Smart',
+      s07: '07 · Wear Pass & Wear Pass Plus',
+      s08: '08 · Pneus & jantes / Verre de risque routier',
+      s09: '09 · Protection contre le vol',
+      s10: 'Bonus · Comptant vs. financement & investissement'
+    },
+    es: {
+      front: 'Página principal', contents: 'Contenido',
+      s01: '01 · Programa Lexus ECP Platinum',
+      s01b: '01 · Programa de Beneficios de Mantenimiento Incluido',
+      s02: '02 · Programas Lexus Certified Pre-Owned',
+      s03: '03 · Resumen de protección al propietario',
+      s04: '04 · Garantías extendidas Lubrico',
+      s04b: '04 · Certified Powertrain Plus',
+      s05: '05 · Protección de pintura y superficie',
+      s06: '06 · El Programa Smart',
+      s07: '07 · Wear Pass y Wear Pass Plus',
+      s08: '08 · Neumáticos y llantas / Cristal por riesgo vial',
+      s09: '09 · Protección contra robo',
+      s10: 'Bono · Contado vs. Financiamiento e Inversión'
+    },
+    'zh-CN': {
+      front: '首页', contents: '目录',
+      s01: '01 · 雷克萨斯 ECP 白金计划',
+      s01b: '01 · 保养福利计划',
+      s02: '02 · 雷克萨斯认证二手车计划',
+      s03: '03 · 车主保障概览',
+      s04: '04 · Lubrico 延保计划',
+      s04b: '04 · Certified Powertrain Plus',
+      s05: '05 · 漆面与表面保护',
+      s06: '06 · Smart 智选保障计划',
+      s07: '07 · Wear Pass 及 Wear Pass Plus',
+      s08: '08 · 轮胎与轮圈／道路危险玻璃保障',
+      s09: '09 · 防盗保障',
+      s10: '附加 · 现金 vs. 贷款投资'
+    },
+    'zh-HK': {
+      front: '首頁', contents: '目錄',
+      s01: '01 · 凌志 ECP 白金計劃',
+      s01b: '01 · 保養福利計劃',
+      s02: '02 · 凌志認證二手車計劃',
+      s03: '03 · 車主保障概覽',
+      s04: '04 · Lubrico 延長保養',
+      s04b: '04 · Certified Powertrain Plus',
+      s05: '05 · 漆面同表面保護',
+      s06: '06 · Smart 智選保障計劃',
+      s07: '07 · Wear Pass 同 Wear Pass Plus',
+      s08: '08 · 輪胎同鈴／道路風險玻璃保障',
+      s09: '09 · 防盜保障',
+      s10: '附加 · 現金 vs. 貸款投資'
+    },
+    ja: {
+      front: 'フロントページ', contents: '目次',
+      s01: '01 · レクサス ECP プラチナプログラム',
+      s01b: '01 · メンテナンス特典プログラム',
+      s02: '02 · レクサス認定中古車プログラム',
+      s03: '03 · オーナープロテクション概要',
+      s04: '04 · Lubrico 延長保証',
+      s04b: '04 · Certified Powertrain Plus',
+      s05: '05 · ペイント＆サーフェスプロテクション',
+      s06: '06 · スマートプログラム',
+      s07: '07 · Wear Pass ＆ Wear Pass Plus',
+      s08: '08 · タイヤ＆ホイール／ロードハザードガラス',
+      s09: '09 · 盗難補償',
+      s10: 'ボーナス · 現金 vs. ローン＆投資'
+    },
+    ko: {
+      front: '첫 페이지', contents: '목차',
+      s01: '01 · 렉서스 ECP 플래티넘 프로그램',
+      s01b: '01 · 정비 혜택 프로그램',
+      s02: '02 · 렉서스 인증 중고차 프로그램',
+      s03: '03 · 오너 보호 개요',
+      s04: '04 · Lubrico 연장 보증',
+      s04b: '04 · Certified Powertrain Plus',
+      s05: '05 · 페인트 & 표면 보호',
+      s06: '06 · 스마트 프로그램',
+      s07: '07 · Wear Pass & Wear Pass Plus',
+      s08: '08 · 타이어 & 림 / 로드 해저드 글래스',
+      s09: '09 · 도난 보장',
+      s10: '보너스 · 현금 vs. 융자 & 투자'
+    },
+    ar: {
+      front: 'الصفحة الرئيسية', contents: 'المحتويات',
+      s01: '01 · برنامج Lexus ECP البلاتيني',
+      s01b: '01 · برنامج مزايا الصيانة المتضمَّنة',
+      s02: '02 · برامج Lexus المعتمدة المستعملة',
+      s03: '03 · نظرة عامة على حماية المالك',
+      s04: '04 · ضمانات Lubrico الممتدة',
+      s04b: '04 · Certified Powertrain Plus',
+      s05: '05 · حماية الطلاء والسطح',
+      s06: '06 · برنامج Smart',
+      s07: '07 · Wear Pass و Wear Pass Plus',
+      s08: '08 · الإطارات والجنوط / زجاج مخاطر الطريق',
+      s09: '09 · الحماية من السرقة',
+      s10: 'إضافي · الدفع نقدًا مقابل التمويل والاستثمار'
+    }
   };
+  function currentLabels(){
+    return labelsByLang[window.__LG_CURRENT_LANG__] || labelsByLang.en;
+  }
   var current = 0;
   var viewport = document.getElementById('lgViewport');
 
@@ -1378,7 +1488,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     }
     var lbl = document.getElementById('lgPageLabel');
     var no = document.getElementById('lgPageNo');
-    if (lbl) lbl.textContent = labels[key] || key;
+    if (lbl) lbl.textContent = currentLabels()[key] || key;
     if (no) no.textContent = String(current + 1);
     var prevBtn = document.getElementById('lgPrevBtn');
     var nextBtn = document.getElementById('lgNextBtn');
@@ -1393,6 +1503,13 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     if (contentsBtn) contentsBtn.disabled = !drawerEligible;
     if (!drawerEligible && window.lgCloseContentsDrawer) window.lgCloseContentsDrawer();
   }
+
+  window.lgRefreshPageLabel = function(){
+    var lbl = document.getElementById('lgPageLabel');
+    if (lbl) lbl.textContent = currentLabels()[order[current]] || order[current];
+    var no = document.getElementById('lgPageNo');
+    if (no) no.textContent = String(current + 1);
+  };
 
   window.lgGoTo = function(key){
     var idx = order.indexOf(key);
@@ -2277,6 +2394,31 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 
   window.lgPrintCalc = function(){
     var data = lgBuildSummaryData();
+
+    // Chrome for Android does not implement window.print() at all (it silently no-ops),
+    // and print support varies across other mobile browsers/in-app webviews.
+    // On touch devices, route through the same PDF + native share sheet used by "Share" —
+    // the OS share sheet exposes a system Print option on both iOS and Android.
+    var isTouchLikely = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    if (isTouchLikely) {
+      var pdfBlob = lgBuildSummaryPdfBlob(data);
+      if (pdfBlob) {
+        var pdfName = 'Lexus-Care-Summary-' + data.dateStr.replace(/[\/\\]/g, '-') + '.pdf';
+        var pdfFile = null;
+        try { pdfFile = new File([pdfBlob], pdfName, { type: 'application/pdf' }); } catch (err) { pdfFile = null; }
+        if (pdfFile && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+          navigator.share({ files: [pdfFile], title: 'Lexus Care — Payment Calculator Summary' }).catch(function(err){
+            if (err && err.name === 'AbortError') return; // user cancelled the share sheet
+            window.open(URL.createObjectURL(pdfBlob), '_blank'); // fall back to the device's own PDF viewer (has its own print/share icon)
+          });
+          return;
+        }
+        window.open(URL.createObjectURL(pdfBlob), '_blank'); // no file-share support: hand off to the PDF viewer
+        return;
+      }
+      // jsPDF unavailable for some reason — fall through to the desktop path as a last resort.
+    }
+
     var rowsHtml = '';
     data.rows.forEach(function(r){
       rowsHtml += '<tr><td>' + r.label + '</td><td>' + r.amount + '</td></tr>';
@@ -2560,6 +2702,7 @@ window.__LG_I18N_EN__ = (function(){
     document.querySelectorAll('[data-i18n]').forEach(function(el){
       var key = el.getAttribute('data-i18n');
       if (el.querySelector('.lg-add-btn')) return; // preserve live calculator "+ Add" buttons injected by scanPrices()
+      if (el.querySelector('#lgPageNo')) return; // preserve the live page counter; refreshed separately via lgRefreshPageLabel()
       if (lang === 'en') {
         if (en[key] !== undefined) el.innerHTML = en[key];
         return;
@@ -2574,7 +2717,10 @@ window.__LG_I18N_EN__ = (function(){
     document.documentElement.setAttribute('lang', lang === 'en' ? 'en' : lang.split('-')[0]);
     document.documentElement.classList.toggle('lg-rtl-lang', lang === 'ar');
     document.querySelectorAll('[data-i18n]').forEach(function(el){
-      if (lang === 'ar') el.setAttribute('dir', 'rtl'); else el.removeAttribute('dir');
+      var key = el.getAttribute('data-i18n');
+      var entry = dict[key];
+      var hasArabicScript = lang === 'ar' && entry && entry.ar && /[\u0600-\u06FF]/.test(entry.ar);
+      if (hasArabicScript) el.setAttribute('dir', 'rtl'); else el.removeAttribute('dir');
     });
     var btnLabel = document.getElementById('lgLangBtnLabel');
     if (btnLabel) btnLabel.textContent = LANG_LABELS[lang] || 'EN';
@@ -2582,6 +2728,7 @@ window.__LG_I18N_EN__ = (function(){
       b.classList.toggle('is-active', b.getAttribute('data-lang') === lang);
     });
     window.__LG_CURRENT_LANG__ = lang;
+    if (typeof window.lgRefreshPageLabel === 'function') window.lgRefreshPageLabel();
     if (typeof window.lgRecalc === 'function') window.lgRecalc(); // resync live calculator totals after any translated node was recreated
   }
   window.lgSetLanguage = function(lang){
