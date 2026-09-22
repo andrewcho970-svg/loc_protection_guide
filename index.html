@@ -2397,8 +2397,11 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 
     // Chrome for Android does not implement window.print() at all (it silently no-ops),
     // and print support varies across other mobile browsers/in-app webviews.
-    // On touch devices, route through the same PDF + native share sheet used by "Share" —
+    // On touch devices, route through a PDF + the native share sheet instead —
     // the OS share sheet exposes a system Print option on both iOS and Android.
+    // (Unlike the "Share" button's email flow, this omits a title/text payload
+    // entirely, so it isn't affected by the dropped-subject bug that made "Share"
+    // switch to mailto: — there's no subject here to drop.)
     var isTouchLikely = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     if (isTouchLikely) {
       var pdfBlob = lgBuildSummaryPdfBlob(data);
@@ -2533,29 +2536,26 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     if (!blob) { showFeedback('PDF unavailable'); return; }
 
     var fileName = 'Lexus-Care-Summary-' + data.dateStr.replace(/[\/\\]/g, '-') + '.pdf';
-    var file = null;
-    try { file = new File([blob], fileName, { type: 'application/pdf' }); } catch (err) { file = null; }
 
-    // Best path: native share sheet (mobile Safari/Chrome, some desktop browsers)
-    // lets the rep pick Mail directly and the PDF comes along as a real attachment.
-    if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
-      navigator.share({
-        files: [file],
-        title: 'Lexus Care Protection Products Guide',
-        text: 'Lexus Care Protection Products Guide\n\n' +
-          'Estimate only — excludes taxes, levies and dealer fees.\n\n' +
-          'Full guide: https://loc-protection-guide.vercel.app'
-      }).then(function(){
-        showFeedback('Shared!');
-      }).catch(function(err){
-        if (err && err.name === 'AbortError') return; // user cancelled the share sheet
-        showFeedback('Share failed');
-      });
-      return;
-    }
+    var EMAIL_SUBJECT = 'Protect Your Lexus - Exclusive Coverage Options';
+    var EMAIL_BODY =
+      "Hi,\n\n" +
+      "Thank you for choosing Lexus! To help you get the most out of your vehicle, we wanted to share our Lexus Care Protection Products Guide — a range of coverage options designed to protect your investment, minimize unexpected costs, and preserve your vehicle's value for years to come.\n\n" +
+      "Inside you'll find:\n" +
+      "- Extended warranty and mechanical breakdown coverage\n" +
+      "- Paint, surface & interior protection\n" +
+      "- Tire, rim & glass protection\n" +
+      "- Lease-end wear protection\n" +
+      "- Theft protection\n\n" +
+      "View the full guide here: https://loc-protection-guide.vercel.app/\n\n" +
+      "I'd be happy to walk you through the options that make the most sense for your vehicle and driving needs — just reply to this email or give me a call.\n\n" +
+      "Looking forward to helping you protect your Lexus!";
 
-    // Fallback: browsers can't attach a file to a mailto link for security reasons,
-    // so download the PDF and open a pre-filled email — the rep attaches the file that just downloaded.
+    // Native share (navigator.share with a file) unreliably drops the `title` field
+    // across WebKit — both iOS Safari and desktop macOS Safari confirmed to attach
+    // the PDF and fill the body but leave the subject blank, with no way to detect
+    // or fix that from JS. mailto: is the only path that reliably sets the subject
+    // on every platform, so we always use it here rather than gambling per-browser.
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
@@ -2565,16 +2565,8 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     document.body.removeChild(a);
     setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
 
-    var subject = encodeURIComponent('Lexus Care Protection Products Guide');
-    var body = encodeURIComponent(
-      'Hi,\n\nPlease see the attached Lexus Care payment summary:\n\n' +
-      data.principalLabel + ': ' + data.principal + '\n' +
-      'Monthly Payment: ' + data.monthly + '\n' +
-      'Bi-Weekly Payment: ' + data.biweekly + '\n\n' +
-      'The PDF just downloaded to your device as "' + fileName + '" — please attach it to this email before sending.\n\n' +
-      'Estimate only — excludes taxes, levies and dealer fees.\n\n' +
-      'View the full Lexus Care Protection Guide: https://loc-protection-guide.vercel.app'
-    );
+    var subject = encodeURIComponent(EMAIL_SUBJECT);
+    var body = encodeURIComponent(EMAIL_BODY);
     window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
     showFeedback('PDF downloaded', 2200);
   };
