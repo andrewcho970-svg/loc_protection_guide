@@ -567,6 +567,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 <span class="lg-theme-switch-knob" id="lgThemeKnob">☾</span>
 </button>
 <a aria-label="Questions? Click to email us" class="lg-contact-btn" data-i18n="i12" href="mailto:lexusfinancial@lexusofcalgary.com?subject=%5BLexus%20Care%20Online%20Guide%20Inquiry%5D" title="Questions? Click to email us">?</a>
+<button aria-label="Email this guide to a client" class="lg-btn lg-icon" onclick="lgShareGuidePage()" title="Email this guide to a client"><svg aria-hidden="true" focusable="false" height="17" viewBox="0 0 24 24" width="17"><rect fill="none" height="14" rx="2" stroke="currentColor" stroke-width="1.4" width="18" x="3" y="5"></rect><path d="M4 6.5l8 6 8-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4"></path></svg></button>
 <div class="lg-qr-wrap">
 <canvas aria-label="QR code linking to loc-protection-guide.vercel.app. Click to enlarge." class="lg-qr-img" height="34" id="lgQrCanvas" onclick="lgOpenQrModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();lgOpenQrModal();}" role="button" tabindex="0" title="Click to enlarge" width="34"></canvas>
 </div>
@@ -1825,6 +1826,27 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   var downIncluded = false;
   var cartEmptyEl = document.getElementById('lgCalcCartEmpty');
   window.lgCashMode = false;
+
+  // Header icon: instantly email the guide link itself, with no calculator
+  // data, no PDF, no drawer — just a mailto: with the subject/body prefilled.
+  // Independent of the calculator drawer's "Share" button (lgEmailCalc) below —
+  // editing this text does not affect that button, and vice versa.
+  window.lgShareGuidePage = function(){
+    var subject = 'Protect Your Lexus - Exclusive Coverage Options';
+    var body =
+      "Hi,\n\n" +
+      "Thank you for choosing Lexus! To help you get the most out of your vehicle, we wanted to share our Lexus Care Protection Products Guide — a range of coverage options designed to protect your investment, minimize unexpected costs, and preserve your vehicle's value for years to come.\n\n" +
+      "Inside you'll find:\n" +
+      "- Extended warranty and mechanical breakdown coverage\n" +
+      "- Paint, surface & interior protection\n" +
+      "- Tire, rim & glass protection\n" +
+      "- Lease-end wear protection\n" +
+      "- Theft protection\n\n" +
+      "View the full guide here: https://loc-protection-guide.vercel.app/\n\n" +
+      "I'd be happy to walk you through the options that make the most sense for your vehicle and driving needs — just reply to this email or give me a call.\n\n" +
+      "Looking forward to helping you protect your Lexus!";
+    window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  };
 
   // Tracks the last-rendered values of the "headline" calculator outputs so
   // lgRecalc can tell whether something actually changed and, if so, fire a
