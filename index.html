@@ -1850,7 +1850,13 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     // No file involved here (unlike the calculator's Share button), so there's
     // no dropped-subject risk from the WebKit file-attachment bug — the title
     // comes through reliably in this text-only share.
-    if (navigator.share) {
+    function lgIsWindows(){
+  if (navigator.userAgentData && navigator.userAgentData.platform) {
+    return navigator.userAgentData.platform === 'Windows';
+  }
+  return /Win/i.test(navigator.platform || navigator.userAgent || '');
+}
+    if (!lgIsWindows() && navigator.share) {
       navigator.share({ title: subject, text: body }).catch(function(err){
         if (err && err.name === 'AbortError') return; // user cancelled the share sheet
       });
@@ -2595,7 +2601,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     // JS. That's judged a smaller cost than losing every other share target, so
     // native share stays the primary path; mailto: below is the fallback only
     // for browsers/devices that don't support sharing a file at all.
-    if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+    if (!lgIsWindows() && file && navigator.canShare && navigator.canShare({ files: [file] })) {
       navigator.share({
         files: [file],
         title: EMAIL_SUBJECT,
