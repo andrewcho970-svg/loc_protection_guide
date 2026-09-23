@@ -1845,6 +1845,19 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
       "View the full guide here: https://loc-protection-guide.vercel.app/\n\n" +
       "I'd be happy to walk you through the options that make the most sense for your vehicle and driving needs — just reply to this email or give me a call.\n\n" +
       "Looking forward to helping you protect your Lexus!";
+
+    // Best path: native share sheet (Mail, Messages, AirDrop, WhatsApp, etc.).
+    // No file involved here (unlike the calculator's Share button), so there's
+    // no dropped-subject risk from the WebKit file-attachment bug — the title
+    // comes through reliably in this text-only share.
+    if (navigator.share) {
+      navigator.share({ title: subject, text: body }).catch(function(err){
+        if (err && err.name === 'AbortError') return; // user cancelled the share sheet
+      });
+      return;
+    }
+
+    // Fallback for browsers without the Web Share API at all.
     window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
   };
 
@@ -2421,9 +2434,6 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     // and print support varies across other mobile browsers/in-app webviews.
     // On touch devices, route through a PDF + the native share sheet instead —
     // the OS share sheet exposes a system Print option on both iOS and Android.
-    // (Unlike the "Share" button's email flow, this omits a title/text payload
-    // entirely, so it isn't affected by the dropped-subject bug that made "Share"
-    // switch to mailto: — there's no subject here to drop.)
     var isTouchLikely = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
     if (isTouchLikely) {
       var pdfBlob = lgBuildSummaryPdfBlob(data);
@@ -2573,11 +2583,34 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
       "I'd be happy to walk you through the options that make the most sense for your vehicle and driving needs — just reply to this email or give me a call.\n\n" +
       "Looking forward to helping you protect your Lexus!";
 
-    // Native share (navigator.share with a file) unreliably drops the `title` field
-    // across WebKit — both iOS Safari and desktop macOS Safari confirmed to attach
-    // the PDF and fill the body but leave the subject blank, with no way to detect
-    // or fix that from JS. mailto: is the only path that reliably sets the subject
-    // on every platform, so we always use it here rather than gambling per-browser.
+    var file = null;
+    try { file = new File([blob], fileName, { type: 'application/pdf' }); } catch (err) { file = null; }
+
+    // Best path: native share sheet (mobile Safari/Chrome, some desktop browsers)
+    // lets the rep pick Mail, Messages, AirDrop, WhatsApp, etc. directly, with the
+    // PDF attached as a real file.
+    // Known trade-off: Safari (iOS and macOS) sometimes drops the `title` field
+    // when a file is attached, so choosing Mail from the sheet can show up with
+    // no subject pre-filled — there's no way to detect or work around that from
+    // JS. That's judged a smaller cost than losing every other share target, so
+    // native share stays the primary path; mailto: below is the fallback only
+    // for browsers/devices that don't support sharing a file at all.
+    if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({
+        files: [file],
+        title: EMAIL_SUBJECT,
+        text: EMAIL_BODY
+      }).then(function(){
+        showFeedback('Shared!');
+      }).catch(function(err){
+        if (err && err.name === 'AbortError') return; // user cancelled the share sheet
+        showFeedback('Share failed');
+      });
+      return;
+    }
+
+    // Fallback: browsers can't attach a file to a mailto link for security reasons,
+    // so download the PDF and open a pre-filled email — the rep attaches the file that just downloaded.
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
