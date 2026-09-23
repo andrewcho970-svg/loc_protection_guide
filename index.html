@@ -1827,6 +1827,13 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   var cartEmptyEl = document.getElementById('lgCalcCartEmpty');
   window.lgCashMode = false;
 
+  function lgIsWindows(){
+    if (navigator.userAgentData && navigator.userAgentData.platform) {
+      return navigator.userAgentData.platform === 'Windows';
+    }
+    return /Win/i.test(navigator.platform || navigator.userAgent || '');
+  }
+
   // Header icon: instantly email the guide link itself, with no calculator
   // data, no PDF, no drawer — just a mailto: with the subject/body prefilled.
   // Independent of the calculator drawer's "Share" button (lgEmailCalc) below —
@@ -1850,12 +1857,6 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     // No file involved here (unlike the calculator's Share button), so there's
     // no dropped-subject risk from the WebKit file-attachment bug — the title
     // comes through reliably in this text-only share.
-    function lgIsWindows(){
-  if (navigator.userAgentData && navigator.userAgentData.platform) {
-    return navigator.userAgentData.platform === 'Windows';
-  }
-  return /Win/i.test(navigator.platform || navigator.userAgent || '');
-}
     if (!lgIsWindows() && navigator.share) {
       navigator.share({ title: subject, text: body }).catch(function(err){
         if (err && err.name === 'AbortError') return; // user cancelled the share sheet
