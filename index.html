@@ -2893,8 +2893,10 @@ window.__LG_I18N_EN__ = (function(){
 })();
 </script>
 <script>
+/* Canadian holiday observance banner — shows once per session, 2–7 days
+   ahead of the holiday (see per-holiday `lead`), with a live D-# countdown. */
 (function(){
-  function dateOnly(y,m,d){ return new Date(y,m,d,0,0,0,0); }
+  function dateOnly(y, m, d){ return new Date(y, m, d, 0, 0, 0, 0); }
   function addDays(date,n){ var d = new Date(date); d.setDate(d.getDate()+n); return d; }
   function nthWeekday(year, month, weekday, n){
     var d = new Date(year, month, 1);
