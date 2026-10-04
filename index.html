@@ -248,14 +248,11 @@ table.lg-table td.muted, table.lg-table th.muted { color: var(--muted); }
 
 .lg-copy { text-align: center; font-size: 12px; color: var(--muted-2); margin-top: 30px; letter-spacing: .04em; }
 
-.lg-theme-switch { position: relative; display: inline-flex; align-items: center; width: 46px; height: 24px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel-2); cursor: pointer; padding: 0; flex-shrink: 0; transition: background .2s ease, border-color .2s ease; }
-.lg-theme-switch:hover { border-color: var(--gold); background: var(--gold-soft); transform: scale(1.1); box-shadow: 0 6px 16px rgba(198,166,100,0.32); }
-.lg-root.lg-light .lg-theme-switch:hover { box-shadow: 0 6px 16px rgba(156,122,58,0.25); }
-.lg-theme-switch:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-.lg-theme-switch-knob { position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: var(--gold); color: #0a0b0d; display: flex; align-items: center; justify-content: center; font-size: 10px; line-height: 1; transition: transform .22s ease; }
-.lg-theme-switch.is-light .lg-theme-switch-knob { transform: translateX(22px); }
-.lg-theme-switch-auto-dot { position: absolute; top: -5px; right: -5px; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); border: 1.5px solid var(--panel); display: none; }
-.lg-theme-switch.is-auto .lg-theme-switch-auto-dot { display: block; }
+.lg-theme-btn { display: inline-flex; align-items: center; justify-content: center; }
+.lg-theme-btn .lg-theme-ico { display: none; width: 17px; height: 17px; }
+.lg-theme-btn[data-mode="dark"] .lg-ico-dark,
+.lg-theme-btn[data-mode="light"] .lg-ico-light,
+.lg-theme-btn[data-mode="auto"] .lg-ico-auto { display: block; }
 
 .lg-qr-img { width: 34px; height: 34px; border-radius: 3px; border: 1px solid var(--line); background: transparent; padding: 2px; display: block; cursor: pointer; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
 .lg-qr-img:hover { transform: scale(1.25); border-color: var(--gold); box-shadow: 0 8px 22px rgba(198,166,100,0.4), 0 0 0 1px var(--gold); }
@@ -613,9 +610,10 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 <span class="lg-calc-summary-sep" data-i18n="i9">·</span>
 <span class="lg-calc-summary-item" data-i18n="i10"><b id="lgCalcSummaryBiweekly">$0</b><span>/bi-wk</span></span>
 </div>
-<button aria-checked="false" aria-label="Theme: Dark" class="lg-theme-switch" data-i18n="i11" id="lgThemeSwitch" onclick="lgToggleTheme()" role="switch">
-<span class="lg-theme-switch-auto-dot" id="lgThemeAutoDot"></span>
-<span class="lg-theme-switch-knob" id="lgThemeKnob">☾</span>
+<button aria-label="Theme: Auto. Click to change." class="lg-btn lg-icon lg-theme-btn" data-mode="auto" id="lgThemeSwitch" onclick="lgToggleTheme()" title="Theme: Auto" type="button">
+<svg aria-hidden="true" class="lg-theme-ico lg-ico-dark" fill="none" focusable="false" viewBox="0 0 24 24"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.2 8.2 0 1 0 10.2 10.2z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.5"></path></svg>
+<svg aria-hidden="true" class="lg-theme-ico lg-ico-light" fill="none" focusable="false" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"></circle><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"></path></svg>
+<svg aria-hidden="true" class="lg-theme-ico lg-ico-auto" fill="none" focusable="false" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2" stroke="currentColor" stroke-width="1.5"></circle><path d="M12 3.8a8.2 8.2 0 0 1 0 16.4z" fill="currentColor"></path></svg>
 </button>
 <a aria-label="Questions? Click to email us" class="lg-contact-btn" data-i18n="i12" href="mailto:lexusfinancial@lexusofcalgary.com?subject=%5BLexus%20Care%20Online%20Guide%20Inquiry%5D" title="Questions? Click to email us">?</a>
 <button aria-label="Email this guide to a client" class="lg-btn lg-icon" onclick="lgShareGuidePage()" title="Email this guide to a client"><svg aria-hidden="true" focusable="false" height="17" viewBox="0 0 24 24" width="17"><rect fill="none" height="14" rx="2" stroke="currentColor" stroke-width="1.4" width="18" x="3" y="5"></rect><path d="M4 6.5l8 6 8-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4"></path></svg></button>
@@ -1706,7 +1704,7 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
     }, { passive: true });
   }
 
-  window.lgThemeMode = 'dark'; // 'auto' | 'light' | 'dark'
+  window.lgThemeMode = 'auto'; // 'auto' | 'light' | 'dark' — Auto is the default
 
   function lgAutoIsLight(){
     var h = new Date().getHours();
@@ -1719,21 +1717,18 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
 
     var root = document.querySelector('.lg-root');
     var sw = document.getElementById('lgThemeSwitch');
-    var knob = document.getElementById('lgThemeKnob');
     if (root) root.classList.toggle('lg-light', isLight);
     if (sw) {
-      sw.classList.toggle('is-light', isLight);
-      sw.classList.toggle('is-auto', mode === 'auto');
-      sw.setAttribute('aria-checked', isLight ? 'true' : 'false');
+      sw.setAttribute('data-mode', mode);
       var modeLabel = mode === 'auto' ? 'Auto (' + (isLight ? 'Light' : 'Dark') + ')' : (mode === 'light' ? 'Light' : 'Dark');
       sw.setAttribute('aria-label', 'Theme: ' + modeLabel + '. Click to change.');
       sw.title = 'Theme: ' + modeLabel;
     }
-    if (knob) knob.textContent = isLight ? '☀' : '☾';
   }
 
+  // Cycle: Dark → Light → Auto → Dark …
   window.lgToggleTheme = function(){
-    window.lgThemeMode = window.lgThemeMode === 'auto' ? 'light' : window.lgThemeMode === 'light' ? 'dark' : 'auto';
+    window.lgThemeMode = window.lgThemeMode === 'dark' ? 'light' : window.lgThemeMode === 'light' ? 'auto' : 'dark';
     lgApplyTheme();
   };
 
