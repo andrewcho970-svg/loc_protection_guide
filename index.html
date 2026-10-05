@@ -46,7 +46,7 @@ html, body { height: 100%; margin: 0; padding: 0; background: #0a0b0d; }
   overflow: hidden;
   transition: background .25s ease, color .25s ease;
 }
-.lg-root * { box-sizing: border-box; }
+.lg-root, .lg-root * { box-sizing: border-box; }
 .lg-root.lg-light {
   --bg: #f6f5f1; --panel: #ffffff; --panel-2: #efece4; --line: #ddd7c8;
   --platinum: #1c1d1f; --muted: #55585f; --muted-2: #82858c;
@@ -632,19 +632,105 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   background-size: 22px 16px;
 }
 .lg-root.lg-light .lg-holiday-banner::before { filter: saturate(.9); }
-@media (prefers-reduced-motion: reduce) {
-  .lg-holiday-banner::before { transition: none; }
+.lg-holiday-banner > .lg-holiday-banner-art {
+  position: absolute; z-index: 0; right: 40px; top: 50%; width: 220px; height: 72px;
+  transform: translateY(-50%); color: var(--gold); pointer-events: none;
+  opacity: 0; transition: opacity 1.2s ease .5s;
+  -webkit-mask-image: linear-gradient(to left, #000 30%, transparent 100%);
+          mask-image: linear-gradient(to left, #000 30%, transparent 100%);
+}
+.lg-holiday-banner.is-visible > .lg-holiday-banner-art { opacity: .34; }
+.lg-root.lg-light .lg-holiday-banner.is-visible > .lg-holiday-banner-art { opacity: .42; }
+.lg-holiday-banner-art svg { width: 100%; height: 100%; display: block; }
+@media (max-width: 720px) {
+  .lg-holiday-banner > .lg-holiday-banner-art { width: 130px; right: 30px; }
+  .lg-holiday-banner.is-visible > .lg-holiday-banner-art { opacity: .24; }
 }
 @media (max-width: 720px) {
   .lg-holiday-banner { padding: 9px 14px; gap: 9px; }
   .lg-holiday-banner-text { font-size: 12.5px; }
 }
+
+/* ---- Holiday banner motion: light, not objects. Plays only while the banner is visible (auto-hides ~8s). ---- */
+.lg-holiday-banner > .lg-holiday-banner-fx {
+  position: absolute; z-index: 0; inset: 0; pointer-events: none;
+  --hb-sweep: rgba(198,166,100,0.16);
+  background: linear-gradient(105deg, transparent 38%, var(--hb-sweep) 50%, transparent 62%);
+  background-size: 250% 100%; background-position: 150% 0; background-repeat: no-repeat;
+}
+.lg-holiday-banner.is-visible > .lg-holiday-banner-fx { animation: lgHbSweep 3.6s cubic-bezier(.45,.05,.25,1) 1.3s 1 both; }
+@keyframes lgHbSweep { from { background-position: 150% 0; } to { background-position: -50% 0; } }
+
+/* per-holiday sweep colour (Good Friday + Remembrance: none, stays still) */
+.lg-holiday-banner[data-holiday="newyear"] > .lg-holiday-banner-fx { --hb-sweep: rgba(240,222,165,0.22); }
+.lg-holiday-banner[data-holiday="family"] > .lg-holiday-banner-fx { --hb-sweep: rgba(230,170,130,0.16); }
+.lg-holiday-banner[data-holiday="victoria"] > .lg-holiday-banner-fx { --hb-sweep: rgba(160,130,215,0.18); }
+.lg-holiday-banner[data-holiday="labour"] > .lg-holiday-banner-fx { --hb-sweep: rgba(150,175,205,0.18); }
+.lg-holiday-banner[data-holiday="thanksgiving"] > .lg-holiday-banner-fx { --hb-sweep: rgba(224,146,62,0.26); }
+.lg-holiday-banner[data-holiday="christmas"] > .lg-holiday-banner-fx { --hb-sweep: rgba(255,255,255,0.09); }
+.lg-holiday-banner[data-holiday="boxing"] > .lg-holiday-banner-fx { --hb-sweep: rgba(198,166,100,0.16); }
+.lg-holiday-banner[data-holiday="goodfriday"] > .lg-holiday-banner-fx,
+.lg-holiday-banner[data-holiday="remembrance"] > .lg-holiday-banner-fx { display: none; }
+
+/* Canada Day: crimson wings breathe slowly instead of sweeping */
+.lg-holiday-banner[data-holiday="canada"] > .lg-holiday-banner-fx {
+  background: radial-gradient(ellipse 45% 150% at 0% 50%, rgba(190,50,60,0.30), transparent 70%),
+              radial-gradient(ellipse 45% 150% at 100% 50%, rgba(190,50,60,0.30), transparent 70%);
+  opacity: .2;
+}
+.lg-holiday-banner[data-holiday="canada"].is-visible > .lg-holiday-banner-fx { animation: lgHbBreathe 4.2s ease-in-out .6s infinite alternate; }
+@keyframes lgHbBreathe { from { opacity: .2; } to { opacity: 1; } }
+
+/* texture layers (seamless: every shift equals one tile period) */
+.lg-holiday-banner[data-holiday="newyear"].is-visible::before { animation: lgHbSparkle 3.8s ease-in-out infinite, lgHbUp44 9s linear infinite; }
+.lg-holiday-banner[data-holiday="christmas"].is-visible::before { animation: lgHbDown44 8s linear infinite; }
+.lg-holiday-banner[data-holiday="boxing"].is-visible::before { animation: lgHbSparkle 4.4s ease-in-out infinite, lgHbUp16 9s linear infinite; }
+.lg-holiday-banner[data-holiday="family"].is-visible::before { animation: lgHbDot18 10s linear infinite; }
+.lg-holiday-banner[data-holiday="victoria"].is-visible::before { animation: lgHbWeave 7s linear infinite; }
+.lg-holiday-banner[data-holiday="thanksgiving"].is-visible::before { animation: lgHbGrain 5.5s linear infinite; }
+.lg-holiday-banner[data-holiday="labour"].is-visible::before { animation: lgHbGrid 12s linear infinite; }
+@keyframes lgHbSparkle { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+@keyframes lgHbUp44 { to { background-position: 0 -44px; } }
+@keyframes lgHbDown44 { to { background-position: 0 44px; } }
+@keyframes lgHbUp16 { to { background-position: 0 -16px; } }
+@keyframes lgHbDot18 { to { background-position: 18px 18px; } }
+@keyframes lgHbWeave { to { background-position: 12.73px 0; } }
+@keyframes lgHbGrain { to { background-position: 8.08px 0; } }
+@keyframes lgHbGrid { to { background-position: 14px 14px, 14px 14px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .lg-holiday-banner > .lg-holiday-banner-art,
+  .lg-holiday-banner::before { transition: none; }
+  .lg-holiday-banner.is-visible::before,
+  .lg-holiday-banner.is-visible > .lg-holiday-banner-fx { animation: none !important; }
+  .lg-holiday-banner > .lg-holiday-banner-fx { display: none; }
+}
+
+/* ---- Light mode: darker, saturated sweep tints; snow switches from white to soft grey ---- */
+.lg-root.lg-light .lg-holiday-banner > .lg-holiday-banner-fx { --hb-sweep: rgba(156,122,58,0.16); }
+.lg-root.lg-light .lg-holiday-banner[data-holiday="newyear"] > .lg-holiday-banner-fx { --hb-sweep: rgba(156,122,58,0.20); }
+.lg-root.lg-light .lg-holiday-banner[data-holiday="family"] > .lg-holiday-banner-fx { --hb-sweep: rgba(200,105,70,0.15); }
+.lg-root.lg-light .lg-holiday-banner[data-holiday="victoria"] > .lg-holiday-banner-fx { --hb-sweep: rgba(112,80,168,0.15); }
+.lg-root.lg-light .lg-holiday-banner[data-holiday="labour"] > .lg-holiday-banner-fx { --hb-sweep: rgba(70,105,150,0.15); }
+.lg-root.lg-light .lg-holiday-banner[data-holiday="thanksgiving"] > .lg-holiday-banner-fx { --hb-sweep: rgba(196,110,40,0.22); }
+.lg-root.lg-light .lg-holiday-banner[data-holiday="christmas"] > .lg-holiday-banner-fx { --hb-sweep: rgba(28,120,84,0.15); }
+.lg-root.lg-light .lg-holiday-banner[data-holiday="boxing"] > .lg-holiday-banner-fx { --hb-sweep: rgba(52,76,140,0.13); }
+.lg-root.lg-light .lg-holiday-banner[data-holiday="canada"] > .lg-holiday-banner-fx {
+  background: radial-gradient(ellipse 45% 150% at 0% 50%, rgba(190,50,60,0.20), transparent 70%),
+              radial-gradient(ellipse 45% 150% at 100% 50%, rgba(190,50,60,0.20), transparent 70%);
+}
+.lg-root.lg-light .lg-holiday-banner[data-holiday="christmas"]::before { filter: brightness(0); }
+.lg-root.lg-light .lg-holiday-banner[data-holiday="christmas"].is-visible::before { opacity: .9; }
+.lg-root.lg-light .lg-holiday-banner[data-holiday="boxing"]::before,
+.lg-root.lg-light .lg-holiday-banner[data-holiday="newyear"]::before,
+.lg-root.lg-light .lg-holiday-banner[data-holiday="family"]::before { filter: saturate(1.25) brightness(.72); }
 </style>
 </head>
 <body>
 <div class="lg-root">
 <div class="lg-shell">
 <div class="lg-holiday-banner" id="lgHolidayBanner" role="status" aria-live="polite">
+  <span class="lg-holiday-banner-art" id="lgHolidayBannerArt" aria-hidden="true"></span>
   <span class="lg-holiday-banner-icon" id="lgHolidayBannerIcon"></span>
   <span class="lg-holiday-banner-badge" id="lgHolidayBannerBadge"></span>
   <span class="lg-holiday-banner-text" id="lgHolidayBannerText"></span>
@@ -2966,6 +3052,8 @@ window.__LG_I18N_EN__ = (function(){
     return new Date(year, month - 1, day);
   }
 
+  var ART = {"newyear":"<svg viewBox=\"0 0 120 90\" preserveAspectRatio=\"xMaxYMid meet\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M79 46L94 46\"/><circle cx=\"98\" cy=\"46\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M78.1 49.9L91.6 56.4\"/><circle cx=\"95.2\" cy=\"58.1\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M75.6 53L85 64.8\"/><circle cx=\"87.5\" cy=\"67.9\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M72 54.8L75.3 69.4\"/><circle cx=\"76.2\" cy=\"73.3\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M68 54.8L64.7 69.4\"/><circle cx=\"63.8\" cy=\"73.3\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M64.4 53L55 64.8\"/><circle cx=\"52.5\" cy=\"67.9\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M61.9 49.9L48.4 56.4\"/><circle cx=\"44.8\" cy=\"58.1\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M61 46L46 46\"/><circle cx=\"42\" cy=\"46\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M61.9 42.1L48.4 35.6\"/><circle cx=\"44.8\" cy=\"33.9\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M64.4 39L55 27.2\"/><circle cx=\"52.5\" cy=\"24.1\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M68 37.2L64.7 22.6\"/><circle cx=\"63.8\" cy=\"18.7\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M72 37.2L75.3 22.6\"/><circle cx=\"76.2\" cy=\"18.7\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M75.6 39L85 27.2\"/><circle cx=\"87.5\" cy=\"24.1\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M78.1 42.1L91.6 35.6\"/><circle cx=\"95.2\" cy=\"33.9\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M33 26L40 26\"/><circle cx=\"44\" cy=\"26\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M32 28.9L37.7 33.1\"/><circle cx=\"40.9\" cy=\"35.4\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M29.5 30.8L31.7 37.4\"/><circle cx=\"32.9\" cy=\"41.2\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M26.5 30.8L24.3 37.4\"/><circle cx=\"23.1\" cy=\"41.2\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M24 28.9L18.3 33.1\"/><circle cx=\"15.1\" cy=\"35.4\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M23 26L16 26\"/><circle cx=\"12\" cy=\"26\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M24 23.1L18.3 18.9\"/><circle cx=\"15.1\" cy=\"16.6\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M26.5 21.2L24.3 14.6\"/><circle cx=\"23.1\" cy=\"10.8\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M29.5 21.2L31.7 14.6\"/><circle cx=\"32.9\" cy=\"10.8\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M32 23.1L37.7 18.9\"/><circle cx=\"40.9\" cy=\"16.6\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M104 72L109 72\"/><circle cx=\"113\" cy=\"72\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M102.8 74.8L106.4 78.4\"/><circle cx=\"109.2\" cy=\"81.2\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M100 76L100 81\"/><circle cx=\"100\" cy=\"85\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M97.2 74.8L93.6 78.4\"/><circle cx=\"90.8\" cy=\"81.2\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M96 72L91 72\"/><circle cx=\"87\" cy=\"72\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M97.2 69.2L93.6 65.6\"/><circle cx=\"90.8\" cy=\"62.8\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M100 68L100 63\"/><circle cx=\"100\" cy=\"59\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M102.8 69.2L106.4 65.6\"/><circle cx=\"109.2\" cy=\"62.8\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/></svg>","family":"<svg viewBox=\"0 0 120 90\" preserveAspectRatio=\"xMaxYMid meet\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M20 48 60 14l40 34\"/><path d=\"M28 42v34h64V42\"/><path d=\"M60 69C44 57 48 46 56 48c2 .5 4 3 4 3s2-2.500 4-3c8-2 12 9-4 21z\"/></svg>","goodfriday":"<svg viewBox=\"0 0 120 90\" preserveAspectRatio=\"xMaxYMid meet\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M60 32L28.1 20.4\" stroke-opacity=\".45\" stroke-dasharray=\"1 4\"/><path d=\"M60 32L34 10.1\" stroke-opacity=\".45\" stroke-dasharray=\"1 4\"/><path d=\"M60 32L43 2.6\" stroke-opacity=\".45\" stroke-dasharray=\"1 4\"/><path d=\"M60 32L54.1 -1.5\" stroke-opacity=\".45\" stroke-dasharray=\"1 4\"/><path d=\"M60 32L65.9 -1.5\" stroke-opacity=\".45\" stroke-dasharray=\"1 4\"/><path d=\"M60 32L77 2.6\" stroke-opacity=\".45\" stroke-dasharray=\"1 4\"/><path d=\"M60 32L86 10.1\" stroke-opacity=\".45\" stroke-dasharray=\"1 4\"/><path d=\"M60 32L91.9 20.4\" stroke-opacity=\".45\" stroke-dasharray=\"1 4\"/><path d=\"M60 12v58M44 30h32\"/><path d=\"M8 82Q60 60 112 82\"/></svg>","victoria":"<svg viewBox=\"0 0 120 90\" preserveAspectRatio=\"xMaxYMid meet\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M26 70h68M30 62h60M26 70 22 36l22 16 16-24 16 24 22-16-4 34\"/><circle cx=\"22\" cy=\"33\" r=\"3\"/><circle cx=\"60\" cy=\"25\" r=\"3\"/><circle cx=\"98\" cy=\"33\" r=\"3\"/></svg>","canada":"<svg viewBox=\"0 0 120 90\" preserveAspectRatio=\"xMaxYMid meet\" xmlns=\"http://www.w3.org/2000/svg\"><g transform=\"rotate(-5 60 45)\"><rect x=\"0\" y=\"15\" width=\"120\" height=\"60\" fill=\"#fff\" fill-opacity=\".92\"/><rect x=\"0\" y=\"15\" width=\"30\" height=\"60\" fill=\"#c8202f\"/><rect x=\"90\" y=\"15\" width=\"30\" height=\"60\" fill=\"#c8202f\"/><path transform=\"translate(60 45) scale(.2)\" d=\"M0,-100 L20,-60 L50,-70 L40,-30 L75,-40 L60,0 L90,20 L50,35 L55,60 L10,50 L10,100 L-10,100 L-10,50 L-55,60 L-50,35 L-90,20 L-60,0 L-75,-40 L-40,-30 L-50,-70 L-20,-60 Z\" fill=\"#c8202f\"/><rect x=\".5\" y=\"15.5\" width=\"119\" height=\"59\" fill=\"none\" stroke=\"#c6a664\" stroke-width=\"1\" stroke-opacity=\".8\"/></g></svg>","labour":"<svg viewBox=\"0 0 120 90\" preserveAspectRatio=\"xMaxYMid meet\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"64\" cy=\"48\" r=\"18\"/><circle cx=\"64\" cy=\"48\" r=\"7.2\"/><rect x=\"59.8\" y=\"23\" width=\"8.4\" height=\"7\" transform=\"rotate(0 64 48)\"/><rect x=\"59.8\" y=\"23\" width=\"8.4\" height=\"7\" transform=\"rotate(45 64 48)\"/><rect x=\"59.8\" y=\"23\" width=\"8.4\" height=\"7\" transform=\"rotate(90 64 48)\"/><rect x=\"59.8\" y=\"23\" width=\"8.4\" height=\"7\" transform=\"rotate(135 64 48)\"/><rect x=\"59.8\" y=\"23\" width=\"8.4\" height=\"7\" transform=\"rotate(180 64 48)\"/><rect x=\"59.8\" y=\"23\" width=\"8.4\" height=\"7\" transform=\"rotate(225 64 48)\"/><rect x=\"59.8\" y=\"23\" width=\"8.4\" height=\"7\" transform=\"rotate(270 64 48)\"/><rect x=\"59.8\" y=\"23\" width=\"8.4\" height=\"7\" transform=\"rotate(315 64 48)\"/><circle cx=\"96\" cy=\"22\" r=\"9\"/><circle cx=\"96\" cy=\"22\" r=\"3.6\"/><rect x=\"93.6\" y=\"9\" width=\"4.8\" height=\"4\" transform=\"rotate(0 96 22)\"/><rect x=\"93.6\" y=\"9\" width=\"4.8\" height=\"4\" transform=\"rotate(60 96 22)\"/><rect x=\"93.6\" y=\"9\" width=\"4.8\" height=\"4\" transform=\"rotate(120 96 22)\"/><rect x=\"93.6\" y=\"9\" width=\"4.8\" height=\"4\" transform=\"rotate(180 96 22)\"/><rect x=\"93.6\" y=\"9\" width=\"4.8\" height=\"4\" transform=\"rotate(240 96 22)\"/><rect x=\"93.6\" y=\"9\" width=\"4.8\" height=\"4\" transform=\"rotate(300 96 22)\"/></svg>","thanksgiving":"<svg viewBox=\"0 0 120 90\" preserveAspectRatio=\"xMaxYMid meet\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" xmlns=\"http://www.w3.org/2000/svg\"><g transform=\"rotate(-22 60 86)\"><path d=\"M60 86V24\"/><ellipse cx=\"53.500\" cy=\"30\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(-32 53.5 30)\"/><ellipse cx=\"66.500\" cy=\"30\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(32 66.5 30)\"/><ellipse cx=\"53.500\" cy=\"39\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(-32 53.5 39)\"/><ellipse cx=\"66.500\" cy=\"39\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(32 66.5 39)\"/><ellipse cx=\"53.500\" cy=\"48\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(-32 53.5 48)\"/><ellipse cx=\"66.500\" cy=\"48\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(32 66.5 48)\"/><ellipse cx=\"53.500\" cy=\"57\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(-32 53.5 57)\"/><ellipse cx=\"66.500\" cy=\"57\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(32 66.5 57)\"/><ellipse cx=\"53.500\" cy=\"66\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(-32 53.5 66)\"/><ellipse cx=\"66.500\" cy=\"66\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(32 66.5 66)\"/><ellipse cx=\"53.500\" cy=\"75\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(-32 53.5 75)\"/><ellipse cx=\"66.500\" cy=\"75\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(32 66.5 75)\"/><ellipse cx=\"60\" cy=\"21\" rx=\"2.600\" ry=\"6\"/></g><g transform=\"rotate(22 60 86)\"><path d=\"M60 86V24\"/><ellipse cx=\"53.500\" cy=\"30\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(-32 53.5 30)\"/><ellipse cx=\"66.500\" cy=\"30\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(32 66.5 30)\"/><ellipse cx=\"53.500\" cy=\"39\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(-32 53.5 39)\"/><ellipse cx=\"66.500\" cy=\"39\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(32 66.5 39)\"/><ellipse cx=\"53.500\" cy=\"48\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(-32 53.5 48)\"/><ellipse cx=\"66.500\" cy=\"48\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(32 66.5 48)\"/><ellipse cx=\"53.500\" cy=\"57\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(-32 53.5 57)\"/><ellipse cx=\"66.500\" cy=\"57\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(32 66.5 57)\"/><ellipse cx=\"53.500\" cy=\"66\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(-32 53.5 66)\"/><ellipse cx=\"66.500\" cy=\"66\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(32 66.5 66)\"/><ellipse cx=\"53.500\" cy=\"75\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(-32 53.5 75)\"/><ellipse cx=\"66.500\" cy=\"75\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(32 66.5 75)\"/><ellipse cx=\"60\" cy=\"21\" rx=\"2.600\" ry=\"6\"/></g><g transform=\"rotate(0 60 86)\"><path d=\"M60 86V14\"/><ellipse cx=\"53.500\" cy=\"20\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(-32 53.5 20)\"/><ellipse cx=\"66.500\" cy=\"20\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(32 66.5 20)\"/><ellipse cx=\"53.500\" cy=\"29\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(-32 53.5 29)\"/><ellipse cx=\"66.500\" cy=\"29\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(32 66.5 29)\"/><ellipse cx=\"53.500\" cy=\"38\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(-32 53.5 38)\"/><ellipse cx=\"66.500\" cy=\"38\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(32 66.5 38)\"/><ellipse cx=\"53.500\" cy=\"47\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(-32 53.5 47)\"/><ellipse cx=\"66.500\" cy=\"47\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(32 66.5 47)\"/><ellipse cx=\"53.500\" cy=\"56\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(-32 53.5 56)\"/><ellipse cx=\"66.500\" cy=\"56\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(32 66.5 56)\"/><ellipse cx=\"53.500\" cy=\"65\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(-32 53.5 65)\"/><ellipse cx=\"66.500\" cy=\"65\" rx=\"2.600\" ry=\"5.500\" transform=\"rotate(32 66.5 65)\"/><ellipse cx=\"60\" cy=\"11\" rx=\"2.600\" ry=\"6\"/></g><path d=\"M50 84h20\" /><path d=\"M54 78h12\" stroke-opacity=\".6\"/></svg>","remembrance":"<svg viewBox=\"0 0 120 90\" preserveAspectRatio=\"xMaxYMid meet\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M72 56Q74 72 68 86\" fill=\"none\" stroke=\"#5c6270\" stroke-width=\"1.4\" stroke-linecap=\"round\"/><path d=\"M71 72Q82 66 88 70Q80 78 71 72Z\" fill=\"#5c6270\" fill-opacity=\".7\"/><g fill=\"#b3262e\" fill-opacity=\".9\"><circle cx=\"63\" cy=\"36\" r=\"14\"/><circle cx=\"81\" cy=\"36\" r=\"14\"/><circle cx=\"63\" cy=\"54\" r=\"14\"/><circle cx=\"81\" cy=\"54\" r=\"14\"/></g><circle cx=\"72\" cy=\"45\" r=\"6\" fill=\"#16161a\"/><g fill=\"#16161a\"><circle cx=\"72\" cy=\"35\" r=\"1.100\"/><circle cx=\"72\" cy=\"55\" r=\"1.100\"/><circle cx=\"62\" cy=\"45\" r=\"1.100\"/><circle cx=\"82\" cy=\"45\" r=\"1.100\"/></g></svg>","christmas":"<svg viewBox=\"0 0 120 90\" preserveAspectRatio=\"xMaxYMid meet\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M60 16 80 40H70L88 62H72L94 82H26L48 62H32L50 40H40Z\"/><path d=\"M56 82v6h8v-6\"/><path d=\"M60 6l1.800 5 5.200.2-4.100 3.200 1.500 5L60 16.500 55.600 19.400l1.500-5L53 11.200l5.200-.2Z\" fill=\"currentColor\"/><circle cx=\"54\" cy=\"46\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"68\" cy=\"58\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"48\" cy=\"70\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"74\" cy=\"74\" r=\"2\" fill=\"currentColor\" stroke=\"none\"/></svg>","boxing":"<svg viewBox=\"0 0 120 90\" preserveAspectRatio=\"xMaxYMid meet\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"34\" y=\"42\" width=\"52\" height=\"38\"/><rect x=\"29\" y=\"31\" width=\"62\" height=\"11\"/><path d=\"M60 31v49\"/><path d=\"M60 31C44 10 28 26 60 31 76 10 92 26 60 31Z\"/></svg>"};
+
   var ICONS = {
     newyear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2 14.2 9.2 21.5 11.5 14.2 13.8 12 21 9.8 13.8 2.5 11.5 9.8 9.2Z"/></svg>',
     family: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11 12 4l8 7"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-6h4v6"/></svg>',
@@ -3024,6 +3112,13 @@ window.__LG_I18N_EN__ = (function(){
   if (!banner || !iconEl || !badgeEl || !textEl || !closeBtn) return;
 
   banner.setAttribute('data-holiday', holiday.id.split('-')[0]);
+  var artEl = document.getElementById('lgHolidayBannerArt');
+  if (!banner.querySelector('.lg-holiday-banner-fx')) {
+    var fx = document.createElement('span');
+    fx.className = 'lg-holiday-banner-fx'; fx.setAttribute('aria-hidden', 'true');
+    banner.insertBefore(fx, banner.firstChild);
+  }
+  if (artEl) artEl.innerHTML = ART[holiday.id.split('-')[0]] || '';
   iconEl.innerHTML = ICONS[holiday.icon] || '';
   badgeEl.textContent = holiday.daysUntil <= 0 ? 'Today' : ('D-' + holiday.daysUntil);
   textEl.textContent = holiday.text;
