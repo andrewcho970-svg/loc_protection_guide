@@ -46,7 +46,7 @@ html, body { height: 100%; margin: 0; padding: 0; background: #0a0b0d; }
   overflow: hidden;
   transition: background .25s ease, color .25s ease;
 }
-.lg-root, .lg-root * { box-sizing: border-box; }
+.lg-root * { box-sizing: border-box; }
 .lg-root.lg-light {
   --bg: #f6f5f1; --panel: #ffffff; --panel-2: #efece4; --line: #ddd7c8;
   --platinum: #1c1d1f; --muted: #55585f; --muted-2: #82858c;
@@ -646,84 +646,16 @@ table.lg-table td .lg-add-btn { margin-left: 6px; }
   .lg-holiday-banner > .lg-holiday-banner-art { width: 130px; right: 30px; }
   .lg-holiday-banner.is-visible > .lg-holiday-banner-art { opacity: .24; }
 }
+@media (prefers-reduced-motion: reduce) {
+  .lg-holiday-banner > .lg-holiday-banner-art { transition: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lg-holiday-banner::before { transition: none; }
+}
 @media (max-width: 720px) {
   .lg-holiday-banner { padding: 9px 14px; gap: 9px; }
   .lg-holiday-banner-text { font-size: 12.5px; }
 }
-
-/* ---- Holiday banner motion: light, not objects. Plays only while the banner is visible (auto-hides ~8s). ---- */
-.lg-holiday-banner > .lg-holiday-banner-fx {
-  position: absolute; z-index: 0; inset: 0; pointer-events: none;
-  --hb-sweep: rgba(198,166,100,0.16);
-  background: linear-gradient(105deg, transparent 38%, var(--hb-sweep) 50%, transparent 62%);
-  background-size: 250% 100%; background-position: 150% 0; background-repeat: no-repeat;
-}
-.lg-holiday-banner.is-visible > .lg-holiday-banner-fx { animation: lgHbSweep 3.6s cubic-bezier(.45,.05,.25,1) 1.3s 1 both; }
-@keyframes lgHbSweep { from { background-position: 150% 0; } to { background-position: -50% 0; } }
-
-/* per-holiday sweep colour (Good Friday + Remembrance: none, stays still) */
-.lg-holiday-banner[data-holiday="newyear"] > .lg-holiday-banner-fx { --hb-sweep: rgba(240,222,165,0.22); }
-.lg-holiday-banner[data-holiday="family"] > .lg-holiday-banner-fx { --hb-sweep: rgba(230,170,130,0.16); }
-.lg-holiday-banner[data-holiday="victoria"] > .lg-holiday-banner-fx { --hb-sweep: rgba(160,130,215,0.18); }
-.lg-holiday-banner[data-holiday="labour"] > .lg-holiday-banner-fx { --hb-sweep: rgba(150,175,205,0.18); }
-.lg-holiday-banner[data-holiday="thanksgiving"] > .lg-holiday-banner-fx { --hb-sweep: rgba(224,146,62,0.26); }
-.lg-holiday-banner[data-holiday="christmas"] > .lg-holiday-banner-fx { --hb-sweep: rgba(255,255,255,0.09); }
-.lg-holiday-banner[data-holiday="boxing"] > .lg-holiday-banner-fx { --hb-sweep: rgba(198,166,100,0.16); }
-.lg-holiday-banner[data-holiday="goodfriday"] > .lg-holiday-banner-fx,
-.lg-holiday-banner[data-holiday="remembrance"] > .lg-holiday-banner-fx { display: none; }
-
-/* Canada Day: crimson wings breathe slowly instead of sweeping */
-.lg-holiday-banner[data-holiday="canada"] > .lg-holiday-banner-fx {
-  background: radial-gradient(ellipse 45% 150% at 0% 50%, rgba(190,50,60,0.30), transparent 70%),
-              radial-gradient(ellipse 45% 150% at 100% 50%, rgba(190,50,60,0.30), transparent 70%);
-  opacity: .2;
-}
-.lg-holiday-banner[data-holiday="canada"].is-visible > .lg-holiday-banner-fx { animation: lgHbBreathe 4.2s ease-in-out .6s infinite alternate; }
-@keyframes lgHbBreathe { from { opacity: .2; } to { opacity: 1; } }
-
-/* texture layers (seamless: every shift equals one tile period) */
-.lg-holiday-banner[data-holiday="newyear"].is-visible::before { animation: lgHbSparkle 3.8s ease-in-out infinite, lgHbUp44 9s linear infinite; }
-.lg-holiday-banner[data-holiday="christmas"].is-visible::before { animation: lgHbDown44 8s linear infinite; }
-.lg-holiday-banner[data-holiday="boxing"].is-visible::before { animation: lgHbSparkle 4.4s ease-in-out infinite, lgHbUp16 9s linear infinite; }
-.lg-holiday-banner[data-holiday="family"].is-visible::before { animation: lgHbDot18 10s linear infinite; }
-.lg-holiday-banner[data-holiday="victoria"].is-visible::before { animation: lgHbWeave 7s linear infinite; }
-.lg-holiday-banner[data-holiday="thanksgiving"].is-visible::before { animation: lgHbGrain 5.5s linear infinite; }
-.lg-holiday-banner[data-holiday="labour"].is-visible::before { animation: lgHbGrid 12s linear infinite; }
-@keyframes lgHbSparkle { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
-@keyframes lgHbUp44 { to { background-position: 0 -44px; } }
-@keyframes lgHbDown44 { to { background-position: 0 44px; } }
-@keyframes lgHbUp16 { to { background-position: 0 -16px; } }
-@keyframes lgHbDot18 { to { background-position: 18px 18px; } }
-@keyframes lgHbWeave { to { background-position: 12.73px 0; } }
-@keyframes lgHbGrain { to { background-position: 8.08px 0; } }
-@keyframes lgHbGrid { to { background-position: 14px 14px, 14px 14px; } }
-
-@media (prefers-reduced-motion: reduce) {
-  .lg-holiday-banner > .lg-holiday-banner-art,
-  .lg-holiday-banner::before { transition: none; }
-  .lg-holiday-banner.is-visible::before,
-  .lg-holiday-banner.is-visible > .lg-holiday-banner-fx { animation: none !important; }
-  .lg-holiday-banner > .lg-holiday-banner-fx { display: none; }
-}
-
-/* ---- Light mode: darker, saturated sweep tints; snow switches from white to soft grey ---- */
-.lg-root.lg-light .lg-holiday-banner > .lg-holiday-banner-fx { --hb-sweep: rgba(156,122,58,0.16); }
-.lg-root.lg-light .lg-holiday-banner[data-holiday="newyear"] > .lg-holiday-banner-fx { --hb-sweep: rgba(156,122,58,0.20); }
-.lg-root.lg-light .lg-holiday-banner[data-holiday="family"] > .lg-holiday-banner-fx { --hb-sweep: rgba(200,105,70,0.15); }
-.lg-root.lg-light .lg-holiday-banner[data-holiday="victoria"] > .lg-holiday-banner-fx { --hb-sweep: rgba(112,80,168,0.15); }
-.lg-root.lg-light .lg-holiday-banner[data-holiday="labour"] > .lg-holiday-banner-fx { --hb-sweep: rgba(70,105,150,0.15); }
-.lg-root.lg-light .lg-holiday-banner[data-holiday="thanksgiving"] > .lg-holiday-banner-fx { --hb-sweep: rgba(196,110,40,0.22); }
-.lg-root.lg-light .lg-holiday-banner[data-holiday="christmas"] > .lg-holiday-banner-fx { --hb-sweep: rgba(28,120,84,0.15); }
-.lg-root.lg-light .lg-holiday-banner[data-holiday="boxing"] > .lg-holiday-banner-fx { --hb-sweep: rgba(52,76,140,0.13); }
-.lg-root.lg-light .lg-holiday-banner[data-holiday="canada"] > .lg-holiday-banner-fx {
-  background: radial-gradient(ellipse 45% 150% at 0% 50%, rgba(190,50,60,0.20), transparent 70%),
-              radial-gradient(ellipse 45% 150% at 100% 50%, rgba(190,50,60,0.20), transparent 70%);
-}
-.lg-root.lg-light .lg-holiday-banner[data-holiday="christmas"]::before { filter: brightness(0); }
-.lg-root.lg-light .lg-holiday-banner[data-holiday="christmas"].is-visible::before { opacity: .9; }
-.lg-root.lg-light .lg-holiday-banner[data-holiday="boxing"]::before,
-.lg-root.lg-light .lg-holiday-banner[data-holiday="newyear"]::before,
-.lg-root.lg-light .lg-holiday-banner[data-holiday="family"]::before { filter: saturate(1.25) brightness(.72); }
 </style>
 </head>
 <body>
@@ -3023,6 +2955,98 @@ window.__LG_I18N_EN__ = (function(){
 })();
 </script>
 <script>
+/* ---- Attract mode: after idle on the front page, rotate through every language.
+        Any touch / mouse movement / key press / wheel stops it and restores the original language. ---- */
+(function(){
+  var IDLE_MS  = 60000;  // idle time on the front page before attract mode starts
+  var SLIDE_MS = 6000;   // how long each language stays on screen
+  var FADE_MS  = 450;    // cross-fade time between languages
+  var MOVE_PX  = 4;      // ignore mouse jitter smaller than this
+
+  var lastActivity = Date.now(), attract = false, langs = [], idx = 0, originalLang = 'en';
+  var slideTimer = null, fadeTimer = null, lastX = null, lastY = null, swallowUntil = 0;
+
+  var st = document.createElement('style');
+  st.textContent = '.lg-hero{transition:opacity ' + FADE_MS + 'ms ease}.lg-hero.lg-attract-fade{opacity:0}';
+  document.head.appendChild(st);
+
+  function frontActive(){
+    var p = document.getElementById('page-front');
+    return !!(p && p.classList.contains('active'));
+  }
+  function overlayOpen(){
+    return ['lgQrBackdrop','lgCalcBackdrop','lgContentsDrawer','lgLangMenu'].some(function(id){
+      var el = document.getElementById(id);
+      return el && el.classList.contains('is-open');
+    });
+  }
+  function hero(){ return document.querySelector('#page-front .lg-hero'); }
+
+  function fadeTo(lang){
+    var h = hero();
+    if (h) h.classList.add('lg-attract-fade');
+    fadeTimer = setTimeout(function(){
+      if (!attract) return;
+      window.lgSetLanguage(lang);
+      var hh = hero();
+      if (hh) hh.classList.remove('lg-attract-fade');
+    }, FADE_MS);
+  }
+  function nextSlide(){
+    if (!attract) return;
+    idx = (idx + 1) % langs.length;
+    fadeTo(langs[idx]);
+    slideTimer = setTimeout(nextSlide, SLIDE_MS);
+  }
+  function startAttract(){
+    langs = Array.prototype.map.call(
+      document.querySelectorAll('#lgLangMenu button[data-lang]'),
+      function(b){ return b.getAttribute('data-lang'); });
+    if (langs.length < 2) return;
+    originalLang = window.__LG_CURRENT_LANG__ || 'en';
+    idx = Math.max(0, langs.indexOf(originalLang));
+    attract = true;
+    slideTimer = setTimeout(nextSlide, SLIDE_MS);
+  }
+  function stopAttract(){
+    attract = false;
+    clearTimeout(slideTimer); clearTimeout(fadeTimer);
+    var h = hero();
+    if (h) h.classList.remove('lg-attract-fade');
+    if ((window.__LG_CURRENT_LANG__ || 'en') !== originalLang) window.lgSetLanguage(originalLang);
+  }
+
+  function onActivity(e){
+    if (e.type === 'mousemove') {
+      if (lastX !== null && Math.abs(e.clientX - lastX) < MOVE_PX && Math.abs(e.clientY - lastY) < MOVE_PX) return;
+      lastX = e.clientX; lastY = e.clientY;
+    }
+    if (attract) {
+      // A tap/click that wakes the screen shouldn't also press a button underneath it.
+      if (e.type === 'touchstart' || e.type === 'pointerdown' || e.type === 'mousedown') swallowUntil = Date.now() + 700;
+      stopAttract();
+    }
+    lastActivity = Date.now();
+  }
+  ['mousemove','mousedown','pointerdown','touchstart','keydown','wheel'].forEach(function(t){
+    document.addEventListener(t, onActivity, { capture: true, passive: true });
+  });
+  document.addEventListener('click', function(e){
+    if (Date.now() < swallowUntil) { e.preventDefault(); e.stopPropagation(); }
+  }, true);
+
+  setInterval(function(){
+    if (attract) {
+      if (!frontActive() || overlayOpen()) stopAttract();
+      return;
+    }
+    // Idle only counts while the front page is showing with nothing open on top of it.
+    if (!frontActive() || overlayOpen() || document.hidden) { lastActivity = Date.now(); return; }
+    if (Date.now() - lastActivity >= IDLE_MS) startAttract();
+  }, 1000);
+})();
+</script>
+<script>
 /* Canadian holiday observance banner — shows once per session, 2–7 days
    ahead of the holiday (see per-holiday `lead`), with a live D-# countdown. */
 (function(){
@@ -3113,11 +3137,6 @@ window.__LG_I18N_EN__ = (function(){
 
   banner.setAttribute('data-holiday', holiday.id.split('-')[0]);
   var artEl = document.getElementById('lgHolidayBannerArt');
-  if (!banner.querySelector('.lg-holiday-banner-fx')) {
-    var fx = document.createElement('span');
-    fx.className = 'lg-holiday-banner-fx'; fx.setAttribute('aria-hidden', 'true');
-    banner.insertBefore(fx, banner.firstChild);
-  }
   if (artEl) artEl.innerHTML = ART[holiday.id.split('-')[0]] || '';
   iconEl.innerHTML = ICONS[holiday.icon] || '';
   badgeEl.textContent = holiday.daysUntil <= 0 ? 'Today' : ('D-' + holiday.daysUntil);
