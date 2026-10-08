@@ -781,6 +781,130 @@ html.lg-rtl-lang .lg-contents-drawer .lg-toc-item, html.lg-rtl-lang #page-conten
   .lg-holiday-banner-badge { font-size: 10px; padding: 3px 9px; }
   .lg-holiday-banner > .lg-holiday-banner-art { width: 150px; }
 }
+
+/* ===== Header — glass / gold-pill language (matches the attract-mode language dock + Contents drawer) ===== */
+.lg-nav {
+  /* kept opaque: the holiday banner sits underneath the header, so a see-through bar would show it */
+  background: linear-gradient(180deg, rgba(198,166,100,0.07), rgba(198,166,100,0.01)), var(--panel);
+  border-bottom: 1px solid rgba(198,166,100,0.34);
+  box-shadow: 0 14px 36px rgba(0,0,0,0.34), 0 0 28px rgba(198,166,100,0.08), inset 0 1px 0 rgba(255,255,255,0.07);
+  position: relative; z-index: 50;
+}
+.lg-root.lg-light .lg-nav {
+  background: linear-gradient(180deg, rgba(156,122,58,0.08), rgba(156,122,58,0.01)), var(--panel);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.10), 0 0 24px rgba(156,122,58,0.10), inset 0 1px 0 rgba(255,255,255,0.7);
+}
+.lg-nav-actions { gap: 10px; }
+
+/* pill buttons */
+.lg-nav .lg-btn {
+  min-height: 38px; padding: 7px 18px; border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+  border: 1px solid rgba(198,166,100,0.28);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.08);
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: color .45s ease, background .45s ease, border-color .45s ease, box-shadow .45s ease, transform .5s cubic-bezier(.34,1.56,.64,1);
+}
+.lg-root.lg-light .lg-nav .lg-btn { box-shadow: 0 5px 14px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.7); }
+.lg-nav .lg-btn:hover {
+  color: var(--platinum); border-color: var(--gold); background: var(--gold-soft);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.26), 0 0 22px rgba(198,166,100,0.30), inset 0 1px 0 rgba(255,255,255,0.14);
+}
+.lg-root.lg-light .lg-nav .lg-btn:hover { box-shadow: 0 8px 22px rgba(0,0,0,0.14), 0 0 22px rgba(156,122,58,0.22), inset 0 1px 0 rgba(255,255,255,0.7); }
+.lg-nav .lg-btn.lg-btn-glow { border-color: rgba(198,166,100,0.55); }
+.lg-nav .lg-btn:disabled, .lg-nav .lg-btn:disabled:hover {
+  opacity: .3; transform: none; color: var(--muted); border-color: rgba(198,166,100,0.28); background: transparent; box-shadow: none;
+}
+
+/* round "chip" icon buttons (flag-chip look) */
+.lg-nav .lg-btn.lg-icon { padding: 0; width: 38px; min-width: 38px; border-radius: 50%; }
+.lg-nav #lgPrevBtn, .lg-nav #lgNextBtn, .lg-nav .lg-calc-btn, .lg-nav .lg-lang-btn {
+  background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.16), rgba(198,166,100,0.10) 60%, rgba(0,0,0,0.10));
+  border-color: rgba(198,166,100,0.42);
+}
+.lg-nav #lgPrevBtn, .lg-nav #lgNextBtn { font-size: 20px; line-height: 1; }
+.lg-nav .lg-btn.lg-lang-btn { width: auto; min-width: 38px; padding: 0 14px 0 11px; border-radius: 999px; gap: 8px; }
+.lg-nav .lg-lang-btn[aria-expanded="true"] {
+  color: var(--platinum); border-color: var(--gold);
+  background: linear-gradient(180deg, rgba(198,166,100,0.26), rgba(198,166,100,0.08));
+  box-shadow: 0 8px 22px rgba(0,0,0,0.26), 0 0 26px rgba(198,166,100,0.30), inset 0 1px 0 rgba(255,255,255,0.16);
+}
+
+/* theme switch, QR, contact chip */
+.lg-theme-switch {
+  height: 28px; width: 52px; border-radius: 999px; border: 1px solid rgba(198,166,100,0.42);
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+  box-shadow: 0 6px 16px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.lg-theme-switch-knob {
+  top: 3px; left: 3px; width: 20px; height: 20px;
+  background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.55), var(--gold) 62%);
+  box-shadow: 0 0 12px rgba(198,166,100,0.45), inset 0 1px 0 rgba(255,255,255,0.3);
+}
+.lg-theme-switch.is-light .lg-theme-switch-knob { transform: translateX(24px); }
+.lg-qr-img { border-radius: 12px; border: 1px solid rgba(198,166,100,0.42); box-shadow: 0 6px 16px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.08); }
+.lg-contact-btn {
+  border-color: rgba(198,166,100,0.55);
+  background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.16), rgba(198,166,100,0.10) 60%, rgba(0,0,0,0.10));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.16);
+}
+.lg-nav .lg-calc-summary { border-radius: 999px; border-color: rgba(198,166,100,0.28); }
+
+/* language menu — same glass dock, gold pills, flag chips */
+.lg-lang-menu {
+  top: calc(100% + 14px); min-width: 250px; padding: 16px 16px 18px; border-radius: 30px;
+  background: var(--panel);
+  background: color-mix(in srgb, var(--panel) 80%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(198,166,100,0.34);
+  box-shadow: 0 28px 64px rgba(0,0,0,0.42), 0 0 36px rgba(198,166,100,0.10), inset 0 1px 0 rgba(255,255,255,0.07);
+  overflow: visible;
+}
+.lg-root.lg-light .lg-lang-menu { box-shadow: 0 22px 52px rgba(0,0,0,0.16), 0 0 28px rgba(156,122,58,0.12), inset 0 1px 0 rgba(255,255,255,0.7); }
+.lg-lang-menu::before {            /* gold ornament, like the dock heading rules */
+  content: ""; display: block; height: 1px; width: 120px; margin: 0 auto 14px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.lg-lang-menu.is-open { display: flex; flex-direction: column; gap: 8px; animation: lgLmIn .6s cubic-bezier(.16,1,.3,1) both; }
+@keyframes lgLmIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+.lg-lang-menu button {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 46px;
+  padding: 6px 20px 6px 7px; border-radius: 999px; text-align: left;
+  font-size: 13.5px; letter-spacing: .02em; color: var(--muted);
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+  border: 1px solid rgba(198,166,100,0.28);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.08);
+  transition: color .45s ease, background .45s ease, border-color .45s ease, box-shadow .45s ease, transform .5s cubic-bezier(.34,1.56,.64,1);
+}
+.lg-root.lg-light .lg-lang-menu button { box-shadow: 0 5px 14px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.7); }
+.lg-lang-menu button:hover { color: var(--platinum); border-color: var(--gold); background: var(--gold-soft); transform: translateY(-2px); }
+.lg-lang-menu button.is-active {
+  color: var(--platinum); font-weight: 600; border-color: var(--gold);
+  background: linear-gradient(180deg, rgba(198,166,100,0.26), rgba(198,166,100,0.08));
+  box-shadow: 0 8px 22px rgba(0,0,0,0.26), 0 0 26px rgba(198,166,100,0.30), inset 0 1px 0 rgba(255,255,255,0.16);
+}
+.lg-lm-flag {
+  display: inline-flex; align-items: center; justify-content: center; flex: none; width: 32px; height: 32px;
+  border-radius: 50%; font-size: 18px; line-height: 1;
+  background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.16), rgba(198,166,100,0.10) 60%, rgba(0,0,0,0.10));
+  border: 1px solid rgba(198,166,100,0.42); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16);
+  transition: transform .5s cubic-bezier(.34,1.56,.64,1), box-shadow .5s ease;
+}
+.lg-lang-menu button.is-active .lg-lm-flag { transform: scale(1.1); box-shadow: 0 0 14px rgba(198,166,100,0.55), inset 0 1px 0 rgba(255,255,255,0.2); }
+@media (max-width: 720px) {
+  .lg-nav .lg-btn { min-height: 36px; padding: 6px 14px; }
+  .lg-nav .lg-btn.lg-icon { width: 36px; min-width: 36px; padding: 0; }
+  .lg-nav .lg-btn.lg-lang-btn { width: auto; padding: 0 12px 0 10px; }
+  .lg-lang-menu { min-width: 230px; max-width: calc(100vw - 24px); border-radius: 26px; right: 0; left: auto; max-height: 70vh; overflow-y: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lg-nav .lg-btn, .lg-lang-menu button, .lg-lm-flag, .lg-lang-menu.is-open { transition-duration: .01s !important; animation-duration: .01s !important; }
+}
+
+/* header order: lang menu now sits mid-row, so anchor it to the button's left edge */
+.lg-lang-menu { left: 0; right: auto; }
+@media (max-width: 720px) { .lg-lang-menu { left: 0; right: auto; } }
 </style>
 </head>
 <body>
@@ -800,6 +924,24 @@ html.lg-rtl-lang .lg-contents-drawer .lg-toc-item, html.lg-rtl-lang #page-conten
 <div class="lg-nav-actions">
 <button class="lg-btn lg-btn-glow" data-i18n="i2" id="lgFrontNavBtn" onclick="lgGoTo('front')">Front Page</button>
 <button class="lg-btn lg-btn-glow" data-i18n="i3" id="lgContentsNavBtn" onclick="lgOpenContentsDrawer()">Contents</button>
+<div class="lg-lang-wrap">
+<button aria-expanded="false" aria-haspopup="listbox" aria-label="Change language" class="lg-btn lg-icon lg-lang-btn" id="lgLangBtn" onclick="lgToggleLangMenu()" title="Language / Langue / Idioma / 语言 / 語言 / 言語 / 언어 / اللغة / Ngôn ngữ / भाषा">
+<svg aria-hidden="true" focusable="false" height="16" viewBox="0 0 24 24" width="16"><circle cx="12" cy="12" fill="none" r="9.2" stroke="currentColor" stroke-width="1.4"></circle><path d="M2.8 12h18.4M12 2.8c2.6 2.6 4 6 4 9.2s-1.4 6.6-4 9.2c-2.6-2.6-4-6-4-9.2s1.4-6.6 4-9.2z" fill="none" stroke="currentColor" stroke-width="1.4"></path></svg>
+<span id="lgLangBtnLabel">EN</span>
+</button>
+<div class="lg-lang-menu" id="lgLangMenu" role="listbox">
+<button data-lang="en" onclick="lgSetLanguage('en')" role="option" class="is-active"><span class="lg-lm-flag">🇨🇦</span> <span class="lg-lm-name">English</span></button>
+<button data-lang="fr" onclick="lgSetLanguage('fr')" role="option"><span class="lg-lm-flag">🇫🇷</span> <span class="lg-lm-name">Français</span></button>
+<button data-lang="es" onclick="lgSetLanguage('es')" role="option"><span class="lg-lm-flag">🇪🇸</span> <span class="lg-lm-name">Español</span></button>
+<button data-lang="ar" onclick="lgSetLanguage('ar')" role="option"><span class="lg-lm-flag">🇸🇦</span> <span class="lg-lm-name">العربية</span></button>
+<button data-lang="hi" onclick="lgSetLanguage('hi')" role="option"><span class="lg-lm-flag">🇮🇳</span> <span class="lg-lm-name">हिन्दी</span></button>
+<button data-lang="zh-CN" onclick="lgSetLanguage('zh-CN')" role="option"><span class="lg-lm-flag">🇨🇳</span> <span class="lg-lm-name">中文（普通话）</span></button>
+<button data-lang="zh-HK" onclick="lgSetLanguage('zh-HK')" role="option"><span class="lg-lm-flag">🇭🇰</span> <span class="lg-lm-name">中文（廣東話）</span></button>
+<button data-lang="vi" onclick="lgSetLanguage('vi')" role="option"><span class="lg-lm-flag">🇻🇳</span> <span class="lg-lm-name">Tiếng Việt</span></button>
+<button data-lang="ja" onclick="lgSetLanguage('ja')" role="option"><span class="lg-lm-flag">🇯🇵</span> <span class="lg-lm-name">日本語</span></button>
+<button data-lang="ko" onclick="lgSetLanguage('ko')" role="option"><span class="lg-lm-flag">🇰🇷</span> <span class="lg-lm-name">한국어</span></button>
+</div>
+</div>
 <button aria-label="Previous page" class="lg-btn lg-icon" data-i18n="i4" id="lgPrevBtn" onclick="lgStep(-1)">‹</button>
 <button aria-label="Next page" class="lg-btn lg-icon" data-i18n="i5" id="lgNextBtn" onclick="lgStep(1)">›</button>
 <button aria-label="Open payment calculator" class="lg-btn lg-icon lg-calc-btn" onclick="lgOpenCalc()" title="Payment Calculator"><svg aria-hidden="true" class="lg-calc-icon" focusable="false" height="17" viewBox="0 0 24 24" width="17"><rect fill="none" height="19" rx="2.2" stroke="currentColor" stroke-width="1.4" width="15" x="4.5" y="2.5"></rect><rect fill="none" height="4" rx="0.8" stroke="currentColor" stroke-width="1.3" width="10" x="7" y="5.2"></rect><circle cx="8" cy="13.4" fill="currentColor" r="0.95"></circle><circle cx="12" cy="13.4" fill="currentColor" r="0.95"></circle><circle cx="16" cy="13.4" fill="currentColor" r="0.95"></circle><circle cx="8" cy="17.2" fill="currentColor" r="0.95"></circle><circle cx="12" cy="17.2" fill="currentColor" r="0.95"></circle><circle cx="16" cy="17.2" fill="currentColor" r="0.95"></circle></svg><span class="lg-calc-badge" id="lgCalcBadge">0</span></button>
@@ -810,33 +952,16 @@ html.lg-rtl-lang .lg-contents-drawer .lg-toc-item, html.lg-rtl-lang #page-conten
 <span class="lg-calc-summary-sep" data-i18n="i9">·</span>
 <span class="lg-calc-summary-item" data-i18n="i10"><b id="lgCalcSummaryBiweekly">$0</b><span>/bi-wk</span></span>
 </div>
+<button aria-label="Email this guide to a client" class="lg-btn lg-icon" onclick="lgShareGuidePage()" title="Email this guide to a client"><svg aria-hidden="true" focusable="false" height="17" viewBox="0 0 24 24" width="17"><rect fill="none" height="14" rx="2" stroke="currentColor" stroke-width="1.4" width="18" x="3" y="5"></rect><path d="M4 6.5l8 6 8-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4"></path></svg></button>
+<div class="lg-qr-wrap">
+<canvas aria-label="QR code linking to loc-protection-guide.vercel.app. Click to enlarge." class="lg-qr-img" height="34" id="lgQrCanvas" onclick="lgOpenQrModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();lgOpenQrModal();}" role="button" tabindex="0" title="Click to enlarge" width="34"></canvas>
+</div>
 <button aria-checked="false" aria-label="Theme: Auto. Click to change." title="Theme: Auto" type="button" class="lg-theme-switch" id="lgThemeSwitch" onclick="lgToggleTheme()" role="switch">
 <span class="lg-theme-switch-auto-dot" id="lgThemeAutoDot"></span>
 <span class="lg-theme-switch-knob" id="lgThemeKnob">☾</span>
 </button>
 <a aria-label="Questions? Click to email us" class="lg-contact-btn" data-i18n="i12" href="mailto:lexusfinancial@lexusofcalgary.com?subject=%5BLexus%20Care%20Online%20Guide%20Inquiry%5D" title="Questions? Click to email us">?</a>
-<button aria-label="Email this guide to a client" class="lg-btn lg-icon" onclick="lgShareGuidePage()" title="Email this guide to a client"><svg aria-hidden="true" focusable="false" height="17" viewBox="0 0 24 24" width="17"><rect fill="none" height="14" rx="2" stroke="currentColor" stroke-width="1.4" width="18" x="3" y="5"></rect><path d="M4 6.5l8 6 8-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4"></path></svg></button>
-<div class="lg-qr-wrap">
-<canvas aria-label="QR code linking to loc-protection-guide.vercel.app. Click to enlarge." class="lg-qr-img" height="34" id="lgQrCanvas" onclick="lgOpenQrModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();lgOpenQrModal();}" role="button" tabindex="0" title="Click to enlarge" width="34"></canvas>
-</div>
-<div class="lg-lang-wrap">
-<button aria-expanded="false" aria-haspopup="listbox" aria-label="Change language" class="lg-btn lg-icon lg-lang-btn" id="lgLangBtn" onclick="lgToggleLangMenu()" title="Language / Langue / Idioma / 语言 / 語言 / 言語 / 언어 / اللغة / Ngôn ngữ / भाषा">
-<svg aria-hidden="true" focusable="false" height="16" viewBox="0 0 24 24" width="16"><circle cx="12" cy="12" fill="none" r="9.2" stroke="currentColor" stroke-width="1.4"></circle><path d="M2.8 12h18.4M12 2.8c2.6 2.6 4 6 4 9.2s-1.4 6.6-4 9.2c-2.6-2.6-4-6-4-9.2s1.4-6.6 4-9.2z" fill="none" stroke="currentColor" stroke-width="1.4"></path></svg>
-<span id="lgLangBtnLabel">EN</span>
-</button>
-<div class="lg-lang-menu" id="lgLangMenu" role="listbox">
-<button data-lang="en" onclick="lgSetLanguage('en')" role="option" class="is-active">🇨🇦 English</button>
-<button data-lang="fr" onclick="lgSetLanguage('fr')" role="option">🇫🇷 Français</button>
-<button data-lang="es" onclick="lgSetLanguage('es')" role="option">🇪🇸 Español</button>
-<button data-lang="ar" onclick="lgSetLanguage('ar')" role="option">🇸🇦 العربية</button>
-<button data-lang="hi" onclick="lgSetLanguage('hi')" role="option">🇮🇳 हिन्दी</button>
-<button data-lang="zh-CN" onclick="lgSetLanguage('zh-CN')" role="option">🇨🇳 中文（普通话）</button>
-<button data-lang="zh-HK" onclick="lgSetLanguage('zh-HK')" role="option">🇭🇰 中文（廣東話）</button>
-<button data-lang="vi" onclick="lgSetLanguage('vi')" role="option">🇻🇳 Tiếng Việt</button>
-<button data-lang="ja" onclick="lgSetLanguage('ja')" role="option">🇯🇵 日本語</button>
-<button data-lang="ko" onclick="lgSetLanguage('ko')" role="option">🇰🇷 한국어</button>
-</div>
-</div>
+
 </div>
 </div>
 <div class="lg-qr-modal-backdrop" id="lgQrBackdrop" onclick="if(event.target===this){lgCloseQrModal();}">
