@@ -729,6 +729,58 @@ html.lg-rtl-lang .lg-contents-drawer .lg-toc-item, html.lg-rtl-lang #page-conten
   .lg-holiday-banner { padding: 9px 14px; gap: 9px; }
   .lg-holiday-banner-text { font-size: 12.5px; }
 }
+
+/* ---- Holiday banner: a touch more presence + a one-time gold sparkle (still gold-on-dark, still restrained) ---- */
+.lg-holiday-banner {
+  box-sizing: border-box; padding: 0 26px; gap: 14px; height: var(--hb-h, 66px);  /* --hb-h is synced to the header's height by script so the gold line sits exactly on the header line */
+  border-bottom: 1px solid rgba(198,166,100,0.45);
+  box-shadow: 0 14px 34px rgba(0,0,0,0.42), 0 0 30px rgba(198,166,100,0.14), inset 0 1px 0 rgba(255,255,255,0.07);
+}
+.lg-root.lg-light .lg-holiday-banner { box-shadow: 0 12px 28px rgba(0,0,0,0.13), 0 0 24px rgba(156,122,58,0.14), inset 0 1px 0 rgba(255,255,255,0.7); }
+.lg-holiday-banner-icon {
+  width: 34px; height: 34px; padding: 8px; box-sizing: border-box; border-radius: 50%;
+  background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.16), rgba(198,166,100,0.12) 60%, rgba(0,0,0,0.10));
+  border: 1px solid rgba(198,166,100,0.50); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 0 14px rgba(198,166,100,0.28);
+}
+.lg-holiday-banner.is-visible .lg-holiday-banner-icon { animation: lgHbPop .9s cubic-bezier(.34,1.56,.64,1) .45s both; }
+@keyframes lgHbPop { 0% { transform: scale(.4) rotate(-20deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+.lg-holiday-banner-badge {
+  font-size: 11px; padding: 4px 11px; letter-spacing: .12em; text-transform: uppercase;
+  background: linear-gradient(180deg, rgba(198,166,100,0.26), rgba(198,166,100,0.08));
+  box-shadow: 0 0 16px rgba(198,166,100,0.25), inset 0 1px 0 rgba(255,255,255,0.14);
+}
+.lg-holiday-banner-text { font-family: var(--font-display); font-size: 16px; font-weight: 600; letter-spacing: .02em; }
+.lg-holiday-banner > .lg-holiday-banner-art { width: 260px; height: 84px; }
+.lg-holiday-banner.is-visible > .lg-holiday-banner-art { opacity: .5; }
+.lg-root.lg-light .lg-holiday-banner.is-visible > .lg-holiday-banner-art { opacity: .55; }
+.lg-holiday-banner-close { width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(198,166,100,0.3); padding: 0; display: flex; align-items: center; justify-content: center; }
+.lg-holiday-banner-close:hover { border-color: var(--gold); }
+
+.lg-holiday-banner-fx { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+.lg-holiday-banner-fx i {
+  position: absolute; bottom: 10%; display: block; background: var(--gold); border-radius: 50%; opacity: 0;
+  box-shadow: 0 0 8px rgba(198,166,100,0.9);
+}
+.lg-holiday-banner-fx i.d { border-radius: 1px; transform: rotate(45deg); }
+.lg-holiday-banner.is-visible .lg-holiday-banner-fx i { animation: lgHbSpark var(--dur, 3s) ease-out var(--dl, 1s) 1 both; }
+@keyframes lgHbSpark {
+  0% { opacity: 0; transform: translateY(10px) scale(.2); }
+  18% { opacity: 1; transform: translateY(-2px) scale(1); }
+  100% { opacity: 0; transform: translateY(-34px) scale(.5); }
+}
+.lg-holiday-banner[data-holiday="remembrance"] .lg-holiday-banner-fx,
+.lg-holiday-banner[data-holiday="goodfriday"] .lg-holiday-banner-fx { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .lg-holiday-banner-fx { display: none; }
+  .lg-holiday-banner.is-visible .lg-holiday-banner-icon { animation: none; }
+}
+@media (max-width: 720px) {
+  .lg-holiday-banner { padding: 0 14px; gap: 10px; }
+  .lg-holiday-banner-icon { width: 30px; height: 30px; padding: 7px; }
+  .lg-holiday-banner-text { font-size: 14px; }
+  .lg-holiday-banner-badge { font-size: 10px; padding: 3px 9px; }
+  .lg-holiday-banner > .lg-holiday-banner-art { width: 150px; }
+}
 </style>
 </head>
 <body>
@@ -3312,6 +3364,12 @@ window.__LG_I18N_EN__ = (function(){
   if (!banner || !iconEl || !badgeEl || !textEl || !closeBtn) return;
 
   banner.setAttribute('data-holiday', holiday.id.split('-')[0]);
+  // Match the banner's height to the header so its gold bottom line lands exactly on the header line
+  var navEl = document.querySelector('.lg-nav');
+  function syncBannerHeight(){ if (navEl) banner.style.setProperty('--hb-h', navEl.offsetHeight + 'px'); }
+  syncBannerHeight();
+  window.addEventListener('resize', syncBannerHeight);
+  if (navEl && window.ResizeObserver) new ResizeObserver(syncBannerHeight).observe(navEl);
   var artEl = document.getElementById('lgHolidayBannerArt');
   if (artEl) artEl.innerHTML = ART[holiday.id.split('-')[0]] || '';
   iconEl.innerHTML = ICONS[holiday.icon] || '';
@@ -3328,7 +3386,22 @@ window.__LG_I18N_EN__ = (function(){
   window.requestAnimationFrame(function(){
     setTimeout(function(){ banner.classList.add('is-visible'); }, 150);
   });
-  hideTimer = setTimeout(hideBanner, 8000);
+  // One-time gold sparkle drifting up through the banner (hidden via CSS for solemn holidays / reduced motion)
+  var fx = document.createElement('span');
+  fx.className = 'lg-holiday-banner-fx';
+  fx.setAttribute('aria-hidden', 'true');
+  for (var n = 0; n < 18; n++){
+    var sp = document.createElement('i');
+    var sz = 2 + Math.random() * 3;
+    sp.style.left = (4 + Math.random() * 92).toFixed(1) + '%';
+    sp.style.width = sp.style.height = sz.toFixed(1) + 'px';
+    sp.style.setProperty('--dl', (0.6 + Math.random() * 1.8).toFixed(2) + 's');
+    sp.style.setProperty('--dur', (2.2 + Math.random() * 1.6).toFixed(2) + 's');
+    if (n % 3 === 0) sp.className = 'd';
+    fx.appendChild(sp);
+  }
+  banner.appendChild(fx);
+  hideTimer = setTimeout(hideBanner, 10000);
 })();
 </script>
 
