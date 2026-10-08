@@ -784,7 +784,7 @@ html.lg-rtl-lang .lg-contents-drawer .lg-toc-item, html.lg-rtl-lang #page-conten
 
 /* ===== Header — glass / gold-pill language (matches the attract-mode language dock + Contents drawer) ===== */
 .lg-nav {
-  /* kept opaque: the holiday banner sits underneath the header, so a see-through bar would show it */
+  /* header sits above page content (z-index 50); the holiday banner is layered above it (z-index 55) so it slides down over the header, as in the reference build */
   background: linear-gradient(180deg, rgba(198,166,100,0.07), rgba(198,166,100,0.01)), var(--panel);
   border-bottom: 1px solid rgba(198,166,100,0.34);
   box-shadow: 0 14px 36px rgba(0,0,0,0.34), 0 0 28px rgba(198,166,100,0.08), inset 0 1px 0 rgba(255,255,255,0.07);
@@ -905,6 +905,9 @@ html.lg-rtl-lang .lg-contents-drawer .lg-toc-item, html.lg-rtl-lang #page-conten
 /* header order: lang menu now sits mid-row, so anchor it to the button's left edge */
 .lg-lang-menu { left: 0; right: auto; }
 @media (max-width: 720px) { .lg-lang-menu { left: 0; right: auto; } }
+
+/* holiday banner must overlay the header (header is z-index 50), but stay under the drawers/modals (70+) */
+.lg-holiday-banner { z-index: 55; }
 </style>
 </head>
 <body>
