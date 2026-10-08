@@ -3263,6 +3263,7 @@ window.__LG_I18N_EN__ = (function(){
 
   var lastActivity = Date.now(), attract = false, langs = [], idx = 0, originalLang = 'en';
   var slideTimer = null, fadeTimer = null, graceTimer = null, lastX = null, lastY = null, swallowUntil = 0;
+  var langLocked = false;   // true once a visitor has chosen a language; cleared only by a fresh page load (new session)
 
   var st = document.createElement('style');
   st.textContent =
@@ -3436,6 +3437,7 @@ window.__LG_I18N_EN__ = (function(){
       var pick = e.target && e.target.closest ? e.target.closest('.lg-attract-rail button') : null;
       if (pick && (e.type === 'touchstart' || e.type === 'pointerdown' || e.type === 'mousedown')) {
         swallowUntil = Date.now() + 700;
+        langLocked = true;
         stopAttract(true);
         window.lgSetLanguage(pick.getAttribute('data-lang'));
         lastActivity = Date.now();
@@ -3453,12 +3455,17 @@ window.__LG_I18N_EN__ = (function(){
   document.addEventListener('click', function(e){
     if (Date.now() < swallowUntil) { e.preventDefault(); e.stopPropagation(); }
   }, true);
+  document.addEventListener('click', function(e){
+    if (e.target && e.target.closest && e.target.closest('#lgLangMenu button[data-lang]') && Date.now() >= swallowUntil) langLocked = true;
+  }, true);
 
   setInterval(function(){
     if (attract) {
       if (!frontActive() || overlayOpen()) stopAttract();
       return;
     }
+    // Once a language has been chosen, stay in it: no screensaver until the next session (page load).
+    if (langLocked) { lastActivity = Date.now(); return; }
     // Idle only counts while the front page is showing with nothing open on top of it.
     if (!frontActive() || overlayOpen() || document.hidden) { lastActivity = Date.now(); return; }
     if (Date.now() - lastActivity >= IDLE_MS) startAttract();
