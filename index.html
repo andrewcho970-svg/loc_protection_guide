@@ -1934,6 +1934,7 @@ html.lg-rtl-lang .lg-contents-drawer .lg-toc-item, html.lg-rtl-lang #page-conten
     if (idx === -1) return;
     current = idx;
     render();
+    if (window.lgSfx) window.lgSfx('select');
   };
 
   window.lgStep = function(delta){
@@ -2098,58 +2099,61 @@ html.lg-rtl-lang .lg-contents-drawer .lg-toc-item, html.lg-rtl-lang #page-conten
   }
   var soundOn = false;   // off by default; guests/reps opt in with the speaker button (resets each page load)
   var canHover = !window.matchMedia || window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  function playHoverTone(force){
-    if (force !== true && (!soundOn || !canHover)) return;   // force = the confirmation chime when the speaker button is clicked
+  // Soft marimba palette. Every event shares one voice; events differ by notes and length.
+  var PENT = [392, 440, 493.9, 587.3, 659.3, 784, 880, 987.8];   // G major pentatonic: any order sounds consonant
+  var NOTES = {
+    hover:  [[493.9, 0]],
+    select: [[587.3, 0]],
+    add:    [[392, 0], [587.3, 0.09]],
+    remove: [[587.3, 0], [392, 0.09]],
+    on:     [[392, 0], [493.9, 0.08], [587.3, 0.16]]
+  };
+  var DUR = { hover: 0.18, select: 0.4, add: 0.3, remove: 0.3, on: 0.3 };
+  var master = null, lastHover = 0;
+  function getMaster(ac){
+    if (!master) {
+      var comp = ac.createDynamicsCompressor();   // keeps rapid overlapping notes from clipping
+      master = ac.createGain();
+      master.gain.value = HOVER_VOLUME;
+      master.connect(comp);
+      comp.connect(ac.destination);
+    }
+    return master;
+  }
+  function partial(ac, t, f, peak, attack, dur, dest){
+    var g = ac.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(peak, t + attack);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    g.connect(dest);
+    var o = ac.createOscillator();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(f, t);
+    o.connect(g);
+    o.start(t);
+    o.stop(t + dur + 0.03);
+  }
+  function marimba(ac, t, f, d){
+    var m = getMaster(ac);
+    partial(ac, t, f, 1, 0.004, d * 0.7, m);        // body
+    partial(ac, t, f * 4, 0.3, 0.002, d * 0.12, m); // quick wooden strike
+  }
+  // name: hover | select | add | remove | on. pitch overrides the note for hover. force skips the on/off gate (confirmation chime).
+  function playEvent(name, pitch, force){
+    if (force !== true && (!soundOn || !canHover)) return;
     var ac = getCtx();
     if (!ac) return;
-    if (ac.state === 'running') { scheduleTone(ac); return; }
-    // A suspended context has a frozen clock; scheduling now would put the whole envelope in the past (silent).
-    // So wait until it is actually running, then schedule.
+    function go(){
+      var t = ac.currentTime;
+      (pitch ? [[pitch, 0]] : NOTES[name]).forEach(function(n){ marimba(ac, t + n[1], n[0], DUR[name]); });
+    }
+    if (ac.state === 'running') { go(); return; }
+    // A suspended context has a frozen clock; wait until it is running, then schedule.
     var p = ac.resume();
-    if (p && p.then) p.then(function(){ scheduleTone(ac); }, function(){});
-    else scheduleTone(ac);
+    if (p && p.then) p.then(go, function(){});
+    else go();
   }
-  function scheduleTone(ac){
-    var now = ac.currentTime;
-
-    var filter = ac.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(2200, now);
-    filter.Q.value = 0.7;
-    filter.connect(ac.destination);
-
-    var master = ac.createGain();
-    master.gain.setValueAtTime(HOVER_VOLUME, now);
-    master.connect(filter);
-
-    // fundamental: warm, low bell-like tone
-    var osc1 = ac.createOscillator();
-    var g1 = ac.createGain();
-    osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(392, now);
-    osc1.frequency.exponentialRampToValueAtTime(370, now + 0.5);
-    g1.gain.setValueAtTime(0, now);
-    g1.gain.linearRampToValueAtTime(1, now + 0.02);
-    g1.gain.exponentialRampToValueAtTime(0.0001, now + 0.55);
-    osc1.connect(g1);
-    g1.connect(master);
-
-    // quiet octave overtone for shimmer
-    var osc2 = ac.createOscillator();
-    var g2 = ac.createGain();
-    osc2.type = 'sine';
-    osc2.frequency.setValueAtTime(784, now);
-    g2.gain.setValueAtTime(0, now);
-    g2.gain.linearRampToValueAtTime(0.28, now + 0.015);
-    g2.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
-    osc2.connect(g2);
-    g2.connect(master);
-
-    osc1.start(now);
-    osc1.stop(now + 0.55);
-    osc2.start(now);
-    osc2.stop(now + 0.3);
-  }
+  window.lgSfx = function(name){ playEvent(name); };
   window.lgToggleSound = function(){
     soundOn = !soundOn;
     var b = document.getElementById('lgSoundBtn');
@@ -2160,11 +2164,16 @@ html.lg-rtl-lang .lg-contents-drawer .lg-toc-item, html.lg-rtl-lang #page-conten
       b.setAttribute('title', label);
       b.setAttribute('aria-label', label + '. Click to turn ' + (soundOn ? 'off' : 'on') + '.');
     }
-    if (soundOn) playHoverTone(true);   // the click is the user gesture that unlocks audio; the tone confirms it's on
+    if (soundOn) playEvent('on', null, true);   // the click is the user gesture that unlocks audio; the chime confirms it's on
   };
   function attach(){
-    document.querySelectorAll('.lg-hero-cat, .lg-btn-glow, .lg-toc-item').forEach(function(el){
-      el.addEventListener('mouseenter', function(){ playHoverTone(false); });
+    document.querySelectorAll('.lg-hero-cat, .lg-btn-glow, .lg-toc-item').forEach(function(el, i){
+      el.addEventListener('mouseenter', function(){
+        var now = performance.now();
+        if (now - lastHover < 80) return;   // sweeping across tiles shouldn't pile up notes
+        lastHover = now;
+        playEvent('hover', PENT[i % PENT.length]);
+      });
     });
   }
   if (document.readyState === 'loading') {
@@ -2397,6 +2406,7 @@ html.lg-rtl-lang .lg-contents-drawer .lg-toc-item, html.lg-rtl-lang #page-conten
         delete cart[id];
         btn.textContent = '+ Add';
         btn.classList.remove('is-added');
+        if (window.lgSfx) window.lgSfx('remove');
       } else {
         if (groupId) {
           Object.keys(cart).forEach(function(otherId){
@@ -2414,6 +2424,7 @@ html.lg-rtl-lang .lg-contents-drawer .lg-toc-item, html.lg-rtl-lang #page-conten
         delete removed[id];
         btn.textContent = '✓ Added';
         btn.classList.add('is-added');
+        if (window.lgSfx) window.lgSfx('add');
       }
       window.lgRecalc();
     });
@@ -2438,6 +2449,7 @@ html.lg-rtl-lang .lg-contents-drawer .lg-toc-item, html.lg-rtl-lang #page-conten
     counter++;
     var id = 'm' + counter;
     cart[id] = { price: amount, label: label, groupId: null, btn: null };
+    if (window.lgSfx) window.lgSfx('add');
     delete removed[id];
 
     if (labelInput) labelInput.value = '';
@@ -2583,6 +2595,7 @@ html.lg-rtl-lang .lg-contents-drawer .lg-toc-item, html.lg-rtl-lang #page-conten
         remove.setAttribute('aria-label', 'Remove ' + item.label);
         remove.textContent = '✕';
         remove.addEventListener('click', function(){
+          if (window.lgSfx) window.lgSfx('remove');
           pushRemoved(id, item);
           delete cart[id];
           if (item.btn) {
