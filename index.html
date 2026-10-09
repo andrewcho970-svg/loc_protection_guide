@@ -42,6 +42,7 @@ html, body { height: 100%; margin: 0; padding: 0; background: #0a0b0d; }
   font-family: var(--font-body); background: var(--bg); color: var(--platinum);
   --font-display: 'Space Grotesk', 'Inter', sans-serif;
   --font-body: 'Inter', -apple-system, sans-serif;
+  box-sizing: border-box;
   width: 100%; height: 100vh; height: 100dvh; position: relative; border: 1px solid var(--line);
   overflow: hidden;
   transition: background .25s ease, color .25s ease;
@@ -96,13 +97,7 @@ html, body { height: 100%; margin: 0; padding: 0; background: #0a0b0d; }
 }
 .lg-root.lg-light .lg-lang-menu { box-shadow: 0 12px 28px rgba(0,0,0,0.16); }
 .lg-lang-menu.is-open { display: block; }
-.lg-lang-menu button {
-  display: block; width: 100%; text-align: left; background: transparent; border: none;
-  color: var(--muted); font-family: var(--font-body); font-size: 13.5px; padding: 9px 12px;
-  border-radius: 2px; cursor: pointer; transition: background .15s ease, color .15s ease;
-}
-.lg-lang-menu button:hover { background: var(--gold-soft); color: var(--platinum); }
-.lg-lang-menu button.is-active { color: var(--gold); font-weight: 600; }
+.lg-lang-menu button { font-family: var(--font-body); cursor: pointer; }   /* look defined in the "language menu" block further down */
 @media (max-width: 720px) {
   .lg-lang-menu { right: auto; left: 0; }
 }
@@ -3209,7 +3204,7 @@ window.__LG_I18N_EN__ = (function(){
         el.innerHTML = en[key];
       }
     });
-    document.documentElement.setAttribute('lang', lang === 'en' ? 'en' : lang.split('-')[0]);
+    document.documentElement.setAttribute('lang', lang);   // full tag (zh-CN / zh-HK) so browsers pick the right Chinese glyph set
     document.documentElement.classList.toggle('lg-rtl-lang', lang === 'ar');
     document.querySelectorAll('[data-i18n]').forEach(function(el){
       var key = el.getAttribute('data-i18n');
@@ -3293,20 +3288,19 @@ window.__LG_I18N_EN__ = (function(){
 </script>
 <script>
 /* ---- Attract mode: after idle on the front page, rotate through every language.
-        Any touch / mouse movement / key press / wheel stops it and restores the original language. ---- */
+        Any touch / mouse movement / key press / wheel stops it and restores the original language.
+        Choosing a language locks it in until the next page load (new session). ---- */
 (function(){
   var IDLE_MS  = 60000;  // idle time on the front page before attract mode starts
   var SLIDE_MS = 6000;   // how long each language stays on screen
-  var FADE_MS  = 450;    // cross-fade time between languages
   var MOVE_PX  = 4;      // ignore mouse jitter smaller than this
 
   var lastActivity = Date.now(), attract = false, langs = [], idx = 0, originalLang = 'en';
-  var slideTimer = null, fadeTimer = null, graceTimer = null, lastX = null, lastY = null, swallowUntil = 0;
+  var slideTimer = null, graceTimer = null, lastX = null, lastY = null, swallowUntil = 0;
   var langLocked = false;   // true once a visitor has chosen a language; cleared only by a fresh page load (new session)
 
   var st = document.createElement('style');
   st.textContent =
-    '.lg-hero{transition:opacity ' + FADE_MS + 'ms ease}.lg-hero.lg-attract-fade{opacity:0}' +
     '.lg-attract-rail{position:absolute;left:50%;bottom:50px;z-index:40;display:flex;flex-direction:column;align-items:center;gap:14px;' +
       'width:max-content;max-width:min(96%,1180px);box-sizing:border-box;padding:18px 26px 22px;border-radius:38px;' +
       'background:var(--panel);background:color-mix(in srgb,var(--panel) 76%,transparent);' +
@@ -3421,8 +3415,6 @@ window.__LG_I18N_EN__ = (function(){
       return el && el.classList.contains('is-open');
     });
   }
-  function hero(){ return document.querySelector('#page-front .lg-hero'); }
-
   function fadeTo(lang){
     markActive(lang);                 // dock highlight moves immediately; text cross-fades inside lgSetLanguage
     window.lgSetLanguage(lang);
@@ -3451,9 +3443,7 @@ window.__LG_I18N_EN__ = (function(){
     setStagger(false);
     clearTimeout(graceTimer); graceTimer = null;
     rail.classList.remove('is-on');
-    clearTimeout(slideTimer); clearTimeout(fadeTimer);
-    var h = hero();
-    if (h) h.classList.remove('lg-attract-fade');
+    clearTimeout(slideTimer);
     if (!keepLang && (window.__LG_CURRENT_LANG__ || 'en') !== originalLang) window.lgSetLanguage(originalLang);
   }
 
