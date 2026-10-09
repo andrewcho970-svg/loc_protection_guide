@@ -2093,7 +2093,7 @@ html.lg-rtl-lang .lg-contents-drawer .lg-toc-item, html.lg-rtl-lang #page-conten
 <script>
 (function(){
   var ctx = null;
-  var HOVER_VOLUME = 0.05;   // was 0.012 (very quiet). Raise/lower to taste: 0.03 softer, 0.08 louder, keep under ~0.15
+  var HOVER_VOLUME = 0.15;   // was 0.012 originally (barely audible). Raise/lower to taste: 0.10 softer, 0.25 louder
   function getCtx(){
     if (!ctx) {
       var AC = window.AudioContext || window.webkitAudioContext;
@@ -2103,11 +2103,18 @@ html.lg-rtl-lang .lg-contents-drawer .lg-toc-item, html.lg-rtl-lang #page-conten
   }
   var soundOn = false;   // off by default; guests/reps opt in with the speaker button (resets each page load)
   var canHover = !window.matchMedia || window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  function playHoverTone(){
-    if (!soundOn || !canHover) return;
+  function playHoverTone(force){
+    if (force !== true && (!soundOn || !canHover)) return;   // force = the confirmation chime when the speaker button is clicked
     var ac = getCtx();
     if (!ac) return;
-    if (ac.state === 'suspended') ac.resume();
+    if (ac.state === 'running') { scheduleTone(ac); return; }
+    // A suspended context has a frozen clock; scheduling now would put the whole envelope in the past (silent).
+    // So wait until it is actually running, then schedule.
+    var p = ac.resume();
+    if (p && p.then) p.then(function(){ scheduleTone(ac); }, function(){});
+    else scheduleTone(ac);
+  }
+  function scheduleTone(ac){
     var now = ac.currentTime;
 
     var filter = ac.createBiquadFilter();
@@ -2158,11 +2165,11 @@ html.lg-rtl-lang .lg-contents-drawer .lg-toc-item, html.lg-rtl-lang #page-conten
       b.setAttribute('title', label);
       b.setAttribute('aria-label', label + '. Click to turn ' + (soundOn ? 'off' : 'on') + '.');
     }
-    if (soundOn) playHoverTone();   // the click is the user gesture that unlocks audio; the tone confirms it's on
+    if (soundOn) playHoverTone(true);   // the click is the user gesture that unlocks audio; the tone confirms it's on
   };
   function attach(){
     document.querySelectorAll('.lg-hero-cat, .lg-btn-glow, .lg-toc-item').forEach(function(el){
-      el.addEventListener('mouseenter', playHoverTone);
+      el.addEventListener('mouseenter', function(){ playHoverTone(false); });
     });
   }
   if (document.readyState === 'loading') {
