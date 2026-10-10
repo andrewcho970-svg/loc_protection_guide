@@ -3513,12 +3513,6 @@ window.__LG_I18N_EN__ = (function(){
     if (!frontActive() || overlayOpen() || document.hidden) { lastActivity = Date.now(); return; }
     if (Date.now() - lastActivity >= IDLE_MS) startAttract();
   }, 1000);
-
-  // Start the screensaver right when the page opens (not after the idle wait).
-  // Input is ignored for the first 1.5s so the synthetic mousemove some browsers fire on load can't cancel it.
-  setTimeout(function(){
-    if (!attract && frontActive() && !overlayOpen()) startAttract();
-  }, 300);
 })();
 </script>
 <script>
